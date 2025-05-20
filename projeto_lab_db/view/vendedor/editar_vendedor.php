@@ -37,7 +37,7 @@ $row = $res->fetch_assoc();
 <body class="bg-dark text-light">
     <div class="container py-4">
         <h1 class="text-center text-warning">Editar Vendedor</h1>
-        <form action="../../controller/atualizar_vendedor.php" method="post" class="bg-light text-dark p-4 rounded shadow">
+        <form action="../../controller/vendedor/atualizar_vendedor.php" method="post" class="bg-light text-dark p-4 rounded shadow">
             <input type="hidden" name="id" value="<?= $row['id'] ?>">
             <input type="text" name="nome" class="form-control mb-2" value="<?= $row['nome'] ?>" required>
             <input type="text" name="cpf" class="form-control mb-2" value="<?= $row['cpf'] ?>" required>

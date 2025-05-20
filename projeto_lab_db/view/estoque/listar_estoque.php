@@ -28,12 +28,15 @@ $result = mysqli_query($conn, $query);
         <div class="col-12 col-sm-10 col-md-8 col-lg-7 bg-light p-3 rounded shadow">
             <h2 class="text-center text-dark mb-4">Estoque</h2>
 
-            
-            <?php if ($_SESSION['tipo_usuario'] == 'admin'): ?>
-                <a href="cadastrar_estoque.php" class="btn btn-primary mb-3">Cadastrar novo</a>
-            <?php endif; ?>
+            <?php
+    if ($_SESSION['tipo_usuario'] == 'admin') {
+        echo '<a href="../administrador/home_adm.php" class="btn btn-secondary btn-sm">Voltar</a>';
+    } elseif ($_SESSION['tipo_usuario'] == 'vendedor') {
+        echo '<a href="../vendedor/home_vendedor.php" class="btn btn-secondary btn-sm">Voltar</a>';
+    }
+    ?>
 
-            <button type="button" class="btn btn-secondary mb-3" onclick="window.history.back()">Voltar</button>
+   
 
             <table class="table table-bordered table-hover table-sm">
                 <thead>

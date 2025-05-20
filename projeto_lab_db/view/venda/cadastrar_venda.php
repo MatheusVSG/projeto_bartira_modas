@@ -29,7 +29,7 @@ $vendedor_id = $_SESSION['usuario_id'];
     <div class="bg-light text-dark p-4 rounded shadow">
         <h2 class="text-center mb-4">Nova Venda</h2>
 
-        <form method="POST" action="../../controller/venda_controller.php">
+        <form method="POST" action="../../controller/vendas/venda_controller.php">
             <!-- Campo de busca de cliente -->
             <div class="mb-3">
                 <label for="cliente_nome">Cliente:</label>
@@ -108,7 +108,7 @@ $vendedor_id = $_SESSION['usuario_id'];
         // Autocomplete de produto
         $("#busca-produto").autocomplete({
             source: function (request, response) {
-                $.getJSON("../../controller/produto_buscar.php", { termo: request.term }, function (data) {
+                $.getJSON("../../controller/produto/produto_buscar.php", { termo: request.term }, function (data) {
                     response(data.map(item => ({
                         label: item.nome + " - R$" + parseFloat(item.valor_unidade).toFixed(2),
                         value: item.nome,
@@ -143,7 +143,7 @@ $vendedor_id = $_SESSION['usuario_id'];
         // Autocomplete de cliente
         $("#cliente_nome").autocomplete({
             source: function (request, response) {
-                $.getJSON("../../controller/cliente_buscar.php", { termo: request.term }, function (data) {
+                $.getJSON("../../controller/cliente/cliente_buscar.php", { termo: request.term }, function (data) {
                     response(data.map(item => ({
                         label: item.nome + " - CPF: " + item.cpf,
                         value: item.nome,

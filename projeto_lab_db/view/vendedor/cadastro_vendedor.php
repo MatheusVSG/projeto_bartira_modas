@@ -21,7 +21,7 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['tipo_usuario'] != 'admin') {
         <h1 class="text-center text-warning">Cadastro de Vendedor</h1>
 
 
-        <form action="../../controller/salvar_vendedor.php" method="post" class="bg-light text-dark p-4 rounded shadow">
+        <form action="../../controller/vendedor/salvar_vendedor.php" method="post" class="bg-light text-dark p-4 rounded shadow">
             <input type="text" name="nome" class="form-control mb-2" placeholder="Nome" required>
             <input type="text" name="cpf" class="form-control mb-2" placeholder="CPF" required>
             <input type="email" name="email" class="form-control mb-2" placeholder="Email" required>
@@ -64,7 +64,7 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['tipo_usuario'] != 'admin') {
                         <td>{$row['email']}</td>
                         <td>
                             <a href='editar_vendedor.php?id={$row['id']}' class='btn btn-warning btn-sm'>Editar</a>
-                            <a href='../../controller/excluir_vendedor.php?id={$row['id']}' onclick='return confirm(\"Tem certeza?\")' class='btn btn-danger btn-sm'>Excluir</a>
+                            <a href='../../controller/vendedor/excluir_vendedor.php?id={$row['id']}' onclick='return confirm(\"Tem certeza?\")' class='btn btn-danger btn-sm'>Excluir</a>
                         </td>
                     </tr>";
                 }
