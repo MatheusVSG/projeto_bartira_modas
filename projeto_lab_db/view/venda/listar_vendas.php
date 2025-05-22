@@ -42,6 +42,8 @@ $result = $stmt->get_result();
 
             <div class="mb-2 text-right">
                 <a href="../administrador/home_adm.php" class="btn btn-secondary btn-sm">Voltar</a>
+                <a href="relatorios_de_venda.php" class="btn btn-primary btn-sm">Relatório de Vendas</a>
+
             </div>
 
             <div class="table-responsive">

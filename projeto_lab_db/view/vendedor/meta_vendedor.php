@@ -3,15 +3,12 @@ session_start();
 include '../../connection.php';
 include '../../head.php';
 
-// Verifica se o usuário está logado e é do tipo 'admin' ou 'vendedor'
 if (!isset($_SESSION['usuario_id']) || !in_array($_SESSION['tipo_usuario'], ['admin', 'vendedor'])) {
     header("Location: ../../login.php");
     exit();
 }
 
-// Query para buscar as vendas, com filtro por vendedor se o usuário for vendedor
 if ($_SESSION['tipo_usuario'] == 'admin') {
-    // Se for admin, mostra todas as vendas
     $sql = "SELECT v.id, c.nome AS cliente, ve.nome AS vendedor, fp.descricao AS forma_pagto, v.valor, v.data_criacao
             FROM vendas v
             INNER JOIN clientes c ON v.fk_cliente_id = c.id
@@ -19,7 +16,6 @@ if ($_SESSION['tipo_usuario'] == 'admin') {
             INNER JOIN forma_pagto fp ON v.fk_forma_pagto_id = fp.id
             ORDER BY v.data_criacao DESC";
 } else {
-    // Se for vendedor, mostra apenas as suas vendas
     $sql = "SELECT v.id, c.nome AS cliente, ve.nome AS vendedor, fp.descricao AS forma_pagto, v.valor, v.data_criacao
             FROM vendas v
             INNER JOIN clientes c ON v.fk_cliente_id = c.id
@@ -29,7 +25,6 @@ if ($_SESSION['tipo_usuario'] == 'admin') {
             ORDER BY v.data_criacao DESC";
 }
 
-// Prepare a consulta para as vendas
 $stmt = $conn->prepare($sql);
 if (!$stmt->execute()) {
     die("Erro ao executar consulta: " . $stmt->error);
@@ -37,7 +32,6 @@ if (!$stmt->execute()) {
 
 $result = $stmt->get_result();
 
-// Consulta para buscar a meta do vendedor
 $sql_meta = "SELECT valor FROM meta_vendas WHERE fk_vendedor_id = {$_SESSION['usuario_id']} AND data_validade >= CURDATE() LIMIT 1";
 $stmt_meta = $conn->prepare($sql_meta);
 if (!$stmt_meta->execute()) {
@@ -46,7 +40,6 @@ if (!$stmt_meta->execute()) {
 $result_meta = $stmt_meta->get_result();
 $meta = $result_meta->fetch_assoc();
 
-// Consulta para calcular o valor total das vendas
 $sql_total_vendas = "SELECT SUM(valor) AS total_vendas FROM vendas WHERE fk_vendedor_id = {$_SESSION['usuario_id']}";
 $stmt_total_vendas = $conn->prepare($sql_total_vendas);
 if (!$stmt_total_vendas->execute()) {
@@ -54,7 +47,6 @@ if (!$stmt_total_vendas->execute()) {
 }
 $result_total_vendas = $stmt_total_vendas->get_result();
 $total_vendas = $result_total_vendas->fetch_assoc()['total_vendas'];
-
 ?>
 
 <!DOCTYPE html>
@@ -63,7 +55,6 @@ $total_vendas = $result_total_vendas->fetch_assoc()['total_vendas'];
 <head>
     <meta charset="UTF-8">
     <title>Bartira Modas | Vendas Realizadas</title>
-
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 
@@ -75,7 +66,6 @@ $total_vendas = $result_total_vendas->fetch_assoc()['total_vendas'];
 
             <div class="mb-2 text-right">
                 <?php
-                // Exibe o botão de "Voltar" com base no tipo de usuário
                 if ($_SESSION['tipo_usuario'] == 'admin') {
                     echo '<a href="../administrador/home_adm.php" class="btn btn-secondary btn-sm">Voltar</a>';
                 } elseif ($_SESSION['tipo_usuario'] == 'vendedor') {
@@ -84,11 +74,19 @@ $total_vendas = $result_total_vendas->fetch_assoc()['total_vendas'];
                 ?>
             </div>
 
-            <!-- Exibe as informações da meta e valor total de vendas para o vendedor -->
             <?php if ($_SESSION['tipo_usuario'] == 'vendedor'): ?>
                 <div class="alert alert-info">
                     <h5>Meta de Vendas</h5>
-                    <p>Valor da Meta: R$ <?= number_format($meta['valor'], 2, ',', '.') ?: 'Sem meta definida' ?></p>
+                    <p>Valor da Meta: R$ 
+                    <?php
+                    
+                    if (isset($meta) && isset($meta['valor'])) {
+                        echo number_format($meta['valor'], 2, ',', '.');
+                    } else {
+                        echo 'Sem meta definida';
+                    }
+                    ?>
+                    </p>
                     <p>Valor Total de Vendas: R$ <?= number_format($total_vendas, 2, ',', '.') ?></p>
                 </div>
             <?php endif; ?>

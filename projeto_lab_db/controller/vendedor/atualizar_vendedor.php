@@ -14,9 +14,12 @@ $cidade = $_POST['cidade'];
 $estado = $_POST['estado'];
 $sexo = $_POST['sexo'];
 $modificado_por = 1;
+$senha = password_hash($_POST['senha'], PASSWORD_DEFAULT);
 
-$stmt = $conn->prepare("UPDATE vendedores SET nome=?, cpf=?, email=?, telefone=?, logradouro=?, numero=?, bairro=?, cidade=?, estado=?, sexo=?, modificado_por=? WHERE id=?");
-$stmt->bind_param("ssssssssssii", $nome, $cpf, $email, $telefone, $logradouro, $numero, $bairro, $cidade, $estado, $sexo, $modificado_por, $id);
+$stmt = $conn->prepare("UPDATE vendedores SET nome=?, cpf=?, email=?, telefone=?, logradouro=?, numero=?, bairro=?, cidade=?, estado=?, sexo=?, modificado_por=?, senha=? WHERE id=?");
+
+
+$stmt->bind_param("ssssssssssisi", $nome, $cpf, $email, $telefone, $logradouro, $numero, $bairro, $cidade, $estado, $sexo, $modificado_por, $senha, $id);
 
 if ($stmt->execute()) {
     header("Location: ../../view/vendedor/cadastro_vendedor.php");
@@ -31,3 +34,5 @@ if ($stmt->execute()) {
     );
     echo "Erro ao atualizar: " . $stmt->error;
 }
+?>
+

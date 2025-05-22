@@ -8,7 +8,7 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['tipo_usuario'] != 'admin') {
     exit();
 }
 
-// Verifica se ID foi passado
+
 if (!isset($_GET['id'])) {
     echo "ID do vendedor não especificado.";
     exit();
@@ -52,6 +52,7 @@ $row = $res->fetch_assoc();
                 <option value="M" <?= $row['sexo'] == 'M' ? 'selected' : '' ?>>Masculino</option>
                 <option value="F" <?= $row['sexo'] == 'F' ? 'selected' : '' ?>>Feminino</option>
             </select>
+            <input type="password" name="senha" class="form-control mb-2" value="<?= $row['senha'] ?>" required>
             <button type="submit" class="btn btn-primary">Atualizar</button>
             <button type="button" class="btn btn-secondary" onclick="window.history.back()">Voltar</button>
         </form>

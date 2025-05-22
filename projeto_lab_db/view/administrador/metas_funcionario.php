@@ -12,13 +12,12 @@ if (
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_SESSION['tipo_usuario'] == 'admin') {
-    // Dados do formulário
+
     $vendedor_id = $_POST['vendedor_id'];
     $meta_valor = $_POST['meta_valor'];
     $data_validade = $_POST['data_validade'];
-    $modificado_por = $_SESSION['usuario_id']; // ID do administrador logado
+    $modificado_por = $_SESSION['usuario_id']; 
 
-    // Query para inserir meta
     $query = "INSERT INTO meta_vendas (fk_vendedor_id, valor, data_validade, modificado_por) 
               VALUES ('$vendedor_id', '$meta_valor', '$data_validade', '$modificado_por')";
 
@@ -29,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_SESSION['tipo_usuario'] == 'admin'
     }
 }
 
-// Query para buscar vendedores e suas metas
+
 if ($_SESSION['tipo_usuario'] == 'admin') {
     $query_vendedores = "SELECT v.id AS vendedor_id, v.nome AS vendedor_nome, m.valor AS meta_valor, m.status AS meta_status
                          FROM vendedores v
@@ -98,16 +97,16 @@ $result_vendedores = mysqli_query($conn, $query_vendedores);
                             <td><?= $vendedor['vendedor_nome']; ?></td>
                             <td><?= $vendedor['meta_valor']; ?></td>
                             <td>
-                                <?php
-                                if ($vendedor['meta_status'] === null) {
-                                    echo "Meta não definida";
-                                } elseif ($vendedor['meta_status'] == 1) {
-                                    echo "Meta atingida";
-                                } else {
-                                    echo "Meta não atingida";
-                                }
-                                ?>
-                            </td>
+    <?php
+    if (isset($vendedor['meta_status'])) {
+        echo $vendedor['meta_status'] == 1 ? "Meta atingida" : "Meta não atingida";
+    } else {
+        echo "Meta não definida";
+    }
+    ?>
+</td>
+
+
                         </tr>
                     <?php endwhile; ?>
                 </tbody>

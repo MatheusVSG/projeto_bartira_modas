@@ -11,7 +11,6 @@ if (
     exit();
 }
 
-// Recupera ID do usuário logado (vendedor)
 $vendedor_id = $_SESSION['usuario_id'];
 ?>
 
@@ -30,14 +29,14 @@ $vendedor_id = $_SESSION['usuario_id'];
         <h2 class="text-center mb-4">Nova Venda</h2>
 
         <form method="POST" action="../../controller/vendas/venda_controller.php">
-            <!-- Campo de busca de cliente -->
+          
             <div class="mb-3">
                 <label for="cliente_nome">Cliente:</label>
                 <input type="text" id="cliente_nome" class="form-control" placeholder="Digite o nome do cliente..." required>
                 <input type="hidden" name="fk_cliente_id" id="fk_cliente_id">
             </div>
 
-            <!-- Campo do vendedor logado -->
+            
             <input type="hidden" name="fk_vendedor_id" value="<?= $vendedor_id ?>">
 
             <div class="mb-3">
@@ -53,13 +52,13 @@ $vendedor_id = $_SESSION['usuario_id'];
                 </select>
             </div>
 
-            <!-- Campo de busca de produtos -->
+           
             <div class="mb-3">
                 <label>Buscar Produto:</label>
                 <input type="text" id="busca-produto" class="form-control" placeholder="Digite o nome do produto...">
             </div>
 
-            <!-- Itens da venda -->
+          
             <div class="mb-3">
                 <table class="table table-sm table-bordered" id="tabela-itens">
                     <thead>
@@ -73,13 +72,13 @@ $vendedor_id = $_SESSION['usuario_id'];
                 </table>
             </div>
 
-            <!-- Valor total -->
+        
             <div class="mb-3">
                 <label>Valor Total:</label>
                 <input type="text" id="valor-total" name="valor" class="form-control" readonly>
             </div>
 
-            <!-- Lista de produtos em campos ocultos -->
+          
             <div id="produtos-selecionados"></div>
 
             <div class="d-flex justify-content-between">
@@ -96,7 +95,7 @@ $vendedor_id = $_SESSION['usuario_id'];
     </div>
 </div>
 
-<!-- Scripts -->
+
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
 
@@ -105,7 +104,7 @@ $vendedor_id = $_SESSION['usuario_id'];
     let contador = 0;
 
     $(function () {
-        // Autocomplete de produto
+     
         $("#busca-produto").autocomplete({
             source: function (request, response) {
                 $.getJSON("../../controller/produto/produto_buscar.php", { termo: request.term }, function (data) {
@@ -140,7 +139,7 @@ $vendedor_id = $_SESSION['usuario_id'];
             }
         });
 
-        // Autocomplete de cliente
+       
         $("#cliente_nome").autocomplete({
             source: function (request, response) {
                 $.getJSON("../../controller/cliente/cliente_buscar.php", { termo: request.term }, function (data) {
