@@ -16,6 +16,12 @@ $result = mysqli_query($conn, "SELECT * FROM forma_pagto");
 
 <head>
     <title>Bartira Modas | Formas de Pagamento</title>
+    <style>
+        .logo {
+            max-width: 200px;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 
 <body>

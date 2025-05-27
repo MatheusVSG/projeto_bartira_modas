@@ -21,6 +21,12 @@ $admin = $result->fetch_assoc();
 
 <head>
     <title>Editar Administrador</title>
+    <style>
+        .logo {
+            max-width: 200px;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 
 <body class="bg-dark text-light">

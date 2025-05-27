@@ -6,9 +6,9 @@ class RelatorioVendasController
 {
     public function gerarRelatorio()
     {
-        global $conn; 
+        global $conn;
 
-      
+
         $sql = "
         SELECT YEAR(v.data_venda) AS ano, MONTH(v.data_venda) AS mes, SUM(v.valor_total) AS total_vendido
         FROM vendas v
@@ -17,7 +17,7 @@ class RelatorioVendasController
         ";
         $result = mysqli_query($conn, $sql);
 
-      
+
         if ($result) {
             $dados = [];
             while ($row = mysqli_fetch_assoc($result)) {
@@ -29,5 +29,3 @@ class RelatorioVendasController
         }
     }
 }
-?>
-

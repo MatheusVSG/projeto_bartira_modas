@@ -20,6 +20,12 @@ $row = $result->fetch_assoc();
 
 <head>
     <title>Editar Produto</title>
+    <style>
+        .logo {
+            max-width: 200px;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 
 <body class="bg-dark text-light">

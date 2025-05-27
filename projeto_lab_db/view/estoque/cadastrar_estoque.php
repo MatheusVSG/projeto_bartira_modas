@@ -4,7 +4,7 @@ include '../../connection.php';
 include '../../head.php';
 
 if (
-    !isset($_SESSION['usuario_id']) || 
+    !isset($_SESSION['usuario_id']) ||
     !in_array($_SESSION['tipo_usuario'], ['admin', 'vendedor'])
 ) {
     header("Location: ../../login.php");
@@ -18,6 +18,12 @@ if (
 
 <head>
     <title>Bartira Modas | Cadastro de Estoque</title>
+    <style>
+        .logo {
+            max-width: 200px;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 
 <body>

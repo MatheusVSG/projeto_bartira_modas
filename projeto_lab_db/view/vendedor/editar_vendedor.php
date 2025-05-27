@@ -31,6 +31,12 @@ $row = $res->fetch_assoc();
 
 <head>
     <title>Editar Vendedor</title>
+    <style>
+        .logo {
+            max-width: 200px;
+            margin-bottom: 20px;
+        }
+    </style>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 

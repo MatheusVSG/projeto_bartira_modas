@@ -21,6 +21,12 @@ if (!$result) {
 <head>
     <meta charset="UTF-8">
     <title>Bartira Modas | Logs do Sistema</title>
+    <style>
+        .logo {
+            max-width: 200px;
+            margin-bottom: 20px;
+        }
+    </style>
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>

@@ -20,5 +20,5 @@ if (!$stmt->execute()) {
     exit;
 }
 
-header("Location: ../../view/cliente/cadastro_cliente.php");
+header("Location: ../../view/cliente/listar_clientes.php?excluido=1");
 exit;

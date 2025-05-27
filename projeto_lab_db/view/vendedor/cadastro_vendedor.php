@@ -14,6 +14,12 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['tipo_usuario'] != 'admin') {
 
 <head>
     <title>Cadastro de Vendedor</title>
+    <style>
+        .logo {
+            max-width: 200px;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 
 <body class="bg-dark text-light">
@@ -23,8 +29,8 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['tipo_usuario'] != 'admin') {
 
         <form action="../../controller/vendedor/salvar_vendedor.php" method="post" class="bg-light text-dark p-4 rounded shadow">
             <input type="text" name="nome" class="form-control mb-2" placeholder="Nome" required>
-            <input type="text" name="cpf" class="form-control mb-2" placeholder="CPF" required>
-            <input type="email" name="email" class="form-control mb-2" placeholder="Email" required>
+            <input type="text" name="cpf" class="form-control mb-2" placeholder="CPF" required class="form-control form-control-sm" required class="form-control form-control-sm" pattern="\d{11}" maxlength="11" oninput="this.value = this.value.replace(/\D/g, '')" title="Digite exatamente 11 números, somente dígitos.">
+            <input type="text" name="email" class="form-control mb-2" placeholder="Email" required>
             <input type="text" name="telefone" class="form-control mb-2" placeholder="Telefone">
             <input type="text" name="logradouro" class="form-control mb-2" placeholder="Logradouro">
             <input type="text" name="numero" class="form-control mb-2" placeholder="Número">

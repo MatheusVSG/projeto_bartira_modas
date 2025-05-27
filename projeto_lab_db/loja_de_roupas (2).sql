@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 12/05/2025 às 23:40
+-- Tempo de geração: 27/05/2025 às 17:48
 -- Versão do servidor: 10.4.32-MariaDB
 -- Versão do PHP: 8.2.12
 
@@ -38,7 +38,9 @@ CREATE TABLE `administrador` (
 --
 
 INSERT INTO `administrador` (`id`, `usuario`, `senha`) VALUES
-(2, 'matheus', '$2y$10$6ixw7nR55C6ku4n9bwaj2ea2QbHYXv/xhRlwAfo/ijT4ZIuboIZJS');
+(4, 'matheus', '$2y$10$bFnV3xf7nwQXHpInPnvPSeHLkLsk0lqF0towfdkamk89FuJ5M3wvS'),
+(5, 'carlao', '$2y$10$G0dl49FF/s798yCfAIXFkOR5qtc3TylasrYu4MjKC8BVNieW3ovxK'),
+(6, 'luan', '$2y$10$AnCmVvN1zsgPGRKwcq6TKOHarikifHt0aPjbcG7ciFgMUILElef9e');
 
 -- --------------------------------------------------------
 
@@ -68,7 +70,8 @@ CREATE TABLE `clientes` (
 --
 
 INSERT INTO `clientes` (`id`, `nome`, `cpf`, `email`, `telefone`, `logradouro`, `numero`, `bairro`, `cidade`, `estado`, `sexo`, `data_criacao`, `data_atualizacao`, `modificado_por`) VALUES
-(4, 'Matheus Vitor Siqueira Gusmão', '537.724.548', 'siqueiramatheusvitor@gmail.com', '15997562793', 'rua jose paulo colaco', '212', 'vila la brunetti', 'Itapetininga', 'sp', 'M', '2025-05-10 15:24:41', '2025-05-10 15:24:41', NULL);
+(4, 'Matheus Vitor Siqueira G', '22222222222', 'siqueiramatheusvitor@gmail.com', '15997562793', 'rua jose paulo colaco', '212', 'vila la brunetti', 'Itapetininga', 'sp', 'M', '2025-05-10 15:24:41', '2025-05-27 15:11:33', NULL),
+(11, 'fabio', '12344556676', 'fabio@gmail.com', '15997562793', 'rua jose paulo colaco', '212', 'vila la brunetti', 'Itapetininga', 'sp', 'M', '2025-05-27 15:36:36', '2025-05-27 15:36:36', NULL);
 
 -- --------------------------------------------------------
 
@@ -109,7 +112,8 @@ CREATE TABLE `forma_pagto` (
 
 INSERT INTO `forma_pagto` (`id`, `descricao`) VALUES
 (1, 'debito'),
-(7, 'credito');
+(7, 'credito'),
+(8, 'pix');
 
 -- --------------------------------------------------------
 
@@ -207,15 +211,16 @@ CREATE TABLE `vendas` (
   `fk_forma_pagto_id` int(11) DEFAULT NULL,
   `valor` decimal(10,0) DEFAULT NULL,
   `data_criacao` timestamp NOT NULL DEFAULT current_timestamp(),
-  `data_venda` date DEFAULT curdate()
+  `data_venda` date DEFAULT curdate(),
+  `valor_total` decimal(10,2) NOT NULL DEFAULT 0.00
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Despejando dados para a tabela `vendas`
 --
 
-INSERT INTO `vendas` (`id`, `fk_cliente_id`, `fk_vendedor_id`, `fk_forma_pagto_id`, `valor`, `data_criacao`, `data_venda`) VALUES
-(2, 4, 2, 1, 5000, '2025-05-10 15:59:07', '2025-05-10');
+INSERT INTO `vendas` (`id`, `fk_cliente_id`, `fk_vendedor_id`, `fk_forma_pagto_id`, `valor`, `data_criacao`, `data_venda`, `valor_total`) VALUES
+(2, 4, 2, 1, 5000, '2025-05-10 15:59:07', '2025-05-10', 0.00);
 
 --
 -- Acionadores `vendas`
@@ -286,7 +291,8 @@ CREATE TABLE `vendedores` (
 --
 
 INSERT INTO `vendedores` (`id`, `nome`, `cpf`, `email`, `telefone`, `logradouro`, `numero`, `bairro`, `cidade`, `estado`, `sexo`, `data_criacao`, `data_atualizacao`, `modificado_por`, `senha`, `tipo`) VALUES
-(2, 'Matheus Vitor Siqueira Gusmão', '537.724.548', 'siqueiramatheusvitor@gmail.com', '15997562793', 'rua jose paulo colaco', '212', 'vila la brunetti', 'Itapetininga', 'sp', 'M', '2025-05-10 14:43:08', '2025-05-10 14:43:08', 1, '$2y$10$jZeBwiVTCzR6kCZnfKsKhOugHoVTwL/FMqdq0BAauFTz.IQ9T9XQO', 'vendedor');
+(2, 'Matheus Vitor Siqueira Gusmão', '537.724.548', 'siqueiramatheusvitor@gmail.com', '15997562793', 'rua jose paulo colaco', '212', 'vila la brunetti', 'Itapetininga', 'sp', 'M', '2025-05-10 14:43:08', '2025-05-10 14:43:08', 1, '$2y$10$jZeBwiVTCzR6kCZnfKsKhOugHoVTwL/FMqdq0BAauFTz.IQ9T9XQO', 'vendedor'),
+(3, 'luan', '12345678791', 'luan@gmail.com', '15997562793', 'rua jose paulo colaco', '212', 'vila la brunetti', 'Itapetininga', 'sp', 'M', '2025-05-27 15:30:27', '2025-05-27 15:30:27', 1, '$2y$10$E7I/mzfI3rLtKYO4fx5CfOcY9dTFyW4QamaFpdXMNa/lTv9dtZgWW', 'vendedor');
 
 --
 -- Índices para tabelas despejadas
@@ -370,19 +376,19 @@ ALTER TABLE `vendedores`
 -- AUTO_INCREMENT de tabela `administrador`
 --
 ALTER TABLE `administrador`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de tabela `clientes`
 --
 ALTER TABLE `clientes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT de tabela `forma_pagto`
 --
 ALTER TABLE `forma_pagto`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de tabela `item_venda`
@@ -418,7 +424,7 @@ ALTER TABLE `vendas`
 -- AUTO_INCREMENT de tabela `vendedores`
 --
 ALTER TABLE `vendedores`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Restrições para tabelas despejadas

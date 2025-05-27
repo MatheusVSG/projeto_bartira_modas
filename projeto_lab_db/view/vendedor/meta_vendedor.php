@@ -56,6 +56,12 @@ $total_vendas = $result_total_vendas->fetch_assoc()['total_vendas'];
     <meta charset="UTF-8">
     <title>Bartira Modas | Vendas Realizadas</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .logo {
+            max-width: 200px;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 
 <body>
@@ -77,15 +83,15 @@ $total_vendas = $result_total_vendas->fetch_assoc()['total_vendas'];
             <?php if ($_SESSION['tipo_usuario'] == 'vendedor'): ?>
                 <div class="alert alert-info">
                     <h5>Meta de Vendas</h5>
-                    <p>Valor da Meta: R$ 
-                    <?php
-                    
-                    if (isset($meta) && isset($meta['valor'])) {
-                        echo number_format($meta['valor'], 2, ',', '.');
-                    } else {
-                        echo 'Sem meta definida';
-                    }
-                    ?>
+                    <p>Valor da Meta: R$
+                        <?php
+
+                        if (isset($meta) && isset($meta['valor'])) {
+                            echo number_format($meta['valor'], 2, ',', '.');
+                        } else {
+                            echo 'Sem meta definida';
+                        }
+                        ?>
                     </p>
                     <p>Valor Total de Vendas: R$ <?= number_format($total_vendas, 2, ',', '.') ?></p>
                 </div>

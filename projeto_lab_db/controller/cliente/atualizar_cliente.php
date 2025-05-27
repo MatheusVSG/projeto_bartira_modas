@@ -24,7 +24,7 @@ if ($stmt === false) {
 $stmt->bind_param("sssi", $nome, $cpf, $email, $id);
 
 if ($stmt->execute()) {
-    header("Location: ../../view/cliente/cadastro_cliente.php");
+    header("Location: ../../view/cliente/listar_clientes.php?id=$id&atualizado=1");
     exit;
 } else {
     registrar_log(

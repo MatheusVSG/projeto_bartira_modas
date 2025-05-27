@@ -16,18 +16,27 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['tipo_usuario'] != 'vendedor') 
 
 <head>
     <title>Home Vendedor</title>
+    <style>
+        .logo {
+            max-width: 200px;
+            margin-bottom: 20px;
+        }
+    </style>
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 
-<body>
-    <div class="container-fluid bg-dark text-light p-4">
-        <h1 class="mb-4 text-warning text-center">Painel do Vendedor</h1>
+<body class="bg-dark text-light min-vh-100">
+    <div class="container py-5">
 
-        <div class="row justify-content-center gap-4">
+        <a href="../logout.php" class="btn btn-danger position-absolute" style="top: 20px; right: 20px;">Sair</a>
 
-            <div class="col-10 col-md-3">
-                <div class="card bg-light text-center shadow-sm h-100">
+        <h1 class="mb-5 text-warning text-center">Painel do Vendedor</h1>
+
+        <div class="row justify-content-center">
+
+            <div class="col-10 col-md-3 mb-4">
+                <div class="card bg-light text-center shadow-lg rounded-3 h-100">
                     <div class="card-body d-flex flex-column justify-content-between">
                         <h4 class="card-title text-dark">Cadastro de Cliente</h4>
                         <p class="card-text">Gerenciar os dados dos clientes.</p>
@@ -36,9 +45,8 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['tipo_usuario'] != 'vendedor') 
                 </div>
             </div>
 
-
-            <div class="col-10 col-md-3">
-                <div class="card bg-light text-center shadow-sm h-100">
+            <div class="col-10 col-md-3 mb-4">
+                <div class="card bg-light text-center shadow-lg rounded-3 h-100">
                     <div class="card-body d-flex flex-column justify-content-between">
                         <h4 class="card-title text-dark">Estoque</h4>
                         <p class="card-text">Visualizar o estoque.</p>
@@ -47,8 +55,8 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['tipo_usuario'] != 'vendedor') 
                 </div>
             </div>
 
-            <div class="col-10 col-md-3">
-                <div class="card bg-light text-center shadow-sm h-100">
+            <div class="col-10 col-md-3 mb-4">
+                <div class="card bg-light text-center shadow-lg rounded-3 h-100">
                     <div class="card-body d-flex flex-column justify-content-between">
                         <h4 class="card-title text-dark">Metas de Venda</h4>
                         <p class="card-text">Visualizar minhas metas de vendas.</p>
@@ -57,28 +65,19 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['tipo_usuario'] != 'vendedor') 
                 </div>
             </div>
 
-
-            <div class="col-10 col-md-3">
-                <div class="card bg-light text-center shadow-sm h-100">
+            <div class="col-10 col-md-3 mb-4">
+                <div class="card bg-light text-center shadow-lg rounded-3 h-100">
                     <div class="card-body d-flex flex-column justify-content-between">
                         <h4 class="card-title text-dark">Vendas</h4>
-                        <p class="card-text">fazer vendas.</p>
+                        <p class="card-text">Fazer vendas.</p>
                         <a href="../venda/cadastrar_venda.php" class="btn btn-primary mt-3">Acessar</a>
                     </div>
                 </div>
             </div>
 
-
-            <div class="d-flex justify-content-end mb-3">
-                <a href="../logout.php" class="btn btn-danger position-absolute" style="top: 20px; right: 20px;">Sair</a>
-            </div>
-
         </div>
 
     </div>
-
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

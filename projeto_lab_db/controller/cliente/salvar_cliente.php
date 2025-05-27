@@ -21,7 +21,7 @@ $stmt = $conn->prepare($sql);
 $stmt->bind_param("ssssssssss", $nome, $cpf, $email, $telefone, $logradouro, $numero, $bairro, $cidade, $estado, $sexo);
 
 if ($stmt->execute()) {
-    header("Location: ../../view/cliente/cadastro_cliente.php");
+    header("Location: ../../view/cliente/cadastro_cliente.php?sucesso=1");
     exit;
 } else {
     registrar_log(

@@ -5,7 +5,7 @@ include '../../head.php';
 
 
 if (
-    !isset($_SESSION['usuario_id']) || 
+    !isset($_SESSION['usuario_id']) ||
     !in_array($_SESSION['tipo_usuario'], ['admin', 'vendedor'])
 ) {
     header("Location: ../../login.php");
@@ -21,6 +21,12 @@ $result = mysqli_query($conn, $query);
 
 <head>
     <title>Bartira Modas | Estoque</title>
+    <style>
+        .logo {
+            max-width: 200px;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 
 <body>
@@ -29,14 +35,14 @@ $result = mysqli_query($conn, $query);
             <h2 class="text-center text-dark mb-4">Estoque</h2>
 
             <?php
-    if ($_SESSION['tipo_usuario'] == 'admin') {
-        echo '<a href="../administrador/home_adm.php" class="btn btn-secondary btn-sm">Voltar</a>';
-    } elseif ($_SESSION['tipo_usuario'] == 'vendedor') {
-        echo '<a href="../vendedor/home_vendedor.php" class="btn btn-secondary btn-sm">Voltar</a>';
-    }
-    ?>
+            if ($_SESSION['tipo_usuario'] == 'admin') {
+                echo '<a href="../administrador/home_adm.php" class="btn btn-secondary btn-sm">Voltar</a>';
+            } elseif ($_SESSION['tipo_usuario'] == 'vendedor') {
+                echo '<a href="../vendedor/home_vendedor.php" class="btn btn-secondary btn-sm">Voltar</a>';
+            }
+            ?>
 
-   
+
 
             <table class="table table-bordered table-hover table-sm">
                 <thead>
@@ -57,14 +63,14 @@ $result = mysqli_query($conn, $query);
                             <td><?php echo $row['data_de_modificacao']; ?></td>
                             <td>
                                 <?php if ($_SESSION['tipo_usuario'] == 'admin'): ?>
-                                    
+
                                     <form method="POST" action="../../controller/estoque_controller.php" style="display:inline;">
                                         <input type="hidden" name="tamanho" value="<?php echo $row['tamanho']; ?>">
                                         <input type="hidden" name="fk_produto_id" value="<?php echo $row['fk_produto_id']; ?>">
                                         <button type="submit" name="excluir_estoque" class="btn btn-danger btn-sm">Excluir</button>
                                     </form>
                                 <?php else: ?>
-                                    
+
                                     <span>Sem permissão</span>
                                 <?php endif; ?>
                             </td>

@@ -4,7 +4,7 @@ include '../../connection.php';
 include '../../head.php';
 
 if (
-    !isset($_SESSION['usuario_id']) || 
+    !isset($_SESSION['usuario_id']) ||
     !in_array($_SESSION['tipo_usuario'], ['admin', 'vendedor'])
 ) {
     header("Location: ../../login.php");
@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_SESSION['tipo_usuario'] == 'admin'
     $vendedor_id = $_POST['vendedor_id'];
     $meta_valor = $_POST['meta_valor'];
     $data_validade = $_POST['data_validade'];
-    $modificado_por = $_SESSION['usuario_id']; 
+    $modificado_por = $_SESSION['usuario_id'];
 
     $query = "INSERT INTO meta_vendas (fk_vendedor_id, valor, data_validade, modificado_por) 
               VALUES ('$vendedor_id', '$meta_valor', '$data_validade', '$modificado_por')";
@@ -51,6 +51,12 @@ $result_vendedores = mysqli_query($conn, $query_vendedores);
     <meta charset="UTF-8">
     <title>Bartira Modas | Definir Metas</title>
     <link href="../../path_to_bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .logo {
+            max-width: 200px;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 
 <body>
@@ -62,7 +68,7 @@ $result_vendedores = mysqli_query($conn, $query_vendedores);
                     <div class="mb-3">
                         <label for="vendedor_id" class="form-label">Fornecedor:</label>
                         <select name="vendedor_id" id="vendedor_id" class="form-select" required>
-                            <?php 
+                            <?php
                             $vendedores_result = mysqli_query($conn, "SELECT id, nome FROM vendedores");
                             while ($vendedor = mysqli_fetch_assoc($vendedores_result)) {
                                 echo "<option value='{$vendedor['id']}'>{$vendedor['nome']}</option>";
@@ -97,14 +103,14 @@ $result_vendedores = mysqli_query($conn, $query_vendedores);
                             <td><?= $vendedor['vendedor_nome']; ?></td>
                             <td><?= $vendedor['meta_valor']; ?></td>
                             <td>
-    <?php
-    if (isset($vendedor['meta_status'])) {
-        echo $vendedor['meta_status'] == 1 ? "Meta atingida" : "Meta não atingida";
-    } else {
-        echo "Meta não definida";
-    }
-    ?>
-</td>
+                                <?php
+                                if (isset($vendedor['meta_status'])) {
+                                    echo $vendedor['meta_status'] == 1 ? "Meta atingida" : "Meta não atingida";
+                                } else {
+                                    echo "Meta não definida";
+                                }
+                                ?>
+                            </td>
 
 
                         </tr>

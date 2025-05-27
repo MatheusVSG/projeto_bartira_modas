@@ -15,6 +15,12 @@ $result = $conn->query("SELECT * FROM administrador");
 
 <head>
     <title>Administradores Cadastrados</title>
+    <style>
+        .logo {
+            max-width: 200px;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 
 <body class="bg-dark text-light">
@@ -25,7 +31,7 @@ $result = $conn->query("SELECT * FROM administrador");
             <a href="cadastro_administrador.php" class="btn btn-primary">Novo Administrador</a>
         </div>
 
-        <a href ="./home_adm.php" class="btn btn-secondary mb-3">Voltar</a>
+        <a href="./home_adm.php" class="btn btn-secondary mb-3">Voltar</a>
 
         <table class="table table-striped table-bordered table-hover">
             <thead>

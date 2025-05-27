@@ -8,19 +8,42 @@ if (!isset($_SESSION['usuario_id']) || !in_array($_SESSION['tipo_usuario'], ['ad
     exit();
 }
 
+$mensagem_sucesso = '';
+if (isset($_GET['sucesso']) && $_GET['sucesso'] == 1) {
+    $mensagem_sucesso = 'Cliente cadastrado com sucesso!';
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 
 <head>
     <title>Bartira Modas | Cadastro de Cliente</title>
+    <style>
+        .logo {
+            max-width: 200px;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 
 <body>
     <div class="w-100 vh-100 d-flex flex-column justify-content-center align-items-center bg-dark p-3">
-        
+
         <div class="col-12 col-sm-8 col-md-6 col-lg-5 bg-light p-2 rounded shadow">
             <h2 class="text-center text-dark mb-2">Cadastro de Cliente</h2>
+
+            <?php if (!empty($mensagem_sucesso)): ?>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <?= $mensagem_sucesso ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+                </div>
+            <?php endif; ?>
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2>Clientes</h2>
+                <a href="listar_clientes.php" class="btn btn-primary btn-sm"> lista de Cliente</a>
+            </div>
 
             <form action="../../controller/cliente/salvar_cliente.php" method="POST">
                 <div class="mb-2">
@@ -30,7 +53,7 @@ if (!isset($_SESSION['usuario_id']) || !in_array($_SESSION['tipo_usuario'], ['ad
 
                 <div class="mb-2">
                     <label for="cpf" class="form-label">CPF</label>
-                    <input type="text" name="cpf" id="cpf" required class="form-control form-control-sm">
+                    <input type="text" name="cpf" id="cpf" required class="form-control form-control-sm" required class="form-control form-control-sm" pattern="\d{11}" maxlength="11" oninput="this.value = this.value.replace(/\D/g, '')" title="Digite exatamente 11 números, somente dígitos.">
                 </div>
 
                 <div class="mb-2">
@@ -78,13 +101,13 @@ if (!isset($_SESSION['usuario_id']) || !in_array($_SESSION['tipo_usuario'], ['ad
                 </div>
 
                 <div class="d-flex justify-content-between">
-                <?php
-    if ($_SESSION['tipo_usuario'] == 'admin') {
-        echo '<a href="../administrador/home_adm.php" class="btn btn-secondary btn-sm">Voltar</a>';
-    } elseif ($_SESSION['tipo_usuario'] == 'vendedor') {
-        echo '<a href="../vendedor/home_vendedor.php" class="btn btn-secondary btn-sm">Voltar</a>';
-    }
-    ?>
+                    <?php
+                    if ($_SESSION['tipo_usuario'] == 'admin') {
+                        echo '<a href="../administrador/home_adm.php" class="btn btn-secondary btn-sm">Voltar</a>';
+                    } elseif ($_SESSION['tipo_usuario'] == 'vendedor') {
+                        echo '<a href="../vendedor/home_vendedor.php" class="btn btn-secondary btn-sm">Voltar</a>';
+                    }
+                    ?>
                     <button type="submit" name="cadastrar" class="btn btn-success btn-sm">Cadastrar</button>
                 </div>
             </form>

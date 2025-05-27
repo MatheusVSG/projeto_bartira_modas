@@ -16,6 +16,16 @@
     ?>
 
     <title>Cadastro de Produto</title>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        .logo {
+            max-width: 200px;
+            margin-bottom: 20px;
+        }
+    </style>
+
 </head>
 
 <body class="bg-dark text-light">
@@ -66,7 +76,28 @@
                                 <td>{$row['id']}</td>
                                 <td>{$row['nome']}</td>
                                 <td>R$ " . number_format($row['valor_unidade'], 2, ',', '.') . "</td>
-                                <td><img src='../../view/produto/fotos/{$row['foto']}' width='50' class='rounded'></td>
+                                <td>
+    <a href='#' data-toggle='modal' data-target='#modalFoto{$row['id']}'>
+        <img src='../../view/produto/fotos/{$row['foto']}' width='50' class='rounded'>
+    </a>
+
+    <!-- Modal -->
+    <div class='modal fade' id='modalFoto{$row['id']}' tabindex='-1' role='dialog' aria-labelledby='modalFotoLabel{$row['id']}' aria-hidden='true'>
+      <div class='modal-dialog modal-dialog-centered' role='document'>
+        <div class='modal-content'>
+          <div class='modal-header'>
+            <h5 class='modal-title' id='modalFotoLabel{$row['id']}'>Foto do Produto: {$row['nome']}</h5>
+            <button type='button' class='close' data-dismiss='modal' aria-label='Fechar'>
+              <span aria-hidden='true'>&times;</span>
+            </button>
+          </div>
+          <div class='modal-body text-center'>
+            <img src='../../view/produto/fotos/{$row['foto']}' class='img-fluid rounded'>
+          </div>
+        </div>
+      </div>
+    </div>
+</td>
                                 <td>
                                     <a href='editar_produto.php?id={$row['id']}' class='btn btn-sm btn-warning'>Editar</a>
                                     <a href='/projeto_lab_db/controller/produto/excluir_produto.php?id={$row['id']}' onclick='return confirm(\"Tem certeza que deseja excluir?\")' class='btn btn-sm btn-danger'>Excluir</a>
