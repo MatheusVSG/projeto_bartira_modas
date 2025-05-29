@@ -17,8 +17,22 @@ $sql = "INSERT INTO produtos (nome, valor_unidade, foto, modificado_por, tipo_id
         VALUES ('$nome', '$valor', '$foto', 'admin', '$tipo_id')";
 
 if ($conn->query($sql)) {
-        header("Location: ../../view/produto/cadastro-produto.php");
-        exit;
+    $produto_id = $conn->insert_id;
+    
+    // Inserir tamanhos com suas respectivas quantidades
+    if (isset($_POST['tamanhos']) && is_array($_POST['tamanhos'])) {
+        foreach ($_POST['tamanhos'] as $index => $tamanho) {
+            $tamanho = mysqli_real_escape_string($conn, $tamanho);
+            $quantidade = $_POST['quantidades'][$index];
+            
+            $sql_estoque = "INSERT INTO estoque (tamanho, fk_produto_id, quantidade) 
+                           VALUES ('$tamanho', $produto_id, $quantidade)";
+            $conn->query($sql_estoque);
+        }
+    }
+    
+    header("Location: ../../view/produto/cadastro-produto.php");
+    exit;
 } else {
         registrar_log(
                 $conn,

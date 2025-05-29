@@ -15,9 +15,10 @@ if (
 $tipoFiltro = isset($_GET['tipo_id']) ? $_GET['tipo_id'] : '';
 $nomeFiltro = isset($_GET['nome_produto']) ? $_GET['nome_produto'] : '';
 
-$query = "SELECT e.*, p.nome as produto_nome, t.nome as tipo_nome FROM estoque e
-          LEFT JOIN produtos p ON e.fk_produto_id = p.id
+$query = "SELECT p.id as produto_id, p.nome as produto_nome, p.valor_unidade, p.foto, t.nome as tipo_nome, e.tamanho, e.quantidade
+          FROM produtos p
           LEFT JOIN tipos_produto t ON p.tipo_id = t.id
+          LEFT JOIN estoque e ON p.id = e.fk_produto_id
           WHERE 1=1";
 if ($tipoFiltro) {
     $query .= " AND t.id = '" . mysqli_real_escape_string($conn, $tipoFiltro) . "'";
@@ -70,40 +71,50 @@ $result = mysqli_query($conn, $query);
                 <button type="submit" class="btn btn-primary btn-sm">Filtrar</button>
             </form>
 
-            <table class="table table-bordered table-hover table-sm">
-                <thead>
+            <table class="table table-bordered table-hover text-center align-middle mb-0">
+                <thead class="table-dark">
                     <tr>
-                        <th>Tamanho</th>
-                        <th>Produto ID</th>
-                        <th>Produto</th>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Valor</th>
                         <th>Tipo</th>
+                        <th>Foto</th>
+                        <th>Tamanho</th>
                         <th>Quantidade</th>
-                        <th>Data de Modificação</th>
-                        <th>Ações</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php while ($row = mysqli_fetch_assoc($result)): ?>
                         <tr>
-                            <td><?php echo $row['tamanho']; ?></td>
-                            <td><?php echo $row['fk_produto_id']; ?></td>
+                            <td><?php echo $row['produto_id']; ?></td>
                             <td><?php echo $row['produto_nome']; ?></td>
+                            <td>R$ <?php echo isset($row['valor_unidade']) ? number_format($row['valor_unidade'], 2, ',', '.') : '-'; ?></td>
                             <td><?php echo $row['tipo_nome']; ?></td>
-                            <td><?php echo $row['quantidade']; ?></td>
-                            <td><?php echo $row['data_de_modificacao']; ?></td>
                             <td>
-                                <?php if ($_SESSION['tipo_usuario'] == 'admin'): ?>
-
-                                    <form method="POST" action="../../controller/estoque_controller.php" style="display:inline;">
-                                        <input type="hidden" name="tamanho" value="<?php echo $row['tamanho']; ?>">
-                                        <input type="hidden" name="fk_produto_id" value="<?php echo $row['fk_produto_id']; ?>">
-                                        <button type="submit" name="excluir_estoque" class="btn btn-danger btn-sm">Excluir</button>
-                                    </form>
+                                <?php if (!empty($row['foto'])): ?>
+                                    <a href="#" data-toggle="modal" data-target="#modalFotoEstoque<?php echo $row['produto_id'] . str_replace(' ', '', $row['tamanho']); ?>">
+                                        <img src="../produto/fotos/<?php echo $row['foto']; ?>" width="50" class="rounded">
+                                    </a>
+                                    <!-- Modal -->
+                                    <div class="modal fade" id="modalFotoEstoque<?php echo $row['produto_id'] . str_replace(' ', '', $row['tamanho']); ?>" tabindex="-1" role="dialog" aria-labelledby="modalFotoEstoqueLabel<?php echo $row['produto_id'] . str_replace(' ', '', $row['tamanho']); ?>" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header position-relative">
+                                                    <h5 class="modal-title" id="modalFotoEstoqueLabel<?php echo $row['produto_id'] . str_replace(' ', '', $row['tamanho']); ?>">Foto do Produto: <?php echo $row['produto_nome']; ?></h5>
+                                                    <button type="button" class="btn-close position-absolute" style="right: 16px; top: 16px;" data-dismiss="modal" aria-label="Fechar"></button>
+                                                </div>
+                                                <div class="modal-body text-center">
+                                                    <img src="../produto/fotos/<?php echo $row['foto']; ?>" class="img-fluid rounded">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 <?php else: ?>
-
-                                    <span>Sem permissão</span>
+                                    <span>Sem foto</span>
                                 <?php endif; ?>
                             </td>
+                            <td><?php echo $row['tamanho'] ?? '-'; ?></td>
+                            <td><?php echo $row['quantidade'] ?? '-'; ?></td>
                         </tr>
                     <?php endwhile; ?>
                 </tbody>

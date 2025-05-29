@@ -61,6 +61,18 @@
             </div>
 
             <div class="mb-3">
+                <label class="form-label">Tamanhos e Quantidades:</label>
+                <div id="tamanhos-container">
+                    <div class="input-group mb-2">
+                        <input type="text" name="tamanhos[]" class="form-control" placeholder="Tamanho" required>
+                        <input type="number" name="quantidades[]" class="form-control" placeholder="Qtd" min="1" required>
+                        <button type="button" class="btn btn-danger" onclick="removerTamanho(this)">Remover</button>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-secondary" onclick="adicionarTamanho()">Adicionar Tamanho</button>
+            </div>
+
+            <div class="mb-3">
                 <label for="foto" class="form-label">Foto do Produto:</label>
                 <input type="file" name="foto" id="foto" class="form-control" accept="image/*" required>
             </div>
@@ -68,65 +80,89 @@
             <button type="submit" class="btn btn-success">Salvar Produto</button>
         </form>
 
-        <h2 class="text-center text-light mb-4">Lista de Produtos</h2>
+        <h2 class="text-center text-light mb-4">Lista de Produtos e Estoque</h2>
 
         <div class="table-responsive bg-light rounded shadow-sm">
             <table class="table table-bordered table-hover text-center align-middle mb-0">
                 <thead class="table-dark">
                     <tr>
-                        <th>ID</th>
+                        <th>ID Produto</th>
                         <th>Nome</th>
                         <th>Valor</th>
                         <th>Tipo</th>
                         <th>Foto</th>
+                        <th>Tamanho</th>
+                        <th>Quantidade</th>
                         <th>Ações</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php
                     include_once '../../connection.php';
-                    $sql = "SELECT p.*, t.nome as tipo_nome FROM produtos p LEFT JOIN tipos_produto t ON p.tipo_id = t.id";
+                    // Modificar a query para incluir informações de estoque
+                    $sql = "SELECT p.id as produto_id, p.nome as produto_nome, p.valor_unidade, p.foto, t.nome as tipo_nome, e.tamanho, e.quantidade
+                            FROM produtos p
+                            LEFT JOIN tipos_produto t ON p.tipo_id = t.id
+                            LEFT JOIN estoque e ON p.id = e.fk_produto_id";
                     $result = $conn->query($sql);
 
                     while ($row = $result->fetch_assoc()) {
                         echo "<tr>
-                                <td>{$row['id']}</td>
-                                <td>{$row['nome']}</td>
+                                <td>{$row['produto_id']}</td>
+                                <td>{$row['produto_nome']}</td>
                                 <td>R$ " . number_format($row['valor_unidade'], 2, ',', '.') . "</td>
                                 <td>{$row['tipo_nome']}</td>
                                 <td>
-                            <a href='#' data-toggle='modal' data-target='#modalFoto{$row['id']}'>
-                                <img src='../../view/produto/fotos/{$row['foto']}' width='50' class='rounded'>
-                            </a>
+                                    <a href='#' data-toggle='modal' data-target='#modalFotoProdutoCad{$row['produto_id']}'>
+                                        <img src='../../view/produto/fotos/{$row['foto']}' width='50' class='rounded'>
+                                    </a>
 
-                            <!-- Modal -->
-                            <div class='modal fade' id='modalFoto{$row['id']}' tabindex='-1' role='dialog' aria-labelledby='modalFotoLabel{$row['id']}' aria-hidden='true'>
-                            <div class='modal-dialog modal-dialog-centered' role='document'>
-                                <div class='modal-content'>
-                                <div class='modal-header'>
-                                    <h5 class='modal-title' id='modalFotoLabel{$row['id']}'>Foto do Produto: {$row['nome']}</h5>
-                                    <button type='button' class='close' data-dismiss='modal' aria-label='Fechar'>
-                                    <span aria-hidden='true'>&times;</span>
-                                    </button>
-                                </div>
-                                <div class='modal-body text-center'>
-                                    <img src='../../view/produto/fotos/{$row['foto']}' class='img-fluid rounded'>
-                                </div>
-                                </div>
-                            </div>
-                            </div>
-                        </td>
-                        <td>
-                            <a href='editar_produto.php?id={$row['id']}' class='btn btn-sm btn-warning'>Editar</a>
-                            <a href='/projeto_lab_db/controller/produto/excluir_produto.php?id={$row['id']}' onclick='return confirm(\"Tem certeza que deseja excluir?\")' class='btn btn-sm btn-danger'>Excluir</a>
-                        </td>
-                    </tr>";
+                                    <!-- Modal -->
+                                    <div class='modal fade' id='modalFotoProdutoCad{$row['produto_id']}' tabindex='-1' role='dialog' aria-labelledby='modalFotoProdutoCadLabel{$row['produto_id']}' aria-hidden='true'>
+                                    <div class='modal-dialog modal-dialog-centered' role='document'>
+                                        <div class='modal-content'>
+                                        <div class='modal-header position-relative'>
+                                            <h5 class='modal-title' id='modalFotoProdutoCadLabel{$row['produto_id']}'>Foto do Produto: {$row['produto_nome']}</h5>
+                                            <button type='button' class='btn-close position-absolute' style='right: 16px; top: 16px;' data-dismiss='modal' aria-label='Fechar'></button>
+                                        </div>
+                                        <div class='modal-body text-center'>
+                                            <img src='../../view/produto/fotos/{$row['foto']}' class='img-fluid rounded'>
+                                        </div>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </td>
+                                <td>" . (isset($row['tamanho']) ? $row['tamanho'] : '-') . "</td>
+                                <td>" . (isset($row['quantidade']) ? $row['quantidade'] : '-') . "</td>
+                                <td>
+                                    <a href='editar_produto.php?id={$row['produto_id']}' class='btn btn-sm btn-warning'>Editar</a>
+                                    <a href='/projeto_lab_db/controller/produto/excluir_produto.php?id={$row['produto_id']}' onclick='return confirm(\"Tem certeza que deseja excluir este produto e todo o seu estoque relacionado?\"')' class='btn btn-sm btn-danger'>Excluir Produto</a>
+                                </td>
+                            </tr>";
                     }
                     ?>
                 </tbody>
             </table>
         </div>
     </div>
+
+    <script>
+        function adicionarTamanho() {
+            const container = document.getElementById('tamanhos-container');
+            const div = document.createElement('div');
+            div.className = 'input-group mb-2';
+            div.innerHTML = `
+                <input type="text" name="tamanhos[]" class="form-control" placeholder="Tamanho" required>
+                <input type="number" name="quantidades[]" class="form-control" placeholder="Qtd" min="1" required>
+                <button type="button" class="btn btn-danger" onclick="removerTamanho(this)">Remover</button>
+            `;
+            container.appendChild(div);
+        }
+
+        function removerTamanho(button) {
+            button.parentElement.remove();
+        }
+    </script>
 </body>
 
 </html>

@@ -27,11 +27,20 @@ $venda_id = $conn->insert_id;
 foreach ($produtos as $produto) {
     $produto_id = $produto['id'];
     $qtd = 1; 
+    
+    // Inserir item na venda
     $queryItem = "INSERT INTO item_venda (fk_venda_id, fk_produto_id, qtd_vendida) 
                   VALUES (?, ?, ?)";
     $stmtItem = $conn->prepare($queryItem);
     $stmtItem->bind_param("iii", $venda_id, $produto_id, $qtd);
     $stmtItem->execute();
+
+    // Atualizar o estoque
+    $queryEstoque = "UPDATE estoque SET quantidade = quantidade - ? 
+                     WHERE fk_produto_id = ? AND quantidade > 0";
+    $stmtEstoque = $conn->prepare($queryEstoque);
+    $stmtEstoque->bind_param("ii", $qtd, $produto_id);
+    $stmtEstoque->execute();
 }
 
 

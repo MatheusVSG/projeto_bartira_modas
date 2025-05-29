@@ -24,6 +24,27 @@ try {
     }
 
     if ($stmt->execute()) {
+        // Atualizar estoque
+        // Primeiro, remover todos os registros de estoque existentes
+        $sql_delete = "DELETE FROM estoque WHERE fk_produto_id = ?";
+        $stmt_delete = $conn->prepare($sql_delete);
+        $stmt_delete->bind_param("i", $id);
+        $stmt_delete->execute();
+
+        // Depois, inserir os novos tamanhos com suas respectivas quantidades
+        if (isset($_POST['tamanhos']) && is_array($_POST['tamanhos'])) {
+            foreach ($_POST['tamanhos'] as $index => $tamanho) {
+                $tamanho = mysqli_real_escape_string($conn, $tamanho);
+                $quantidade = $_POST['quantidades'][$index];
+                
+                $sql_estoque = "INSERT INTO estoque (tamanho, fk_produto_id, quantidade) 
+                               VALUES (?, ?, ?)";
+                $stmt_estoque = $conn->prepare($sql_estoque);
+                $stmt_estoque->bind_param("sii", $tamanho, $id, $quantidade);
+                $stmt_estoque->execute();
+            }
+        }
+
         header("Location: ../../view/produto/cadastro-produto.php");
         exit;
     } else {
