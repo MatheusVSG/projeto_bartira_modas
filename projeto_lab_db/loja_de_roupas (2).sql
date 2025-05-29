@@ -187,16 +187,39 @@ CREATE TABLE `produtos` (
   `data_criacao` timestamp NOT NULL DEFAULT current_timestamp(),
   `data_atualizacao` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `modificado_por` int(11) DEFAULT NULL,
-  `foto` varchar(255) DEFAULT NULL
+  `foto` varchar(255) DEFAULT NULL,
+  `tipo_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Despejando dados para a tabela `produtos`
 --
 
-INSERT INTO `produtos` (`id`, `nome`, `valor_unidade`, `quantidade`, `data_criacao`, `data_atualizacao`, `modificado_por`, `foto`) VALUES
-(1, 'tenis', 1.00, 0, '2025-05-06 20:35:38', '2025-05-10 14:02:01', 0, '681f5c59eec72_Captura de tela 2025-05-10 110127.png'),
-(4, 'sapato', 10.00, 0, '2025-05-09 20:29:35', '2025-05-10 14:02:13', 0, '681f5c6570c52_Captura de tela 2025-05-10 110145.png');
+INSERT INTO `produtos` (`id`, `nome`, `valor_unidade`, `quantidade`, `data_criacao`, `data_atualizacao`, `modificado_por`, `foto`, `tipo_id`) VALUES
+(1, 'tenis', 1.00, 0, '2025-05-06 20:35:38', '2025-05-10 14:02:01', 0, '681f5c59eec72_Captura de tela 2025-05-10 110127.png', NULL),
+(4, 'sapato', 10.00, 0, '2025-05-09 20:29:35', '2025-05-10 14:02:13', 0, '681f5c6570c52_Captura de tela 2025-05-10 110145.png', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `tipos_produto`
+--
+
+CREATE TABLE `tipos_produto` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nome` varchar(100) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Populando tipos de produto
+INSERT INTO `tipos_produto` (`nome`) VALUES
+('Calça'),
+('Meia'),
+('Calçado'),
+('Camiseta'),
+('Jaqueta'),
+('Short'),
+('Vestido');
 
 -- --------------------------------------------------------
 
@@ -456,6 +479,13 @@ ALTER TABLE `vendas`
   ADD CONSTRAINT `vendas_ibfk_1` FOREIGN KEY (`fk_cliente_id`) REFERENCES `clientes` (`id`),
   ADD CONSTRAINT `vendas_ibfk_2` FOREIGN KEY (`fk_vendedor_id`) REFERENCES `vendedores` (`id`),
   ADD CONSTRAINT `vendas_ibfk_3` FOREIGN KEY (`fk_forma_pagto_id`) REFERENCES `forma_pagto` (`id`);
+
+--
+-- Restrições para tabelas `produtos`
+--
+ALTER TABLE `produtos`
+  ADD CONSTRAINT `fk_tipo_produto` FOREIGN KEY (`tipo_id`) REFERENCES `tipos_produto`(`id`);
+
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -30,6 +30,10 @@ $row = $result->fetch_assoc();
 
 <body class="bg-dark text-light">
     <div class="container py-5">
+        <div class="d-flex justify-content-end mb-2 gap-2">
+            <a href="../administrador/home_adm.php" class="btn btn-secondary btn-sm">Voltar ao Painel</a>
+            <a href="../logout.php" class="btn btn-danger btn-sm">Sair</a>
+        </div>
 
         <h1 class="text-center text-warning mb-5">Editar Produto</h1>
 
@@ -39,6 +43,20 @@ $row = $result->fetch_assoc();
             <div class="mb-3">
                 <label for="nome" class="form-label">Nome:</label>
                 <input type="text" name="nome" id="nome" value="<?= htmlspecialchars($row['nome']) ?>" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="tipo_id" class="form-label">Tipo de Produto:</label>
+                <select name="tipo_id" id="tipo_id" class="form-control" required>
+                    <option value="">Selecione o tipo</option>
+                    <?php
+                    $tipos = $conn->query("SELECT id, nome FROM tipos_produto");
+                    while ($tipo = $tipos->fetch_assoc()) {
+                        $selected = ($row['tipo_id'] == $tipo['id']) ? 'selected' : '';
+                        echo "<option value='{$tipo['id']}' $selected>{$tipo['nome']}</option>";
+                    }
+                    ?>
+                </select>
             </div>
 
             <div class="mb-3">

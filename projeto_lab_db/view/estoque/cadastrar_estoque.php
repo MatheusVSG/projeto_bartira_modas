@@ -28,7 +28,11 @@ if (
 
 <body>
     <div class="w-100 vh-100 d-flex flex-column justify-content-center align-items-center bg-dark p-3">
-        <div class="col-12 col-sm-8 col-md-6 col-lg-5 bg-light p-3 rounded shadow">
+        <div class="col-12 col-sm-8 col-md-6 col-lg-5 bg-light p-3 rounded shadow position-relative">
+            <div class="d-flex justify-content-end mb-2 gap-2">
+                <a href="../administrador/home_adm.php" class="btn btn-secondary btn-sm">Voltar ao Painel</a>
+                <a href="../logout.php" class="btn btn-danger btn-sm">Sair</a>
+            </div>
             <h2 class="text-center text-dark mb-3">Cadastrar Estoque</h2>
 
             <form action="../../controller/estoque_controller.php" method="POST">
@@ -42,10 +46,11 @@ if (
                     <select name="fk_produto_id" id="fk_produto_id" required class="form-control form-control-sm">
                         <option value="">Selecione o produto</option>
                         <?php
-                        $query = "SELECT id, nome FROM produtos";
+                        $query = "SELECT p.id, p.nome, t.nome as tipo_nome FROM produtos p LEFT JOIN tipos_produto t ON p.tipo_id = t.id";
                         $result = mysqli_query($conn, $query);
                         while ($row = mysqli_fetch_assoc($result)) {
-                            echo "<option value='{$row['id']}'>{$row['id']} - {$row['nome']}</option>";
+                            $tipo = $row['tipo_nome'] ? ' (' . $row['tipo_nome'] . ')' : '';
+                            echo "<option value='{$row['id']}'>{$row['id']} - {$row['nome']}{$tipo}</option>";
                         }
                         ?>
                     </select>

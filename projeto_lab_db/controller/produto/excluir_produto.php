@@ -35,7 +35,8 @@ if (!$stmt->execute()) {
         'Erro ao excluir produto',
         $stmt->error,
         $_SERVER['REQUEST_URI'],
-        'controller/produto/excluir_produto.php'
+        'controller/produto/excluir_produto.php',
+        'produto'
     );
     echo "Erro ao excluir produto: " . $stmt->error;
     exit;

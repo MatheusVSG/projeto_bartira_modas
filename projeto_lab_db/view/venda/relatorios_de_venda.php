@@ -13,9 +13,12 @@ $dados = $controller->gerarRelatorio();
 <head>
     <meta charset="UTF-8">
     <title>Relatório de Vendas por Mês</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        html, body {
+            background-color: #222 !important;
+        }
         .logo {
             max-width: 200px;
             margin-bottom: 20px;
@@ -23,35 +26,37 @@ $dados = $controller->gerarRelatorio();
     </style>
 </head>
 
-<body class="bg-dark">
+<body class="bg-dark text-light">
 
     <div class="w-100 vh-100 d-flex flex-column justify-content-center align-items-center p-3">
         <div class="col-12 col-sm-10 col-md-9 col-lg-8 bg-light p-2 rounded shadow">
             <h2 class="text-center text-dark mb-3">Relatório de Vendas por Mês</h2>
 
             <div class="mb-2 text-right">
-                <a href="listar_vendas.php" class="btn btn-secondary btn-sm">Voltar</a>
+                <a href="listar_vendas.php" class="btn btn-secondary btn-sm position-fixed" style="top: 24px; right: 24px; z-index: 999;">Voltar às Vendas</a>
             </div>
 
             <?php if ($dados): ?>
-                <table class="table table-sm table-bordered table-striped">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th>Ano</th>
-                            <th>Mês</th>
-                            <th>Total Vendido (R$)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($dados as $row): ?>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover table-striped align-middle rounded shadow-sm mb-0">
+                        <thead class="table-dark">
                             <tr>
-                                <td><?= $row['ano'] ?></td>
-                                <td><?= str_pad($row['mes'], 2, '0', STR_PAD_LEFT) ?></td>
-                                <td>R$ <?= number_format($row['total_vendido'], 2, ',', '.') ?></td>
+                                <th>Ano</th>
+                                <th>Mês</th>
+                                <th>Total Vendido (R$)</th>
                             </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($dados as $row): ?>
+                                <tr>
+                                    <td><?= $row['ano'] ?></td>
+                                    <td><?= str_pad($row['mes'], 2, '0', STR_PAD_LEFT) ?></td>
+                                    <td>R$ <?= number_format($row['total_vendido'], 2, ',', '.') ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
 
                 <canvas id="graficoVendas" class="mt-4"></canvas>
 
@@ -105,6 +110,8 @@ $dados = $controller->gerarRelatorio();
             <?php endif; ?>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 

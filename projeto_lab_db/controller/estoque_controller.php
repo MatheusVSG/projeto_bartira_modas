@@ -20,7 +20,8 @@ if (isset($_POST['cadastrar_estoque'])) {
             'Erro ao cadastrar estoque',
             $stmt->error,
             $_SERVER['REQUEST_URI'],
-            'controller/estoque_controller.php'
+            'controller/estoque_controller.php',
+            'estoque'
         );
         echo "Erro ao cadastrar: " . $stmt->error;
     }
@@ -43,7 +44,8 @@ if (isset($_POST['excluir_estoque'])) {
             'Erro ao excluir estoque',
             $stmt->error,
             $_SERVER['REQUEST_URI'],
-            'controller/estoque_controller.php'
+            'controller/estoque_controller.php',
+            'estoque'
         );
         echo "Erro ao excluir: " . $stmt->error;
     }

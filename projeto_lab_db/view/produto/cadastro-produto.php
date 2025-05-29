@@ -30,6 +30,9 @@
 
 <body class="bg-dark text-light">
     <div class="container py-5">
+        <div class="d-flex justify-content-end mb-2 gap-2">
+            <a href="../administrador/home_adm.php" class="btn btn-secondary btn-sm position-fixed" style="top: 24px; right: 24px; z-index: 999;">Voltar ao Painel</a>
+        </div>
 
         <h1 class="text-center text-warning mb-5">Cadastro de Produto</h1>
 
@@ -37,6 +40,19 @@
             <div class="mb-3">
                 <label for="nome" class="form-label">Nome do Produto:</label>
                 <input type="text" name="nome" id="nome" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="tipo_id" class="form-label">Tipo de Produto:</label>
+                <select name="tipo_id" id="tipo_id" class="form-control" required>
+                    <option value="">Selecione o tipo</option>
+                    <?php
+                    $tipos = $conn->query("SELECT id, nome FROM tipos_produto");
+                    while ($tipo = $tipos->fetch_assoc()) {
+                        echo "<option value='{$tipo['id']}'>{$tipo['nome']}</option>";
+                    }
+                    ?>
+                </select>
             </div>
 
             <div class="mb-3">
@@ -61,6 +77,7 @@
                         <th>ID</th>
                         <th>Nome</th>
                         <th>Valor</th>
+                        <th>Tipo</th>
                         <th>Foto</th>
                         <th>Ações</th>
                     </tr>
@@ -68,7 +85,7 @@
                 <tbody>
                     <?php
                     include_once '../../connection.php';
-                    $sql = "SELECT * FROM produtos";
+                    $sql = "SELECT p.*, t.nome as tipo_nome FROM produtos p LEFT JOIN tipos_produto t ON p.tipo_id = t.id";
                     $result = $conn->query($sql);
 
                     while ($row = $result->fetch_assoc()) {
@@ -76,40 +93,39 @@
                                 <td>{$row['id']}</td>
                                 <td>{$row['nome']}</td>
                                 <td>R$ " . number_format($row['valor_unidade'], 2, ',', '.') . "</td>
+                                <td>{$row['tipo_nome']}</td>
                                 <td>
-    <a href='#' data-toggle='modal' data-target='#modalFoto{$row['id']}'>
-        <img src='../../view/produto/fotos/{$row['foto']}' width='50' class='rounded'>
-    </a>
+                            <a href='#' data-toggle='modal' data-target='#modalFoto{$row['id']}'>
+                                <img src='../../view/produto/fotos/{$row['foto']}' width='50' class='rounded'>
+                            </a>
 
-    <!-- Modal -->
-    <div class='modal fade' id='modalFoto{$row['id']}' tabindex='-1' role='dialog' aria-labelledby='modalFotoLabel{$row['id']}' aria-hidden='true'>
-      <div class='modal-dialog modal-dialog-centered' role='document'>
-        <div class='modal-content'>
-          <div class='modal-header'>
-            <h5 class='modal-title' id='modalFotoLabel{$row['id']}'>Foto do Produto: {$row['nome']}</h5>
-            <button type='button' class='close' data-dismiss='modal' aria-label='Fechar'>
-              <span aria-hidden='true'>&times;</span>
-            </button>
-          </div>
-          <div class='modal-body text-center'>
-            <img src='../../view/produto/fotos/{$row['foto']}' class='img-fluid rounded'>
-          </div>
-        </div>
-      </div>
-    </div>
-</td>
-                                <td>
-                                    <a href='editar_produto.php?id={$row['id']}' class='btn btn-sm btn-warning'>Editar</a>
-                                    <a href='/projeto_lab_db/controller/produto/excluir_produto.php?id={$row['id']}' onclick='return confirm(\"Tem certeza que deseja excluir?\")' class='btn btn-sm btn-danger'>Excluir</a>
-                                </td>
-                              </tr>";
+                            <!-- Modal -->
+                            <div class='modal fade' id='modalFoto{$row['id']}' tabindex='-1' role='dialog' aria-labelledby='modalFotoLabel{$row['id']}' aria-hidden='true'>
+                            <div class='modal-dialog modal-dialog-centered' role='document'>
+                                <div class='modal-content'>
+                                <div class='modal-header'>
+                                    <h5 class='modal-title' id='modalFotoLabel{$row['id']}'>Foto do Produto: {$row['nome']}</h5>
+                                    <button type='button' class='close' data-dismiss='modal' aria-label='Fechar'>
+                                    <span aria-hidden='true'>&times;</span>
+                                    </button>
+                                </div>
+                                <div class='modal-body text-center'>
+                                    <img src='../../view/produto/fotos/{$row['foto']}' class='img-fluid rounded'>
+                                </div>
+                                </div>
+                            </div>
+                            </div>
+                        </td>
+                        <td>
+                            <a href='editar_produto.php?id={$row['id']}' class='btn btn-sm btn-warning'>Editar</a>
+                            <a href='/projeto_lab_db/controller/produto/excluir_produto.php?id={$row['id']}' onclick='return confirm(\"Tem certeza que deseja excluir?\")' class='btn btn-sm btn-danger'>Excluir</a>
+                        </td>
+                    </tr>";
                     }
                     ?>
                 </tbody>
             </table>
         </div>
-
-        <a href="../administrador/home_adm.php" class="btn btn-secondary mt-4">Voltar ao Painel</a>
     </div>
 </body>
 

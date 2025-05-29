@@ -31,6 +31,10 @@ $admin = $result->fetch_assoc();
 
 <body class="bg-dark text-light">
     <div class="container py-5">
+        <a href="home_adm.php" class="btn btn-secondary btn-sm position-fixed" style="top: 24px; right: 24px; z-index: 999;">Voltar ao Painel</a>
+        <div class="d-flex justify-content-end mb-2 gap-2">
+            <!-- Botão de voltar já está fixo acima -->
+        </div>
         <h2 class="text-center text-warning mb-4">Editar Administrador</h2>
 
         <form action="../../controller/administrador/administrador_controller.php" method="POST" class="bg-light text-dark p-4 rounded shadow-sm">

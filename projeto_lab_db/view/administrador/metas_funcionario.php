@@ -61,7 +61,11 @@ $result_vendedores = mysqli_query($conn, $query_vendedores);
 
 <body>
     <div class="w-100 vh-100 d-flex flex-column justify-content-center align-items-center bg-dark p-3">
-        <div class="col-12 col-sm-10 col-md-8 col-lg-8 bg-light p-4 rounded shadow">
+        <div class="col-12 col-sm-10 col-md-8 col-lg-8 bg-light p-4 rounded shadow position-relative">
+            <a href="home_adm.php" class="btn btn-secondary btn-sm position-fixed" style="top: 24px; right: 24px; z-index: 999;">Voltar ao Painel</a>
+            <div class="d-flex justify-content-end mb-2 gap-2">
+                <!-- Botão de voltar já está fixo acima -->
+            </div>
             <?php if ($_SESSION['tipo_usuario'] == 'admin'): ?>
                 <h2 class="text-center text-dark mb-4">Definir Meta de Vendas</h2>
                 <form method="POST" action="metas_funcionario.php">
@@ -119,13 +123,7 @@ $result_vendedores = mysqli_query($conn, $query_vendedores);
             </table>
 
             <div class="mb-4 text-start">
-                <?php
-                if ($_SESSION['tipo_usuario'] == 'admin') {
-                    echo '<a href="../administrador/home_adm.php" class="btn btn-secondary btn-sm">Voltar</a>';
-                } elseif ($_SESSION['tipo_usuario'] == 'vendedor') {
-                    echo '<a href="../vendedor/home_vendedor.php" class="btn btn-secondary btn-sm">Voltar</a>';
-                }
-                ?>
+                <!-- Removido botão de voltar -->
             </div>
         </div>
     </div>

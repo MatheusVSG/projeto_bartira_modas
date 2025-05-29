@@ -31,7 +31,7 @@ $result = mysqli_query($conn, "SELECT * FROM forma_pagto");
 
             <a href="cadastrar_forma_pagto.php" class="btn btn-primary mb-3">Nova Forma de Pagamento</a>
 
-            <button type="button" class="btn btn-secondary mb-3" onclick="window.history.back()">Voltar</button>
+            <a href="../administrador/home_adm.php" class="btn btn-secondary btn-sm position-fixed" style="top: 24px; right: 24px; z-index: 999;">Voltar ao Painel</a>
 
             <table class="table table-striped table-bordered">
                 <thead>

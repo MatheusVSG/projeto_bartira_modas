@@ -8,17 +8,115 @@ https://www.flaticon.com/free-icon/fashion_12517249?related_id=12517249*/
 }
 
 body{
-    font-family: sans-serif;
+    font-family: 'Segoe UI', Arial, sans-serif;
     font-size: 16px;
-    background-color: #fff;
+    background-color: #222;
+    color: #222;
 }
 
 .logo{
     width: 256px;
     height: auto;
+    display: block;
+    margin: 0 auto 24px auto;
 }
 
 .p-6{
     padding: 64px;
+}
+
+.bg-light {
+    background-color: #fff !important;
+}
+
+.bg-dark {
+    background-color: #222 !important;
+}
+
+.rounded {
+    border-radius: 16px !important;
+}
+
+.shadow {
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08), 0 1.5px 4px rgba(0,0,0,0.04);
+}
+
+.btn {
+    border-radius: 8px !important;
+    font-weight: 500;
+    transition: background 0.2s, color 0.2s;
+}
+
+.btn-primary {
+    background: #f7b731;
+    border: none;
+    color: #222;
+}
+.btn-primary:hover {
+    background: #f5a623;
+    color: #fff;
+}
+
+.btn-secondary {
+    background: #222;
+    border: none;
+    color: #fff;
+}
+.btn-secondary:hover {
+    background: #444;
+    color: #f7b731;
+}
+
+.btn-danger {
+    background: #e74c3c;
+    border: none;
+    color: #fff;
+}
+.btn-danger:hover {
+    background: #c0392b;
+    color: #fff;
+}
+
+.table {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+input, select, textarea {
+    border-radius: 6px !important;
+    border: 1px solid #d1d5db;
+    padding: 6px 10px;
+    font-size: 1rem;
+}
+
+label {
+    font-weight: 500;
+    color: #222;
+}
+
+h1, h2, h3, h4, h5 {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-weight: 700;
+    color: #f7b731;
+}
+
+.text-dark {
+    color: #222 !important;
+}
+
+.text-light {
+    color: #fff !important;
+}
+
+.text-warning {
+    color: #f7b731 !important;
+}
+
+.gap-2 {
+    gap: 0.5rem;
+}
+
+.gap-3 {
+    gap: 1rem;
 }
 

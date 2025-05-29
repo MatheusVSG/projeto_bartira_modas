@@ -25,13 +25,15 @@ $result = $conn->query("SELECT * FROM administrador");
 
 <body class="bg-dark text-light">
     <div class="container py-5">
+        <a href="home_adm.php" class="btn btn-secondary btn-sm position-fixed" style="top: 24px; right: 24px; z-index: 999;">Voltar ao Painel</a>
+        <div class="d-flex justify-content-end mb-2 gap-2">
+            <!-- Botão de voltar já está fixo acima -->
+        </div>
         <h2 class="text-center text-warning mb-4">Administradores Cadastrados</h2>
 
         <div class="text-end mb-3">
             <a href="cadastro_administrador.php" class="btn btn-primary">Novo Administrador</a>
         </div>
-
-        <a href="./home_adm.php" class="btn btn-secondary mb-3">Voltar</a>
 
         <table class="table table-striped table-bordered table-hover">
             <thead>
