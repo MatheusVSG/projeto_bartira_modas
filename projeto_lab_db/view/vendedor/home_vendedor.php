@@ -1,12 +1,10 @@
 <?php
 session_start();
 include '../../connection.php';
-include '../../head.php';
-
 
 if (!isset($_SESSION['usuario_id']) || $_SESSION['tipo_usuario'] != 'vendedor') {
     $_SESSION['error_message'] = "Você precisa estar logado como Vendedor para acessar essa página.";
-    header("Location: ../../login.php");
+    header("Location: ../../");
     exit();
 }
 ?>
@@ -15,6 +13,7 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['tipo_usuario'] != 'vendedor') 
 <html lang="pt-br">
 
 <head>
+    <?php include '../../head.php' ?>;
     <title>Home Vendedor</title>
     <style>
         .logo {
@@ -22,8 +21,6 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['tipo_usuario'] != 'vendedor') 
             margin-bottom: 20px;
         }
     </style>
-
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 
 <body class="bg-dark text-light min-vh-100">

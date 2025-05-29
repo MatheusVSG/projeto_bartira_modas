@@ -2,10 +2,9 @@
 session_start();
 include '../../connection.php';
 
-
 if (!isset($_SESSION['usuario_id']) || $_SESSION['tipo_usuario'] != 'admin') {
     $_SESSION['error_message'] = "Você precisa estar logado como administrador para acessar essa página.";
-    header("Location: ../../login.php");
+    header("Location: ../../");
     exit();
 }
 ?>

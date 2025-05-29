@@ -1,27 +1,26 @@
 <?php
 session_start();
 include_once 'connection.php';
- 
+
 if ($conn->connect_error) {
     die("Falha na conexão: " . $conn->connect_error);
 }
- 
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
- 
- 
     if (isset($_POST['login_vendedor'])) {
-        $cpf = $_POST['cpf'];
-        $senha = $_POST['senha'];
- 
+        $cpf = trim($_POST['cpf'] ?? '');
+        $senha = trim($_POST['senha'] ?? '');
+
         if (empty($cpf) || empty($senha)) {
             $_SESSION['error_message'] = "Por favor, preencha todos os campos.";
+            header("Location: index.php");
         } else {
             $sql = "SELECT * FROM vendedores WHERE cpf = ?";
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("s", $cpf);
             $stmt->execute();
             $result = $stmt->get_result();
- 
+
             if ($result->num_rows > 0) {
                 $vendedor = $result->fetch_assoc();
                 if (password_verify($senha, $vendedor['senha'])) {
@@ -41,21 +40,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         }
     }
- 
- 
+
+
     if (isset($_POST['login_admin'])) {
-        $usuario = $_POST['usuario'];
-        $senha = $_POST['senha'];
- 
+        $usuario = trim($_POST['usuario'] ?? '');
+        $senha = trim($_POST['senha'] ?? '');
+
         if (empty($usuario) || empty($senha)) {
             $_SESSION['error_message'] = "Por favor, preencha todos os campos.";
+            header("Location: index.php");
         } else {
             $sql = "SELECT * FROM administrador WHERE usuario = ?";
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("s", $usuario);
             $stmt->execute();
             $result = $stmt->get_result();
- 
+
             if ($result->num_rows > 0) {
                 $admin = $result->fetch_assoc();
                 if (password_verify($senha, $admin['senha'])) {
