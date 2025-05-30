@@ -24,19 +24,18 @@ try {
     }
 
     if ($stmt->execute()) {
-        // Atualizar estoque
-        // Primeiro, remover todos os registros de estoque existentes
+
         $sql_delete = "DELETE FROM estoque WHERE fk_produto_id = ?";
         $stmt_delete = $conn->prepare($sql_delete);
         $stmt_delete->bind_param("i", $id);
         $stmt_delete->execute();
 
-        // Depois, inserir os novos tamanhos com suas respectivas quantidades
+
         if (isset($_POST['tamanhos']) && is_array($_POST['tamanhos'])) {
             foreach ($_POST['tamanhos'] as $index => $tamanho) {
                 $tamanho = mysqli_real_escape_string($conn, $tamanho);
                 $quantidade = $_POST['quantidades'][$index];
-                
+
                 $sql_estoque = "INSERT INTO estoque (tamanho, fk_produto_id, quantidade) 
                                VALUES (?, ?, ?)";
                 $stmt_estoque = $conn->prepare($sql_estoque);
@@ -51,6 +50,7 @@ try {
         throw new Exception($stmt->error);
     }
 } catch (Exception $e) {
+
     registrar_log(
         $conn,
         'Erro ao atualizar produto',
@@ -59,5 +59,6 @@ try {
         '../controller/produto_atualizar_produto.php',
         'produto'
     );
+
     echo "Erro ao atualizar produto: " . $e->getMessage();
 }

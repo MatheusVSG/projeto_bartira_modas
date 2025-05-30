@@ -12,11 +12,11 @@ class RelatorioVendasController
         global $conn;
 
         $sql = "
-        SELECT YEAR(v.data_venda) AS ano, MONTH(v.data_venda) AS mes, SUM(v.valor_total) AS total_vendido
+        SELECT YEAR(v.data_criacao) AS ano, MONTH(v.data_criacao) AS mes, SUM(v.valor) AS total_vendido
         FROM vendas v
-        GROUP BY YEAR(v.data_venda), MONTH(v.data_venda)
+        GROUP BY YEAR(v.data_criacao), MONTH(v.data_criacao)
         ORDER BY ano, mes;
-        ";
+    ";
         $result = mysqli_query($conn, $sql);
 
         if ($result) {

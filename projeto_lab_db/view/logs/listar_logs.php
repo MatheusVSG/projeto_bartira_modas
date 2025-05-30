@@ -34,7 +34,7 @@ if (!$result) {
             <h2 class="text-center text-dark mb-3">Logs do Sistema</h2>
 
             <div class="d-flex justify-content-end mb-2 gap-2">
-                <!-- Botão de voltar já está fixo acima -->
+
             </div>
 
             <div class="table-responsive">

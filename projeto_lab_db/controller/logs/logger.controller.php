@@ -6,12 +6,9 @@ function registrar_log($conn, $titulo, $descricao, $endereco = '', $link = '', $
     $endereco = mysqli_real_escape_string($conn, $endereco);
     $link = mysqli_real_escape_string($conn, $link);
 
-    $sql = "INSERT INTO logs (titulo, descricao, endereco, link) 
-            VALUES ('$titulo', '$descricao', '$endereco', '$link')";
-
+    $sql = "INSERT INTO logs (titulo, descricao, endereco, link) VALUES ('$titulo', '$descricao', '$endereco', '$link')";
     mysqli_query($conn, $sql);
 
-    // Salvar também em arquivo
     $data = date('Y-m-d');
     $hora = date('H:i:s');
     $dir = __DIR__ . "/$tipo";

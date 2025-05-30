@@ -31,9 +31,11 @@ $result = $stmt->get_result();
     <meta charset="UTF-8">
     <title>Bartira Modas | Vendas Realizadas</title>
     <style>
-        html, body {
+        html,
+        body {
             background-color: #222 !important;
         }
+
         .logo {
             max-width: 200px;
             margin-bottom: 20px;
@@ -71,7 +73,7 @@ $result = $stmt->get_result();
                         <?php
                         if ($result->num_rows > 0) {
                             while ($row = $result->fetch_assoc()) {
-                                // Buscar produtos vendidos para esta venda
+
                                 $produtos = [];
                                 $sql_prod = "SELECT p.nome, t.nome as tipo_nome, iv.qtd_vendida FROM item_venda iv
                                              INNER JOIN produtos p ON iv.fk_produto_id = p.id

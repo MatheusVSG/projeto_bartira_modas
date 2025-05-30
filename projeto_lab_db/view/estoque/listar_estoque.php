@@ -69,6 +69,8 @@ $result = mysqli_query($conn, $query);
                     </select>
                 </div>
                 <button type="submit" class="btn btn-primary btn-sm">Filtrar</button>
+                <a href="relatorio_estoque_pdf.php" target="_blank" class="btn btn-success btn-sm">Gerar PDF</a>
+
             </form>
 
             <table class="table table-bordered table-hover text-center align-middle mb-0">
