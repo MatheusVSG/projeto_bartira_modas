@@ -29,7 +29,7 @@ if (!$result) {
 <body class="bg-dark text-light">
 
     <div class="w-100 vh-100 d-flex flex-column justify-content-center align-items-center bg-dark p-3">
-        <a href="../administrador/home_adm.php" class="btn btn-secondary btn-sm position-fixed" style="top: 24px; right: 24px; z-index: 999;">Voltar ao Painel</a>
+        <a href="../administrador/home_adm.php" class="btn btn-secondary btn-sm position-fixed" style="top: 24px; right: 24px; z-index: 999;">Voltar</a>
         <div class="col-12 col-sm-10 col-md-9 col-lg-8 bg-light p-2 rounded shadow">
             <h2 class="text-center text-dark mb-3">Logs do Sistema</h2>
 

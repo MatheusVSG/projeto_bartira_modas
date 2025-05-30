@@ -27,6 +27,9 @@ $admin = $result->fetch_assoc();
 
 <body class="bg-dark text-light">
     <div class="container py-4">
+        <div class="d-flex justify-content-end mb-2 gap-2">
+            <a href="listar_administrador.php" class="btn btn-secondary btn-sm position-fixed" style="top: 24px; right: 24px; z-index: 999;">Voltar</a>
+        </div>
         <h1 class="text-center text-warning mb-4">Editar Administrador</h1>
 
         <form action="../../controller/administrador/administrador_controller.php" method="POST" class="bg-light text-dark p-4 rounded shadow">
@@ -44,7 +47,6 @@ $admin = $result->fetch_assoc();
 
             <div class="d-flex justify-content-start gap-2 mt-3">
                 <button type="submit" name="editar" class="btn btn-success">Atualizar</button>
-                <a href="listar_administrador.php" class="btn btn-secondary">Voltar</a>
             </div>
         </form>
     </div>

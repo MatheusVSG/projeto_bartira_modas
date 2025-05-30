@@ -19,7 +19,6 @@ $sql = "INSERT INTO produtos (nome, valor_unidade, foto, modificado_por, tipo_id
 if ($conn->query($sql)) {
     $produto_id = $conn->insert_id;
     
-    // Inserir tamanhos com suas respectivas quantidades
     if (isset($_POST['tamanhos']) && is_array($_POST['tamanhos'])) {
         foreach ($_POST['tamanhos'] as $index => $tamanho) {
             $tamanho = mysqli_real_escape_string($conn, $tamanho);

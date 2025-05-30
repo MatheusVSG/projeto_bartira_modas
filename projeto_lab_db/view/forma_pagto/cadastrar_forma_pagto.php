@@ -22,23 +22,23 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['tipo_usuario'] != 'admin') {
     </style>
 </head>
 
-<body>
-    <div class="w-100 vh-100 d-flex flex-column justify-content-center align-items-center bg-dark p-3">
-        <div class="col-12 col-sm-8 col-md-6 col-lg-5 bg-light p-4 rounded shadow">
-            <h2 class="text-center text-dark mb-4">Cadastrar Forma de Pagamento</h2>
-
-            <form action="../../controller/forma_pagto_controller.php" method="POST">
-                <div class="mb-3">
-                    <label for="descricao" class="form-label">Descrição</label>
-                    <input type="text" name="descricao" id="descricao" required class="form-control">
-                </div>
-
-                <div class="d-flex justify-content-between">
-                    <a href="../administrador/home_adm.php" class="btn btn-secondary btn-sm">Voltar</a>
-                    <button type="submit" name="cadastrar_pagto" class="btn btn-success btn-sm">Cadastrar</button>
-                </div>
-            </form>
+<body class="bg-dark text-light">
+    <div class="container py-4">
+        <div class="d-flex justify-content-end mb-2 gap-2">
+            <a href="listar_forma_pagto.php" class="btn btn-secondary btn-sm position-fixed" style="top: 24px; right: 24px; z-index: 999;">Voltar</a>
         </div>
+        <h1 class="text-center text-warning mb-4">Cadastrar Forma de Pagamento</h1>
+
+        <form action="../../controller/forma_pagto/forma_pagto_controller.php" method="POST" class="bg-light text-dark p-4 rounded shadow">
+            <div class="mb-3">
+                <label for="descricao" class="form-label">Descrição</label>
+                <input type="text" name="descricao" id="descricao" required class="form-control">
+            </div>
+
+            <div class="d-flex justify-content-between">
+                <button type="submit" name="cadastrar_pagto" class="btn btn-success btn-sm">Cadastrar</button>
+            </div>
+        </form>
     </div>
 </body>
 

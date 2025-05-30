@@ -26,7 +26,7 @@ $result = mysqli_query($conn, "SELECT * FROM forma_pagto");
 
 <body>
     <div class="w-100 vh-100 d-flex flex-column justify-content-center align-items-center bg-dark p-3">
-        <div class="col-12 col-sm-8 col-md-6 col-lg-8 bg-light p-4 rounded shadow">
+        <div class="col-12 col-sm-8 col-md-6 col-lg-6 bg-light p-4 rounded shadow">
             <h2 class="text-center text-dark mb-4">Formas de Pagamento</h2>
 
             <a href="cadastrar_forma_pagto.php" class="btn btn-primary mb-3">Nova Forma de Pagamento</a>

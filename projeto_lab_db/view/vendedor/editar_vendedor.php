@@ -37,12 +37,15 @@ $row = $res->fetch_assoc();
             margin-bottom: 20px;
         }
     </style>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 
 <body class="bg-dark text-light">
     <div class="container py-4">
-        <h1 class="text-center text-warning">Editar Vendedor</h1>
+        <div class="d-flex justify-content-end mb-2 gap-2">
+            <a href="listar_vendedores.php" class="btn btn-secondary btn-sm position-fixed" style="top: 24px; right: 24px; z-index: 999;">Voltar</a>
+        </div>
+        <h1 class="text-center text-warning mb-4">Editar Vendedor</h1>
+
         <form action="../../controller/vendedor/atualizar_vendedor.php" method="post" class="bg-light text-dark p-4 rounded shadow">
             <input type="hidden" name="id" value="<?= $row['id'] ?>">
             <input type="text" name="nome" class="form-control mb-2" value="<?= $row['nome'] ?>" required>
@@ -59,8 +62,9 @@ $row = $res->fetch_assoc();
                 <option value="F" <?= $row['sexo'] == 'F' ? 'selected' : '' ?>>Feminino</option>
             </select>
             <input type="password" name="senha" class="form-control mb-2" value="<?= $row['senha'] ?>" required>
-            <button type="submit" class="btn btn-primary">Atualizar</button>
-            <button type="button" class="btn btn-secondary" onclick="window.history.back()">Voltar</button>
+            <div class="d-flex justify-content-start gap-2 mt-3">
+                <button type="submit" name="editar" class="btn btn-success">Atualizar</button>
+            </div>
         </form>
     </div>
 </body>
