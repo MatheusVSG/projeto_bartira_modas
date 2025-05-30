@@ -16,9 +16,11 @@ $dados = $controller->gerarRelatorio();
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        html, body {
+        html,
+        body {
             background-color: #222 !important;
         }
+
         .logo {
             max-width: 200px;
             margin-bottom: 20px;
@@ -35,6 +37,11 @@ $dados = $controller->gerarRelatorio();
             <div class="mb-2 text-right">
                 <a href="listar_vendas.php" class="btn btn-secondary btn-sm position-fixed" style="top: 24px; right: 24px; z-index: 999;">Voltar às Vendas</a>
             </div>
+
+            <div class="d-flex justify-content-end mb-2 gap-2">
+                <a href="relatorio_vendas_pdf.php" target="_blank" class="btn btn-success btn-sm">Gerar PDF</a>
+            </div>
+
 
             <?php if ($dados): ?>
                 <div class="table-responsive">
