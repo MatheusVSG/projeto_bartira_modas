@@ -37,7 +37,7 @@ if (isset($_GET['sucesso']) && $_GET['sucesso'] == 1) {
                 'titulo' => 'Voltar ao Painel',
                 'cor' => 'btn-secondary',
             ],
-            
+
             [
                 'caminho' => 'listar_clientes.php',
                 'titulo' => 'Clientes Cadastrados',
@@ -48,7 +48,7 @@ if (isset($_GET['sucesso']) && $_GET['sucesso'] == 1) {
         include '../../../components/barra_navegacao.php';
         ?>
 
-        <h4 class="text-warning mb-0">
+        <h4 class="text-warning">
             Cadastro de Cliente
         </h4>
 
@@ -103,7 +103,17 @@ if (isset($_GET['sucesso']) && $_GET['sucesso'] == 1) {
 
                 <div class="col-2 col-lg-1 mb-2">
                     <label for="estado" class="form-label">Estado</label>
-                    <input type="text" name="estado" id="estado" class="form-control" placeholder="Digite o estado (UF)">
+                    <select type="text" name="estado" id="estado" class="form-select">
+                        <option value="">Selecione o Estado</option>
+                        <?php
+                        include '../../../components/estados.php';
+                        foreach ($estados as $estado) {
+                        ?>
+                            <option value="<?php echo $estado ?>"><?php echo $estado ?></option>
+                        <?php
+                        }
+                        ?>
+                    </select>
                 </div>
 
                 <div class="mb-3">
