@@ -1,4 +1,12 @@
 <?php
+session_start();
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    $_SESSION['error_message'] = 'Acesso inválido. Requisição não permitida!';
+    header("Location: ../../view/cliente/listar_clientes.php");
+    exit;
+}
+
 include_once '../../connection.php';
 include('../logs/logger.controller.php');
 
@@ -6,33 +14,47 @@ $id = $_POST['id'];
 $nome = $_POST['nome'];
 $cpf = $_POST['cpf'];
 $email = $_POST['email'];
+$telefone = $_POST['telefone'];
+$logradouro = $_POST['logradouro'];
+$numero = $_POST['numero'];
+$bairro = $_POST['bairro'];
+$cidade = $_POST['cidade'];
+$estado = $_POST['estado'];
 
-$sql = "UPDATE clientes SET nome=?, cpf=?, email=?, data_atualizacao=NOW() WHERE id=?";
-$stmt = $conn->prepare($sql);
-
-if ($stmt === false) {
-    registrar_log(
-        $conn,
-        'Erro ao preparar atualização de cliente',
-        mysqli_error($conn),
-        $_SERVER['REQUEST_URI'],
-        'controller/cliente/cliente_controller.php'
-    );
-    die('Erro ao preparar a consulta.');
+if (empty(trim($nome))) {
+    $_SESSION['error_message'] = 'O nome não pode ficar em branco!';
+    header("Location: ../../view/cliente/editar_cliente.php?id=$id");
+    exit;
 }
 
-$stmt->bind_param("sssi", $nome, $cpf, $email, $id);
+try {
+    $sql = "UPDATE clientes SET nome=?, cpf=?, email=?, telefone=?, logradouro=?, numero=?, bairro=?, cidade=?, estado=?, data_atualizacao=NOW() WHERE id=?";
 
-if ($stmt->execute()) {
-    header("Location: ../../view/cliente/listar_clientes.php?id=$id&atualizado=1");
-    exit;
-} else {
+    $stmt = $conn->prepare($sql);
+
+    if (!$stmt) {
+        throw new Exception('Erro ao preparar a consulta: ' . $conn->error);
+    }
+
+    $stmt->bind_param("sssssssssi", $nome, $cpf, $email, $telefone, $logradouro, $numero, $bairro, $cidade, $estado, $id);
+
+    if ($stmt->execute()) {
+        $_SESSION['success_message'] = 'Cliente atualizado com sucesso!';
+        header("Location: ../../view/cliente/editar_cliente.php?id=$id");
+        exit;
+    } else {
+        throw new Exception('Erro na execução da consulta: ' . $stmt->error);
+    }
+} catch (Exception $e) {
     registrar_log(
         $conn,
         'Erro ao atualizar cliente',
-        $stmt->error,
+        $e->getMessage(),
         $_SERVER['REQUEST_URI'],
         'controller/cliente/atualizar_cliente.php'
     );
-    echo "Erro ao atualizar cliente: " . $stmt->error;
+
+    $_SESSION['error_message'] = 'Erro ao atualizar cliente. Verifique os dados e tente novamente.';
+    header("Location: ../../view/cliente/editar_cliente.php?id=$id");
+    exit;
 }

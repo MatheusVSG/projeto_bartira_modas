@@ -1,2 +1,4 @@
 [2025-05-31 21:06:37] Erro ao salvar cliente | Duplicate entry \'12345678912\' for key \'cpf\' | /projeto_bartira_modas/projeto_lab_db/controller/cliente/salvar_cliente.php | controller/cliente/salvar_cliente.php
 [2025-05-31 21:08:31] Erro ao salvar cliente | Duplicate entry \'22222222222\' for key \'cpf\' | /projeto_bartira_modas/projeto_lab_db/controller/cliente/salvar_cliente.php | controller/cliente/salvar_cliente.php
+[2025-05-31 22:31:41] Erro ao atualizar cliente | Duplicate entry \'22222222222\' for key \'cpf\' | /projeto_bartira_modas/projeto_lab_db/controller/cliente/atualizar_cliente.php | controller/cliente/atualizar_cliente.php
+[2025-05-31 22:41:30] Erro ao atualizar cliente | Duplicate entry \'22222222222\' for key \'cpf\' | /projeto_bartira_modas/projeto_lab_db/controller/cliente/atualizar_cliente.php | controller/cliente/atualizar_cliente.php

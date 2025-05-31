@@ -27,7 +27,7 @@ if (!isset($_SESSION['usuario_id']) || !in_array($_SESSION['tipo_usuario'], ['ad
         <?php
         $linksAdicionais = [
             [
-                'caminho' => '../vendedor/home_vendedor.php',
+                'caminho' => $_SESSION['tipo_usuario'] == 'admin' ? '../administrador/home_adm.php' : '../vendedor/home_vendedor.php',
                 'titulo' => 'Voltar ao Painel',
                 'cor' => 'btn-secondary',
             ],

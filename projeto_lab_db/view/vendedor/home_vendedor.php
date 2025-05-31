@@ -13,7 +13,7 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['tipo_usuario'] != 'vendedor') 
 <html lang="pt-br">
 
 <head>
-    <?php include '../../head.php' ?>;
+    <?php include '../../head.php'; ?>
     <title>Home Vendedor</title>
     <style>
         .logo {

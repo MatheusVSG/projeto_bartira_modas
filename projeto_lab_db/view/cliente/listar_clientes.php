@@ -3,15 +3,9 @@ session_start();
 include_once '../../connection.php';
 
 if (!isset($_SESSION['usuario_id']) || !in_array($_SESSION['tipo_usuario'], ['admin', 'vendedor'])) {
-    header("Location: ../../login.php");
+    $_SESSION['error_message'] = 'Acesso negado. Você não tem permissão para realizar esta ação.';
+    header("Location: ../../");
     exit();
-}
-
-$mensagem_sucesso = '';
-if (isset($_GET['excluido']) && $_GET['excluido'] == 1) {
-    $mensagem_sucesso = 'Cliente excluído com sucesso!';
-} elseif (isset($_GET['atualizado']) && $_GET['atualizado'] == 1) {
-    $mensagem_sucesso = 'Cliente atualizado com sucesso!';
 }
 
 $linksAdicionais = [
@@ -43,16 +37,32 @@ $result = mysqli_query($conn, $sql);
     <div class="w-100 min-vh-100 bg-dark px-3 pb-3">
         <?php include '../../../components/barra_navegacao.php'; ?>
 
+        <!-- Mensagens Sucesso/Erro -->
+        <div class="position-fixed top-0 end-0 z-3 p-3">
+            <?php if (isset($_SESSION['success_message'])) { ?>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <?= $_SESSION['success_message'] ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+                </div>
+            <?php
+                unset($_SESSION['success_message']);
+            }
+            ?>
+
+            <?php if (isset($_SESSION['error_message'])) { ?>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <?= $_SESSION['error_message'] ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+                </div>
+            <?php
+                unset($_SESSION['error_message']);
+            }
+            ?>
+        </div>
+
         <h4 class="text-warning mb-0">
             Lista de Clientes
         </h4>
-
-        <?php if (!empty($mensagem_sucesso)): ?>
-            <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
-                <?= htmlspecialchars($mensagem_sucesso) ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
-            </div>
-        <?php endif; ?>
 
         <div class="mt-3">
             <?php if (mysqli_num_rows($result) > 0): ?>
@@ -91,4 +101,5 @@ $result = mysqli_query($conn, $sql);
         </div>
     </div>
 </body>
+
 </html>

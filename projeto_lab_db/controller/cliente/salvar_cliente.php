@@ -54,6 +54,7 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $_SERVER['REQUEST_URI'],
         'controller/cliente/salvar_cliente.php'
     );
+    
     $_SESSION['error_message'] = 'Erro ao salvar cliente. Verifique os dados e tente novamente.';
     header("Location: ../../view/cliente/cadastro_cliente.php");
     exit;
