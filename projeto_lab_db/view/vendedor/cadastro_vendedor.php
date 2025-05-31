@@ -1,19 +1,24 @@
 <?php
 session_start();
-include '../../connection.php';
-include '../../head.php';
+include_once '../../connection.php';
 
-if (!isset($_SESSION['usuario_id']) || $_SESSION['tipo_usuario'] != 'admin') {
+if (!isset($_SESSION['usuario_id']) || $_SESSION['tipo_usuario'] !== 'admin') {
     header("Location: ../../login.php");
     exit();
 }
-?>
 
+$mensagem_sucesso = '';
+if (isset($_GET['sucesso']) && $_GET['sucesso'] == 1) {
+    $mensagem_sucesso = 'Vendedor cadastrado com sucesso!';
+}
+
+?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 
 <head>
-    <title>Cadastro de Vendedor</title>
+    <?php include '../../head.php'; ?>
+    <title>Bartira Modas | Cadastro de Vendedor</title>
     <style>
         .logo {
             max-width: 200px;
@@ -22,95 +27,113 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['tipo_usuario'] != 'admin') {
     </style>
 </head>
 
-<body class="bg-dark text-light">
-    <div class="container py-4">
-        <h1 class="text-center text-warning">Cadastro de Vendedor</h1>
+<body>
+    <div class="w-100 min-vh-100 bg-dark px-3 pb-3">
+        <?php
+        $linksAdicionais = [
+            [
+                'caminho' => '../administrador/home_adm.php',
+                'titulo' => 'Voltar ao Painel',
+                'cor' => 'btn-secondary',
+            ],
+            
+            [
+                'caminho' => 'listar_vendedores.php',
+                'titulo' => 'vendedores Cadastrados',
+                'cor' => 'btn-primary',
+            ]
+        ];
 
+        include '../../../components/barra_navegacao.php';
+        ?>
 
-        <form action="../../controller/vendedor/salvar_vendedor.php" method="post" class="bg-light text-dark p-4 rounded shadow">
-            <input type="text" name="nome" class="form-control mb-2" placeholder="Nome" required>
-            <input type="text" name="cpf" class="form-control mb-2" placeholder="CPF" required class="form-control form-control-sm" required class="form-control form-control-sm" pattern="\d{11}" maxlength="11" oninput="this.value = this.value.replace(/\D/g, '')" title="Digite exatamente 11 números, somente dígitos.">
-            <input type="text" name="email" class="form-control mb-2" placeholder="Email" required>
-            <input type="text" name="telefone" class="form-control mb-2" placeholder="Telefone">
-            <input type="text" name="logradouro" class="form-control mb-2" placeholder="Logradouro">
-            <input type="text" name="numero" class="form-control mb-2" placeholder="Número">
-            <input type="text" name="bairro" class="form-control mb-2" placeholder="Bairro">
-            <input type="text" name="cidade" class="form-control mb-2" placeholder="Cidade">
-            <div class="mb-2">
-            <select name="estado" class="form-control mb-2">
-                <option value="">Estado</option>
-                <option value="AC">Acre</option>
-                <option value="AL">Alagoas</option>
-                <option value="AP">Amapá</option>
-                <option value="AM">Amazonas</option>
-                <option value="BA">Bahia</option>
-                <option value="CE">Ceará</option>
-                <option value="DF">Distrito Federal</option>
-                <option value="ES">Espírito Santo</option>
-                <option value="GO">Goiás</option>
-                <option value="MA">Maranhão</option>
-                <option value="MT">Mato Grosso</option>
-                <option value="MS">Mato Grosso do Sul</option>
-                <option value="MG">Minas Gerais</option>
-                <option value="PA">Pará</option>
-                <option value="PB">Paraíba</option>
-                <option value="PR">Paraná</option>
-                <option value="PE">Pernambuco</option>
-                <option value="PI">Piauí</option>
-                <option value="RJ">Rio de Janeiro</option>
-                <option value="RN">Rio Grande do Norte</option>
-                <option value="RS">Rio Grande do Sul</option>
-                <option value="RO">Rondônia</option>
-                <option value="RR">Roraima</option>
-                <option value="SC">Santa Catarina</option>
-                <option value="SP">São Paulo</option>
-                <option value="SE">Sergipe</option>
-                <option value="TO">Tocantins</option>
-            </select>
-            <select name="sexo" class="form-control mb-2">
-                <option value="">Sexo</option>
-                <option value="M">Masculino</option>
-                <option value="F">Feminino</option>
-            </select>
-            </div>
-            <input type="password" name="senha" class="form-control mb-2" placeholder="Senha" required>
-            <button type="submit" class="btn btn-success">Salvar</button>
+        <h4 class="text-warning mb-0">
+            Cadastro de Vendedor
+        </h4>
 
-        </form>
+        <div class="bg-light rounded p-4">
+            <?php if (!empty($mensagem_sucesso)): ?>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <?= $mensagem_sucesso ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+                </div>
+            <?php endif; ?>
 
-        <h2 class="text-warning mt-5">Lista de Vendedores</h2>
+            <form action="../../controller/vendedor/salvar_vendedor.php" method="POST" class="row">
+                <div class="col-12 col-lg-4 mb-3">
+                    <label for="nome" class="form-label">Nome</label>
+                    <input type="text" name="nome" id="nome" required class="form-control" placeholder="Digite o nome">
+                </div>
 
+                <div class="col-12 col-lg-2 mb-3">
+                    <label for="cpf" class="form-label">CPF</label>
+                    <input type="text" name="cpf" id="cpf" required class="form-control" pattern="\d{11}" maxlength="11" oninput="this.value = this.value.replace(/\D/g, '')" title="Digite exatamente 11 números, somente dígitos." placeholder="000.000.000-00">
+                </div>
 
-        <table class="table table-striped table-dark mt-3">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nome</th>
-                    <th>Email</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php
+                <div class="col-12 col-lg-4 mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" name="email" id="email" required placeholder="Digite o e-mail" class="form-control">
+                </div>
 
-                $res = $conn->query("SELECT * FROM vendedores");
-                while ($row = $res->fetch_assoc()) {
-                    echo "<tr>
-                        <td>{$row['id']}</td>
-                        <td>{$row['nome']}</td>
-                        <td>{$row['email']}</td>
-                        <td>
-                            <a href='editar_vendedor.php?id={$row['id']}' class='btn btn-warning btn-sm'>Editar</a>
-                            <a href='../../controller/vendedor/excluir_vendedor.php?id={$row['id']}' onclick='return confirm(\"Tem certeza?\")' class='btn btn-danger btn-sm'>Excluir</a>
-                        </td>
-                    </tr>";
-                }
-                ?>
-            </tbody>
-        </table>
-        <a href="../administrador/home_adm.php" class="btn btn-secondary btn-sm position-fixed" style="top: 24px; right: 24px; z-index: 999;">Voltar ao Painel</a>
+                <div class="col-12 col-lg-2 mb-3">
+                    <label for="telefone" class="form-label">Telefone</label>
+                    <input type="text" name="telefone" id="telefone" class="form-control" placeholder="Digite o telefone">
+                </div>
+
+                <div class="col-11 col-lg-4 mb-3">
+                    <label for="logradouro" class="form-label">Logradouro</label>
+                    <input type="text" name="logradouro" id="logradouro" class="form-control" placeholder="Digite o logradouro">
+                </div>
+
+                <div class="col-2 col-lg-1 mb-3">
+                    <label for="numero" class="form-label">Nº</label>
+                    <input type="text" name="numero" id="numero" class="form-control" placeholder="Ex.: 10">
+                </div>
+
+                <div class="col-12 col-lg-3 mb-3">
+                    <label for="bairro" class="form-label">Bairro</label>
+                    <input type="text" name="bairro" id="bairro" class="form-control" placeholder="Digite o bairro">
+                </div>
+
+                <div class="col-12 col-lg-3 mb-3">
+                    <label for="cidade" class="form-label">Cidade</label>
+                    <input type="text" name="cidade" id="cidade" class="form-control" placeholder="Digite a cidade">
+                </div>
+
+                <div class="col-12 col-lg-1 mb-3">
+                   <label for="estado" class="form-label">Estado</label>
+                    <select type="text" name="estado" id="estado" class="form-select">
+                        <option value="">Selecione o Estado</option>
+                        <?php
+                        include '../../../components/estados.php';
+                        foreach ($estados as $estado) {
+                        ?>
+                            <option value="<?php echo $estado ?>"><?php echo $estado ?></option>
+                        <?php
+                        }
+                        ?>
+                    </select>
+                </div>
+
+                <div class="col-12 col-lg-2 mb-3">
+                    <label for="sexo" class="form-label">Sexo</label>
+                    <select name="sexo" id="sexo" class="form-control">
+                        <option value="">Selecione</option>
+                        <option value="M">Masculino</option>
+                        <option value="F">Feminino</option>
+                    </select>
+                </div>
+
+                <div class="col-12 col-lg-3 mb-3">
+                    <label for="senha" class="form-label">Senha</label>
+                    <input type="password" name="senha" id="senha" required class="form-control" placeholder="Digite a senha">
+                </div>
+
+                <div class="d-flex justify-content-end">
+                    <button type="submit" name="cadastrar" class="btn btn-success">Cadastrar</button>
+                </div>
+            </form>
+        </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous" defer></script>
 </body>
-
 </html>
