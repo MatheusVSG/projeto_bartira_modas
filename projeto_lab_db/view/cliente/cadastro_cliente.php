@@ -30,19 +30,17 @@ if (isset($_GET['sucesso']) && $_GET['sucesso'] == 1) {
 
 <body>
     <div class="w-100 min-vh-100 bg-dark px-3 pb-3">
-        <div class="position-sticky top-0 start-0 z-3 py-3 bg-dark d-flex justify-content-end align-items-center">
+        <?php
+        $linksAdicionais = [
+            [
+                'caminho' => 'listar_clientes.php',
+                'titulo' => 'Clientes Cadastrados',
+                'cor' => 'btn-primary',
+            ]
+        ];
 
-
-            <div class="d-flex gap-1 align-items-center">
-                <a href="listar_clientes.php" class="btn btn-primary">
-                    Clientes Cadastrados
-                </a>
-
-                <a href="../vendedor/home_vendedor.php" class="btn btn-secondary">
-                    Voltar ao Painel
-                </a>
-            </div>
-        </div>
+        include '../../../components/barra_navegacao.php';
+        ?>
 
         <h4 class="text-warning mb-0">
             Cadastro de Cliente
