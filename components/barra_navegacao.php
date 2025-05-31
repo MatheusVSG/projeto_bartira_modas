@@ -1,10 +1,6 @@
 <?php
 $linksPadrao = [
-    [
-        'caminho' => '../vendedor/home_vendedor.php',
-        'titulo' => 'Voltar ao Painel',
-        'cor' => 'btn-secondary',
-    ]
+    
 ];
 
 // Junta os arrays se $linksAdicionais existir

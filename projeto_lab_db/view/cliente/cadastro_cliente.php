@@ -33,6 +33,12 @@ if (isset($_GET['sucesso']) && $_GET['sucesso'] == 1) {
         <?php
         $linksAdicionais = [
             [
+                'caminho' => '../vendedor/home_vendedor.php',
+                'titulo' => 'Voltar ao Painel',
+                'cor' => 'btn-secondary',
+            ],
+            
+            [
                 'caminho' => 'listar_clientes.php',
                 'titulo' => 'Clientes Cadastrados',
                 'cor' => 'btn-primary',
