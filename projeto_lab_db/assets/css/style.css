@@ -120,3 +120,124 @@ h1, h2, h3, h4, h5 {
     gap: 1rem;
 }
 
+/* Tabela De Dados Personalizada */
+.custom-table {
+    width: 100% !important;
+    border-collapse: separate !important;
+    border-spacing: 0 8px !important;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+    background: transparent !important;
+}
+
+.custom-table thead th {
+    background-color: #343a40 !important;
+    color: white !important;
+    font-weight: 500 !important;
+    padding: 12px 15px !important;
+    text-align: left !important;
+    border: none !important;
+    position: sticky !important;
+    top: 0 !important;
+}
+
+.custom-table tbody tr {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    backdrop-filter: blur(5px) !important;
+    border-radius: 8px !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+}
+
+.custom-table tbody td {
+    padding: 12px 15px !important;
+    vertical-align: middle !important;
+    border: none !important;
+    color: #f8f9fa !important;
+}
+
+.custom-table tbody tr:first-child td:first-child { border-top-left-radius: 8px !important; }
+.custom-table tbody tr:first-child td:last-child { border-top-right-radius: 8px !important; }
+.custom-table tbody tr:last-child td:first-child { border-bottom-left-radius: 8px !important; }
+.custom-table tbody tr:last-child td:last-child { border-bottom-right-radius: 8px !important; }
+
+.custom-table tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15) !important;
+}
+
+.action-btn {
+    border-radius: 20px !important;
+    padding: 5px 12px !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    margin-right: 5px !important;
+    transition: all 0.2s !important;
+    border: none !important;
+    white-space: nowrap !important;
+}
+
+.action-btn:hover {
+    transform: translateY(-1px) !important;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2) !important;
+}
+
+.btn-edit { background-color: #ffc107 !important; color: #212529 !important; }
+.btn-delete { background-color: #dc3545 !important; color: white !important; }
+
+.no-results {
+    padding: 20px !important;
+    text-align: center !important;
+    color: #adb5bd !important;
+    font-style: italic !important;
+}
+
+@media (max-width: 992px) {
+    .custom-table thead { display: none !important; }
+
+    .custom-table tbody tr {
+        display: block !important;
+        margin-bottom: 15px !important;
+    }
+
+    .custom-table tbody td {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        padding: 8px 15px !important;
+        text-align: right !important;
+    }
+
+    .custom-table tbody td::before {
+        content: attr(data-label) !important;
+        font-weight: bold !important;
+        margin-right: 15px !important;
+        color: #ffc107 !important;
+    }
+
+    .action-buttons {
+        display: flex !important;
+        justify-content: flex-end !important;
+        gap: 8px !important;
+        width: 100% !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .action-btn {
+        padding: 4px 10px !important;
+        font-size: 12px !important;
+    }
+
+    .custom-table tbody td {
+        font-size: 14px !important;
+        padding: 8px 10px !important;
+    }
+
+    .custom-table tbody td::before {
+        font-size: 13px !important;
+        margin-right: 10px !important;
+    }
+}
+
+
