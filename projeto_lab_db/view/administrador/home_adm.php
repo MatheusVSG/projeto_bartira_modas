@@ -33,13 +33,13 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['tipo_usuario'] != 'admin') {
         </div>
 
         <div class="row g-4 justify-content-center">
-            <!-- Cada card -->
+
             <div class="col-10 col-md-4 col-lg-3">
                 <div class="card bg-light text-dark shadow h-100 text-center">
                     <div class="card-body d-flex flex-column justify-content-between">
                         <h4 class="card-title">Cadastro de Administrador</h4>
                         <p class="card-text">Gerenciar contas de administradores do sistema.</p>
-                        <a href="../administrador/listar_administrador.php" class="btn btn-primary mt-3">Acessar</a>
+                        <a href="../administrador/cadastro_administrador.php" class="btn btn-primary mt-3">Acessar</a>
                     </div>
                 </div>
             </div>
@@ -89,7 +89,7 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['tipo_usuario'] != 'admin') {
                     <div class="card-body d-flex flex-column justify-content-between">
                         <h4 class="card-title">Forma de Pagamento</h4>
                         <p class="card-text">Gerenciar métodos de pagamento.</p>
-                        <a href="../forma_pagto/listar_forma_pagto.php" class="btn btn-primary mt-3">Acessar</a>
+                        <a href="../forma_pagto/cadastrar_forma_pagto.php" class="btn btn-primary mt-3">Acessar</a>
                     </div>
                 </div>
             </div>

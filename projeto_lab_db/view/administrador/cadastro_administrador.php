@@ -1,11 +1,15 @@
 <?php
 session_start();
 include_once '../../connection.php';
-include '../../head.php';
 
 if (!isset($_SESSION['usuario_id']) || $_SESSION['tipo_usuario'] != 'admin') {
     header("Location: ../../login.php");
     exit();
+}
+
+$mensagem_sucesso = '';
+if (isset($_GET['sucesso']) && $_GET['sucesso'] == 1) {
+    $mensagem_sucesso = 'Administrador cadastrado com sucesso!';
 }
 ?>
 
@@ -13,24 +17,64 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['tipo_usuario'] != 'admin') {
 <html lang="pt-BR">
 
 <head>
-    <title>Cadastro de Administrador</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
+    <?php include '../../head.php'; ?>
+    <title>Bartira Modas | Cadastro de Administrador</title>
+    <style>
+        .logo {
+            max-width: 200px;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 
-<body class="bg-dark text-light">
-    <div class="container py-4">
-        <h1 class="text-center text-warning">Cadastro de Administrador</h1>
+<body>
+    <div class="w-100 min-vh-100 bg-dark px-3 pb-3">
+        <?php
+        $linksAdicionais = [
+            [
+                'caminho' => '../administrador/home_adm.php',
+                'titulo' => 'Voltar ao Painel',
+                'cor' => 'btn-secondary',
+            ],
+            [
+                'caminho' => 'listar_administrador.php',
+                'titulo' => 'Administradores Cadastrados',
+                'cor' => 'btn-primary',
+            ]
+        ];
 
-        <form action="../../controller/administrador/administrador_controller.php" method="POST" class="bg-light text-dark p-4 rounded shadow">
-            <input type="text" name="usuario" class="form-control mb-2" placeholder="Usuário" required>
-            <input type="password" name="senha" class="form-control mb-2" placeholder="Senha" required>
-            <button type="submit" name="cadastrar" class="btn btn-success">Salvar</button>
-        </form>
+        include '../../../components/barra_navegacao.php';
+        ?>
 
-        <a href="home_adm.php" class="btn btn-secondary btn-sm position-fixed" style="top: 24px; right: 24px; z-index: 999;">Voltar</a>
+        <h4 class="text-warning mb-0">
+            Cadastro de Administrador
+        </h4>
+
+        <div class="bg-light rounded p-4 mt-3">
+            <?php if (!empty($mensagem_sucesso)): ?>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <?= $mensagem_sucesso ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+                </div>
+            <?php endif; ?>
+
+            <form action="../../controller/administrador/administrador_controller.php" method="POST" class="row">
+                <div class="col-12 col-md-6 mb-3">
+                    <label for="usuario" class="form-label">Usuário</label>
+                    <input type="text" name="usuario" id="usuario" required class="form-control" placeholder="Digite o nome de usuário">
+                </div>
+
+                <div class="col-12 col-md-6 mb-3">
+                    <label for="senha" class="form-label">Senha</label>
+                    <input type="password" name="senha" id="senha" required class="form-control" placeholder="Digite a senha">
+                </div>
+
+                <div class="d-flex justify-content-end">
+                    <button type="submit" name="cadastrar" class="btn btn-success">Cadastrar</button>
+                </div>
+            </form>
+        </div>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous" defer></script>
 </body>
 
 </html>
