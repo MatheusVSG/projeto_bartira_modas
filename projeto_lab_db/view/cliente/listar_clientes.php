@@ -72,20 +72,17 @@ $result = mysqli_query($conn, $sql);
             color: #f8f9fa;
         }
         
-        /* Bordas arredondadas */
         .custom-table tbody tr:first-child td:first-child { border-top-left-radius: 8px; }
         .custom-table tbody tr:first-child td:last-child { border-top-right-radius: 8px; }
         .custom-table tbody tr:last-child td:first-child { border-bottom-left-radius: 8px; }
         .custom-table tbody tr:last-child td:last-child { border-bottom-right-radius: 8px; }
         
-        /* Efeitos hover */
         .custom-table tbody tr:hover {
             background-color: rgba(255, 255, 255, 0.2);
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(0,0,0,0.15);
         }
         
-        /* Botões de ação */
         .action-btn {
             border-radius: 20px;
             padding: 5px 12px;
@@ -105,7 +102,6 @@ $result = mysqli_query($conn, $sql);
         .btn-edit { background-color: #ffc107; color: #212529; }
         .btn-delete { background-color: #dc3545; color: white; }
         
-        /* Mensagens */
         .no-results {
             padding: 20px;
             text-align: center;
@@ -113,7 +109,6 @@ $result = mysqli_query($conn, $sql);
             font-style: italic;
         }
         
-        /* Layout responsivo */
         @media (max-width: 992px) {
             .custom-table thead { display: none; }
             

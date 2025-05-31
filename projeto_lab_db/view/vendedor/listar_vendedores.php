@@ -38,13 +38,12 @@ $result = mysqli_query($conn, $sql);
     <?php include '../../head.php'; ?>
     <title>Bartira Modas | Lista de Vendedores</title>
     <style>
-        /* Layout Base Responsivo */
+
         .responsive-container {
             width: 100%;
             padding: 0 15px;
         }
         
-        /* Tabela Principal */
         .custom-table {
             width: 100%;
             border-collapse: separate;
@@ -79,20 +78,17 @@ $result = mysqli_query($conn, $sql);
             color: #f8f9fa;
         }
         
-        /* Bordas arredondadas */
         .custom-table tbody tr:first-child td:first-child { border-top-left-radius: 8px; }
         .custom-table tbody tr:first-child td:last-child { border-top-right-radius: 8px; }
         .custom-table tbody tr:last-child td:first-child { border-bottom-left-radius: 8px; }
         .custom-table tbody tr:last-child td:last-child { border-bottom-right-radius: 8px; }
         
-        /* Efeitos hover */
         .custom-table tbody tr:hover {
             background-color: rgba(255, 255, 255, 0.2);
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(0,0,0,0.15);
         }
         
-        /* Botões de ação */
         .action-btn {
             border-radius: 20px;
             padding: 5px 12px;
@@ -112,7 +108,6 @@ $result = mysqli_query($conn, $sql);
         .btn-edit { background-color: #ffc107; color: #212529; }
         .btn-delete { background-color: #dc3545; color: white; }
         
-        /* Status badges */
         .status-badge {
             display: inline-block;
             padding: 4px 8px;
@@ -125,7 +120,6 @@ $result = mysqli_query($conn, $sql);
         .badge-admin { background-color: rgba(40, 167, 69, 0.2); color: #28a745; }
         .badge-vendedor { background-color: rgba(108, 117, 125, 0.2); color: #adb5bd; }
         
-        /* Mensagens */
         .no-results {
             padding: 20px;
             text-align: center;
@@ -133,7 +127,6 @@ $result = mysqli_query($conn, $sql);
             font-style: italic;
         }
         
-        /* Layout responsivo */
         @media (max-width: 992px) {
             .custom-table thead { display: none; }
             
