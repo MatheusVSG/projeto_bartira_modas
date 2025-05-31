@@ -38,11 +38,142 @@ $result = mysqli_query($conn, $sql);
     <?php include '../../head.php'; ?>
     <title>Bartira Modas | Lista de Vendedores</title>
     <style>
-        .table-responsive {
-            overflow-x: auto;
+        /* Layout Base Responsivo */
+        .responsive-container {
+            width: 100%;
+            padding: 0 15px;
         }
-        .table-hover tbody tr:hover {
-            background-color: rgba(0, 0, 0, 0.05);
+        
+        /* Tabela Principal */
+        .custom-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 8px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: transparent;
+        }
+        
+        .custom-table thead th {
+            background-color: #343a40;
+            color: white;
+            font-weight: 500;
+            padding: 12px 15px;
+            text-align: left;
+            border: none;
+            position: sticky;
+            top: 0;
+        }
+        
+        .custom-table tbody tr {
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .custom-table tbody td {
+            padding: 12px 15px;
+            vertical-align: middle;
+            border: none;
+            color: #f8f9fa;
+        }
+        
+        /* Bordas arredondadas */
+        .custom-table tbody tr:first-child td:first-child { border-top-left-radius: 8px; }
+        .custom-table tbody tr:first-child td:last-child { border-top-right-radius: 8px; }
+        .custom-table tbody tr:last-child td:first-child { border-bottom-left-radius: 8px; }
+        .custom-table tbody tr:last-child td:last-child { border-bottom-right-radius: 8px; }
+        
+        /* Efeitos hover */
+        .custom-table tbody tr:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        /* Botões de ação */
+        .action-btn {
+            border-radius: 20px;
+            padding: 5px 12px;
+            font-size: 14px;
+            font-weight: 500;
+            margin-right: 5px;
+            transition: all 0.2s;
+            border: none;
+            white-space: nowrap;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .btn-edit { background-color: #ffc107; color: #212529; }
+        .btn-delete { background-color: #dc3545; color: white; }
+        
+        /* Status badges */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+        
+        .badge-admin { background-color: rgba(40, 167, 69, 0.2); color: #28a745; }
+        .badge-vendedor { background-color: rgba(108, 117, 125, 0.2); color: #adb5bd; }
+        
+        /* Mensagens */
+        .no-results {
+            padding: 20px;
+            text-align: center;
+            color: #adb5bd;
+            font-style: italic;
+        }
+        
+        /* Layout responsivo */
+        @media (max-width: 992px) {
+            .custom-table thead { display: none; }
+            
+            .custom-table tbody tr {
+                display: block;
+                margin-bottom: 15px;
+                padding: 10px;
+            }
+            
+            .custom-table tbody td {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 8px 10px;
+                text-align: right;
+            }
+            
+            .custom-table tbody td::before {
+                content: attr(data-label);
+                font-weight: bold;
+                margin-right: 15px;
+                color: #ffc107;
+            }
+            
+            .action-buttons {
+                display: flex;
+                justify-content: flex-end;
+                gap: 5px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .action-btn {
+                padding: 4px 8px;
+                font-size: 12px;
+            }
+            
+            .custom-table tbody td {
+                font-size: 14px;
+            }
         }
     </style>
 </head>
@@ -51,51 +182,57 @@ $result = mysqli_query($conn, $sql);
     <div class="w-100 min-vh-100 bg-dark px-3 pb-3">
         <?php include '../../../components/barra_navegacao.php'; ?>
 
-        <h4 class="text-warning mb-0">
-            Lista de Vendedores
-        </h4>
+        <div class="responsive-container">
+            <h4 class="text-warning mb-0">
+                Lista de Vendedores
+            </h4>
 
-        <div class="bg-light rounded p-4 mt-3">
             <?php if (!empty($mensagem_sucesso)): ?>
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
                     <?= htmlspecialchars($mensagem_sucesso) ?>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
                 </div>
             <?php endif; ?>
 
-            <?php if (mysqli_num_rows($result) > 0): ?>
-                <div class="table-responsive">
-                    <table class="table table-bordered table-hover">
-                        <thead class="table-dark">
+            <div class="table-responsive mt-3">
+                <?php if (mysqli_num_rows($result) > 0): ?>
+                    <table class="custom-table">
+                        <thead>
                             <tr>
-                                <th class="text-nowrap">ID</th>
-                                <th class="text-nowrap">Nome</th>
-                                <th class="text-nowrap">CPF</th>
-                                <th class="text-nowrap">Email</th>
-                                <th class="text-nowrap">Tipo</th>
-                                <th class="text-nowrap">Ações</th>
+                                <th>ID</th>
+                                <th>Nome</th>
+                                <th>CPF</th>
+                                <th>Email</th>
+                                <th>Tipo</th>
+                                <th>Ações</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php while ($vendedor = mysqli_fetch_assoc($result)): ?>
                                 <tr>
-                                    <td><?= $vendedor['id'] ?></td>
-                                    <td><?= htmlspecialchars($vendedor['nome']) ?></td>
-                                    <td><?= htmlspecialchars($vendedor['cpf']) ?></td>
-                                    <td><?= htmlspecialchars($vendedor['email']) ?></td>
-                                    <td><?= $vendedor['tipo_usuario'] === 'admin' ? 'Administrador' : 'Vendedor' ?></td>
-                                    <td class="text-nowrap">
-                                        <a href="editar_vendedor.php?id=<?= $vendedor['id'] ?>" class="btn btn-warning btn-sm">Editar</a>
-                                        <a href="../../controller/vendedor/excluir_vendedor.php?id=<?= $vendedor['id'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('Tem certeza que deseja excluir este vendedor?')">Excluir</a>
+                                    <td data-label="ID"><?= $vendedor['id'] ?></td>
+                                    <td data-label="Nome"><?= htmlspecialchars($vendedor['nome']) ?></td>
+                                    <td data-label="CPF"><?= htmlspecialchars($vendedor['cpf']) ?></td>
+                                    <td data-label="Email"><?= htmlspecialchars($vendedor['email']) ?></td>
+                                    <td data-label="Tipo">
+                                        <span class="status-badge <?= $vendedor['tipo_usuario'] === 'admin' ? 'badge-admin' : 'badge-vendedor' ?>">
+                                            <?= $vendedor['tipo_usuario'] === 'admin' ? 'Administrador' : 'Vendedor' ?>
+                                        </span>
+                                    </td>
+                                    <td data-label="Ações">
+                                        <div class="action-buttons">
+                                            <a href="editar_vendedor.php?id=<?= $vendedor['id'] ?>" class="action-btn btn-edit">Editar</a>
+                                            <a href="../../controller/vendedor/excluir_vendedor.php?id=<?= $vendedor['id'] ?>" class="action-btn btn-delete" onclick="return confirm('Tem certeza que deseja excluir este vendedor?')">Excluir</a>
+                                        </div>
                                     </td>
                                 </tr>
                             <?php endwhile; ?>
                         </tbody>
                     </table>
-                </div>
-            <?php else: ?>
-                <div class="alert alert-info">Nenhum vendedor cadastrado.</div>
-            <?php endif; ?>
+                <?php else: ?>
+                    <div class="no-results">Nenhum vendedor cadastrado.</div>
+                <?php endif; ?>
+            </div>
         </div>
     </div>
 </body>
