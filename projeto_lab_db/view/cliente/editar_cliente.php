@@ -56,7 +56,7 @@ include '../../components/estados.php';
     <div class="w-100 min-vh-100 justify-content-center align-items-center bg-dark px-3 pb-3">
         <?php include '../../components/barra_navegacao.php'; ?>
 
-        <!-- Mensagens Sucesso/Erro -->
+
         <div class="position-fixed top-0 end-0 z-3 p-3">
             <?php if (isset($_SESSION['success_message'])) { ?>
                 <div class="alert alert-success alert-dismissible fade show" role="alert">

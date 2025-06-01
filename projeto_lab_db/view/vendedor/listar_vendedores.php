@@ -41,7 +41,7 @@ $result = mysqli_query($conn, $sql);
 
 <body>
     <div class="w-100 min-vh-100 bg-dark px-3 pb-3">
-        <?php include '../../../components/barra_navegacao.php'; ?>
+        <?php include '../../components/barra_navegacao.php'; ?>
 
         <div class="responsive-container">
             <h4 class="text-warning mb-0">

@@ -26,7 +26,7 @@ if (isset($_GET['sucesso']) && $_GET['sucesso'] == 1) {
         <?php
         $linksAdicionais = [
             [
-                'caminho' => '../administrador/home_adm.php',
+                'caminho' => $_SESSION['tipo_usuario'] == 'admin' ? '../administrador/home_adm.php' : '../vendedor/home_vendedor.php',
                 'titulo' => 'Voltar ao Painel',
                 'cor' => 'btn-secondary',
             ],
@@ -36,7 +36,7 @@ if (isset($_GET['sucesso']) && $_GET['sucesso'] == 1) {
                 'cor' => 'btn-primary',
             ]
         ];
-        include '../../../components/barra_navegacao.php';
+        include '../../components/barra_navegacao.php';
         ?>
 
         <h4 class="text-warning mb-0">Cadastro de Forma de Pagamento</h4>

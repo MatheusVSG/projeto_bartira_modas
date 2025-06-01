@@ -37,12 +37,12 @@ if (isset($_GET['sucesso']) && $_GET['sucesso'] == 1) {
                 'cor' => 'btn-secondary',
             ],
             [
-                'caminho' => 'listar_produtos.php',
+                'caminho' => 'listar_produto.php',
                 'titulo' => 'Produtos Cadastrados',
                 'cor' => 'btn-primary',
             ]
         ];
-        include '../../../components/barra_navegacao.php';
+        include '../../components/barra_navegacao.php';
         ?>
 
         <h4 class="text-warning mb-0">Cadastro de Produto</h4>

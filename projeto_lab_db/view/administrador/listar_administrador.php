@@ -2,12 +2,26 @@
 session_start();
 include '../../connection.php';
 
-
 if (!isset($_SESSION['usuario_id']) || $_SESSION['tipo_usuario'] != 'admin') {
-    header("Location: ../../login.php");
+    $_SESSION['error_message'] = 'Acesso negado.';
+    header("Location: ../../");
     exit();
 }
-$result = $conn->query("SELECT * FROM administrador");
+
+$linksAdicionais = [
+    [
+        'caminho' => '../administrador/home_adm.php',
+        'titulo' => 'Voltar ao Painel',
+        'cor' => 'btn-secondary'
+    ],
+    [
+        'caminho' => 'cadastro_administrador.php',
+        'titulo' => 'Novo Administrador',
+        'cor' => 'btn-primary'
+    ]
+];
+
+$result = mysqli_query($conn, "SELECT * FROM administrador ORDER BY usuario");
 ?>
 
 <!DOCTYPE html>
@@ -15,22 +29,43 @@ $result = $conn->query("SELECT * FROM administrador");
 
 <head>
     <?php include '../../head.php'; ?>
-    <title>Administradores Cadastrados</title>
+    <title>Bartira Modas | Administradores</title>
 </head>
 
-<body class="bg-dark text-light">
-    <div class="container py-4">
-        <a href="home_adm.php" class="btn btn-secondary btn-sm position-fixed" style="top: 24px; right: 24px; z-index: 999;">Voltar ao Painel</a>
+<body>
+    <div class="w-100 min-vh-100 bg-dark px-3 pb-3">
+        <?php include '../../components/barra_navegacao.php'; ?>
 
-        <h2 class="text-center text-warning mb-4">Administradores Cadastrados</h2>
+        <!-- Mensagens Sucesso/Erro -->
+        <div class="position-fixed top-0 end-0 z-3 p-3">
+            <?php if (isset($_SESSION['success_message'])) { ?>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <?= $_SESSION['success_message'] ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+                </div>
+                <?php unset($_SESSION['success_message']); ?>
+            <?php } ?>
 
-        <div class="text-dark p-4 rounded shadow">
-            <div class="text-end mb-3">
-                <a href="cadastro_administrador.php" class="btn btn-primary btn-sm">Novo Administrador</a>
-            </div>
+            <?php if (isset($_SESSION['error_message'])) { ?>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <?= $_SESSION['error_message'] ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+                </div>
+                <?php unset($_SESSION['error_message']); ?>
+            <?php } ?>
+        </div>
 
+        <h4 class="text-warning">Administradores Cadastrados</h4>
+
+        <div class="mb-3 d-flex flex-wrap gap-2">
+            <?php foreach ($linksAdicionais as $link): ?>
+                <a href="<?= $link['caminho'] ?>" class="btn <?= $link['cor'] ?>"><?= $link['titulo'] ?></a>
+            <?php endforeach; ?>
+        </div>
+
+        <?php if (mysqli_num_rows($result) > 0): ?>
             <div class="table-responsive">
-                <table class="custom-table ">
+                <table class="custom-table">
                     <thead>
                         <tr>
                             <th>ID</th>
@@ -39,24 +74,25 @@ $result = $conn->query("SELECT * FROM administrador");
                         </tr>
                     </thead>
                     <tbody>
-                        <?php while ($row = $result->fetch_assoc()): ?>
+                        <?php while ($row = mysqli_fetch_assoc($result)): ?>
                             <tr>
-                                <td><?= $row['id'] ?></td>
-                                <td><?= $row['usuario'] ?></td>
-                                <td>
-                                    <a href="editar_administrador.php?id=<?= $row['id'] ?>" class="btn btn-warning btn-sm">Editar</a>
-                                    <a href="../../controller/administrador/administrador_controller.php?excluir=<?= $row['id'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('Tem certeza que deseja excluir?')">Excluir</a>
+                                <td data-label="ID"><?= $row['id'] ?></td>
+                                <td data-label="Usuário"><?= htmlspecialchars($row['usuario']) ?></td>
+                                <td data-label="Ações">
+                                    <div class="action-buttons">
+                                        <a href="editar_administrador.php?id=<?= $row['id'] ?>" class="action-btn btn-edit">Editar</a>
+                                        <a href="../../controller/administrador/administrador_controller.php?excluir=<?= $row['id'] ?>" class="action-btn btn-delete" onclick="return confirm('Tem certeza que deseja excluir este administrador?')">Excluir</a>
+                                    </div>
                                 </td>
                             </tr>
                         <?php endwhile; ?>
                     </tbody>
                 </table>
             </div>
-
-        </div>
+        <?php else: ?>
+            <div class="no-results">Nenhum administrador encontrado.</div>
+        <?php endif; ?>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous" defer></script>
 </body>
 
 </html>
