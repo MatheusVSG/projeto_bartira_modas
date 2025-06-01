@@ -12,14 +12,7 @@ if (!isset($_SESSION['usuario_id']) || !in_array($_SESSION['tipo_usuario'], ['ad
 
 <head>
     <?php include '../../head.php'; ?>
-
     <title>Bartira Modas | Cadastro de Cliente</title>
-    <style>
-        .logo {
-            max-width: 200px;
-            margin-bottom: 20px;
-        }
-    </style>
 </head>
 
 <body>
@@ -39,7 +32,7 @@ if (!isset($_SESSION['usuario_id']) || !in_array($_SESSION['tipo_usuario'], ['ad
             ]
         ];
 
-        include '../../../components/barra_navegacao.php'
+        include '../../components/barra_navegacao.php'
         ?>
 
         <!-- Mensagens Sucesso/Erro -->
@@ -133,7 +126,7 @@ if (!isset($_SESSION['usuario_id']) || !in_array($_SESSION['tipo_usuario'], ['ad
                     <select type="text" name="estado" id="estado" class="form-select">
                         <option value="">Selecione o Estado</option>
                         <?php
-                        include '../../../components/estados.php';
+                        include '../../components/estados.php';
                         foreach ($estados as $estado) {
                         ?>
                             <option value="<?php echo $estado ?>"><?php echo $estado ?></option>

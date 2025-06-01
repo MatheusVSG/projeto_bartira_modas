@@ -35,7 +35,7 @@ $result = mysqli_query($conn, $sql);
 
 <body>
     <div class="w-100 min-vh-100 bg-dark px-3 pb-3">
-        <?php include '../../../components/barra_navegacao.php'; ?>
+        <?php include '../../components/barra_navegacao.php'; ?>
 
         <!-- Mensagens Sucesso/Erro -->
         <div class="position-fixed top-0 end-0 z-3 p-3">
