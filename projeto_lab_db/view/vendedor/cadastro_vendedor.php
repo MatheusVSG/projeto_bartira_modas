@@ -44,7 +44,7 @@ if (isset($_GET['sucesso']) && $_GET['sucesso'] == 1) {
             ]
         ];
 
-        include '../../../components/barra_navegacao.php';
+        include '../../components/barra_navegacao.php';
         ?>
 
         <h4 class="text-warning mb-0">
