@@ -60,11 +60,11 @@ $result = mysqli_query($conn, $sql);
             ?>
         </div>
 
-        <h4 class="text-warning mb-0">
+        <h4 class="text-warning">
             Lista de Clientes
         </h4>
 
-        <div class="mt-3">
+        <div>
             <?php if (mysqli_num_rows($result) > 0): ?>
                 <div class="table-responsive">
                     <table class="custom-table">

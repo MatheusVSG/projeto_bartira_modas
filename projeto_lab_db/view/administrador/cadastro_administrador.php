@@ -19,12 +19,6 @@ if (isset($_GET['sucesso']) && $_GET['sucesso'] == 1) {
 <head>
     <?php include '../../head.php'; ?>
     <title>Bartira Modas | Cadastro de Administrador</title>
-    <style>
-        .logo {
-            max-width: 200px;
-            margin-bottom: 20px;
-        }
-    </style>
 </head>
 
 <body>
@@ -43,14 +37,14 @@ if (isset($_GET['sucesso']) && $_GET['sucesso'] == 1) {
             ]
         ];
 
-        include '../../../components/barra_navegacao.php';
+        include '../../components/barra_navegacao.php';
         ?>
 
-        <h4 class="text-warning mb-0">
+        <h4 class="text-warning">
             Cadastro de Administrador
         </h4>
 
-        <div class="bg-light rounded p-4 mt-3">
+        <div class="bg-light rounded p-4">
             <?php if (!empty($mensagem_sucesso)): ?>
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                     <?= $mensagem_sucesso ?>
