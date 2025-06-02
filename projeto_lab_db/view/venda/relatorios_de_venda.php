@@ -1,10 +1,28 @@
 <?php
-
-
+session_start();
 require_once '../../controller/vendas/RelatorioVendasController.php';
+include_once '../../connection.php';
+
+if (!isset($_SESSION['usuario_id']) || $_SESSION['tipo_usuario'] !== 'admin') {
+    header("Location: ../../login.php");
+    exit();
+}
 
 $controller = new RelatorioVendasController();
 $dados = $controller->gerarRelatorio();
+
+$linksAdicionais = [
+    [
+        'caminho' => 'listar_vendas.php',
+        'titulo' => 'Voltar às Vendas',
+        'cor' => 'btn-secondary'
+    ],
+    [
+        'caminho' => 'relatorio_vendas_pdf.php',
+        'titulo' => 'Gerar PDF',
+        'cor' => 'btn-success'
+    ]
+];
 ?>
 
 <!DOCTYPE html>
@@ -12,41 +30,22 @@ $dados = $controller->gerarRelatorio();
 
 <head>
     <meta charset="UTF-8">
-    <title>Relatório de Vendas por Mês</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Bartira Modas | Relatório de Vendas por Mês</title>
+    <?php include '../../head.php'; ?>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        html,
-        body {
-            background-color: #222 !important;
-        }
-
-        .logo {
-            max-width: 200px;
-            margin-bottom: 20px;
-        }
-    </style>
 </head>
 
-<body class="bg-dark text-light">
+<body>
+    <div class="w-100 min-vh-100 bg-dark px-3 pb-3">
+        <?php include '../../components/barra_navegacao.php'; ?>
 
-    <div class="w-100 vh-100 d-flex flex-column justify-content-center align-items-center p-3">
-        <div class="col-12 col-sm-10 col-md-9 col-lg-8 bg-light p-2 rounded shadow">
-            <h2 class="text-center text-dark mb-3">Relatório de Vendas por Mês</h2>
-
-            <div class="mb-2 text-right">
-                <a href="listar_vendas.php" class="btn btn-secondary btn-sm position-fixed" style="top: 24px; right: 24px; z-index: 999;">Voltar às Vendas</a>
-            </div>
-
-            <div class="d-flex justify-content-end mb-2 gap-2">
-                <a href="relatorio_vendas_pdf.php" target="_blank" class="btn btn-success btn-sm">Gerar PDF</a>
-            </div>
-
+        <div class="responsive-container">
+            <h4 class="text-warning mb-0">Relatório de Vendas por Mês</h4>
 
             <?php if ($dados): ?>
-                <div class="table-responsive">
-                    <table class="table table-bordered table-hover table-striped align-middle rounded shadow-sm mb-0">
-                        <thead class="table-dark">
+                <div class="table-responsive mt-3">
+                    <table class="custom-table">
+                        <thead>
                             <tr>
                                 <th>Ano</th>
                                 <th>Mês</th>
@@ -56,9 +55,9 @@ $dados = $controller->gerarRelatorio();
                         <tbody>
                             <?php foreach ($dados as $row): ?>
                                 <tr>
-                                    <td><?= $row['ano'] ?></td>
-                                    <td><?= str_pad($row['mes'], 2, '0', STR_PAD_LEFT) ?></td>
-                                    <td>R$ <?= number_format($row['total_vendido'], 2, ',', '.') ?></td>
+                                    <td data-label="Ano"><?= $row['ano'] ?></td>
+                                    <td data-label="Mês"><?= str_pad($row['mes'], 2, '0', STR_PAD_LEFT) ?></td>
+                                    <td data-label="Total Vendido">R$ <?= number_format($row['total_vendido'], 2, ',', '.') ?></td>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>
@@ -68,11 +67,8 @@ $dados = $controller->gerarRelatorio();
                 <canvas id="graficoVendas" class="mt-4"></canvas>
 
                 <script>
-                    const labels = <?php echo json_encode(array_map(function ($item) {
-                                        return $item['ano'] . '-' . str_pad($item['mes'], 2, '0', STR_PAD_LEFT);
-                                    }, $dados)); ?>;
-
-                    const data = <?php echo json_encode(array_column($dados, 'total_vendido')); ?>;
+                    const labels = <?= json_encode(array_map(fn($item) => $item['ano'] . '-' . str_pad($item['mes'], 2, '0', STR_PAD_LEFT), $dados)); ?>;
+                    const data = <?= json_encode(array_map(fn($item) => $item['total_vendido'], $dados)); ?>;
 
                     const ctx = document.getElementById('graficoVendas').getContext('2d');
                     new Chart(ctx, {
@@ -83,8 +79,9 @@ $dados = $controller->gerarRelatorio();
                                 label: 'Total Vendido (R$)',
                                 data: data,
                                 borderColor: 'rgba(75, 192, 192, 1)',
-                                fill: false,
-                                tension: 0.1
+                                backgroundColor: 'rgba(75, 192, 192, 0.1)',
+                                fill: true,
+                                tension: 0.3
                             }]
                         },
                         options: {
@@ -102,24 +99,18 @@ $dados = $controller->gerarRelatorio();
                                         text: 'Valor (R$)'
                                     },
                                     ticks: {
-                                        callback: function(value) {
-                                            return 'R$ ' + value.toLocaleString('pt-BR');
-                                        }
+                                        callback: value => 'R$ ' + value.toLocaleString('pt-BR')
                                     }
                                 }
                             }
                         }
                     });
                 </script>
-
             <?php else: ?>
-                <p class="text-center">Nenhum dado encontrado para exibir.</p>
+                <div class="alert alert-warning mt-3">Nenhum dado encontrado para exibir.</div>
             <?php endif; ?>
         </div>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
 </body>
 
 </html>

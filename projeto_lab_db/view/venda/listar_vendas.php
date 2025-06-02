@@ -1,7 +1,6 @@
 <?php
 session_start();
 include '../../connection.php';
-include '../../head.php';
 
 if (!isset($_SESSION['usuario_id']) || $_SESSION['tipo_usuario'] != 'admin') {
     header("Location: ../../login.php");
@@ -22,93 +21,89 @@ if (!$stmt->execute()) {
 }
 
 $result = $stmt->get_result();
+
+$linksAdicionais = [
+    [
+        'caminho' => '../administrador/home_adm.php',
+        'titulo' => 'Voltar ao Painel',
+        'cor' => 'btn-secondary'
+    ],
+    [
+        'caminho' => 'relatorios_de_venda.php',
+        'titulo' => 'Relatório de Vendas',
+        'cor' => 'btn-primary'
+    ]
+];
 ?>
 
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 
 <head>
-    <meta charset="UTF-8">
+    <?php include '../../head.php'; ?>
     <title>Bartira Modas | Vendas Realizadas</title>
-    <style>
-        html,
-        body {
-            background-color: #222 !important;
-        }
-
-        .logo {
-            max-width: 200px;
-            margin-bottom: 20px;
-        }
-    </style>
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
-<body class="bg-dark text-light">
+<body>
+    <div class="w-100 min-vh-100 bg-dark px-3 pb-3">
+        <?php include '../../components/barra_navegacao.php'; ?>
 
-    <div class="w-100 vh-100 d-flex flex-column justify-content-center align-items-center bg-dark p-3">
-        <a href="../administrador/home_adm.php" class="btn btn-secondary btn-sm position-fixed" style="top: 24px; right: 24px; z-index: 999;">Voltar ao Painel</a>
-        <div class="col-12 col-sm-10 col-md-9 col-lg-8 bg-light p-2 rounded shadow">
-            <h2 class="text-center text-dark mb-3">Vendas Realizadas</h2>
-
-            <div class="d-flex justify-content-end mb-2 gap-2">
-                <a href="relatorios_de_venda.php" class="btn btn-primary btn-sm">Relatório de Vendas</a>
-            </div>
+        <div class="responsive-container">
+            <h4 class="text-warning mb-0">Vendas Realizadas</h4>
 
             <div class="table-responsive">
-                <table class="table table-sm table-bordered table-striped">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th>#</th>
-                            <th>Cliente</th>
-                            <th>Vendedor</th>
-                            <th>Forma de Pagamento</th>
-                            <th>Valor</th>
-                            <th>Produtos Vendidos</th>
-                            <th>Data da Venda</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php
-                        if ($result->num_rows > 0) {
-                            while ($row = $result->fetch_assoc()) {
-
+                <?php if ($result->num_rows > 0): ?>
+                    <table class="custom-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Cliente</th>
+                                <th>Vendedor</th>
+                                <th>Forma de Pagamento</th>
+                                <th>Valor</th>
+                                <th>Produtos Vendidos</th>
+                                <th>Data da Venda</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php while ($row = $result->fetch_assoc()): ?>
+                                <?php
                                 $produtos = [];
-                                $sql_prod = "SELECT p.nome, t.nome as tipo_nome, iv.qtd_vendida FROM item_venda iv
-                                             INNER JOIN produtos p ON iv.fk_produto_id = p.id
-                                             LEFT JOIN tipos_produto t ON p.tipo_id = t.id
-                                             WHERE iv.fk_venda_id = " . $row['id'];
-                                $res_prod = $conn->query($sql_prod);
+                                $sql_prod = "SELECT p.nome, t.nome as tipo_nome, iv.qtd_vendida
+                                                 FROM item_venda iv
+                                                 INNER JOIN produtos p ON iv.fk_produto_id = p.id
+                                                 LEFT JOIN tipos_produto t ON p.tipo_id = t.id
+                                                 WHERE iv.fk_venda_id = ?";
+                                $stmt_prod = $conn->prepare($sql_prod);
+                                $stmt_prod->bind_param("i", $row['id']);
+                                $stmt_prod->execute();
+                                $res_prod = $stmt_prod->get_result();
                                 while ($prod = $res_prod->fetch_assoc()) {
                                     $produtos[] = $prod['nome'] .
                                         ($prod['tipo_nome'] ? ' (' . $prod['tipo_nome'] . ')' : '') .
                                         ' - Qtd: ' . $prod['qtd_vendida'];
                                 }
                                 $produtos_str = implode('<br>', $produtos);
-                                echo "<tr>
-                                        <td>{$row['id']}</td>
-                                        <td>{$row['cliente']}</td>
-                                        <td>{$row['vendedor']}</td>
-                                        <td>{$row['forma_pagto']}</td>
-                                        <td>R$ " . number_format($row['valor'], 2, ',', '.') . "</td>
-                                        <td>{$produtos_str}</td>
-                                        <td>" . date("d/m/Y H:i:s", strtotime($row['data_criacao'])) . "</td>
-                                      </tr>";
-                            }
-                        } else {
-                            echo "<tr><td colspan='6' class='text-center'>Nenhuma venda encontrada</td></tr>";
-                        }
-                        ?>
-                    </tbody>
-                </table>
+                                ?>
+                                <tr>
+                                    <td data-label="ID"><?= $row['id'] ?></td>
+                                    <td data-label="Cliente"><?= htmlspecialchars($row['cliente']) ?></td>
+                                    <td data-label="Vendedor"><?= htmlspecialchars($row['vendedor']) ?></td>
+                                    <td data-label="Forma de Pagamento"><?= htmlspecialchars($row['forma_pagto']) ?></td>
+                                    <td data-label="Valor">R$ <?= number_format($row['valor'], 2, ',', '.') ?></td>
+                                    <td data-label="Produtos Vendidos"><?= $produtos_str ?></td>
+                                    <td data-label="Data da Venda"><?= date("d/m/Y H:i:s", strtotime($row['data_criacao'])) ?></td>
+                                </tr>
+                            <?php endwhile; ?>
+                        </tbody>
+                    </table>
+                <?php else: ?>
+                    <div class="no-results">Nenhuma venda registrada.</div>
+                <?php endif; ?>
             </div>
         </div>
     </div>
 
-
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

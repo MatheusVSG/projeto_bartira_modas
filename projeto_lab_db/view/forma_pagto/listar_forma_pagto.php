@@ -58,12 +58,6 @@ $linksAdicionais = [
 
         <h4 class="text-warning">Formas de Pagamento</h4>
 
-        <div class="mb-3 d-flex flex-wrap gap-2">
-            <?php foreach ($linksAdicionais as $link): ?>
-                <a href="<?= $link['caminho'] ?>" class="btn <?= $link['cor'] ?>"><?= $link['titulo'] ?></a>
-            <?php endforeach; ?>
-        </div>
-
         <div class="table-responsive">
             <table class="custom-table">
                 <thead>
