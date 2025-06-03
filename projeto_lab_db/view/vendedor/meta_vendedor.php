@@ -32,7 +32,11 @@ if (!$stmt->execute()) {
 
 $result = $stmt->get_result();
 
-$sql_meta = "SELECT valor FROM meta_vendas WHERE fk_vendedor_id = {$_SESSION['usuario_id']} AND data_validade >= CURDATE() LIMIT 1";
+$sql_meta = "SELECT valor, data_validade FROM meta_vendas 
+             WHERE fk_vendedor_id = {$_SESSION['usuario_id']} 
+             AND data_validade >= CURDATE() 
+             ORDER BY data_validade DESC 
+             LIMIT 1";
 $stmt_meta = $conn->prepare($sql_meta);
 if (!$stmt_meta->execute()) {
     die("Erro ao executar consulta de meta: " . $stmt_meta->error);
@@ -40,66 +44,97 @@ if (!$stmt_meta->execute()) {
 $result_meta = $stmt_meta->get_result();
 $meta = $result_meta->fetch_assoc();
 
-$sql_total_vendas = "SELECT SUM(valor) AS total_vendas FROM vendas WHERE fk_vendedor_id = {$_SESSION['usuario_id']}";
+$sql_total_vendas = "SELECT SUM(valor) AS total_vendas 
+                     FROM vendas 
+                     WHERE fk_vendedor_id = {$_SESSION['usuario_id']}
+                     AND MONTH(data_venda) = MONTH(CURRENT_DATE())
+                     AND YEAR(data_venda) = YEAR(CURRENT_DATE())";
 $stmt_total_vendas = $conn->prepare($sql_total_vendas);
 if (!$stmt_total_vendas->execute()) {
     die("Erro ao calcular o total das vendas: " . $stmt_total_vendas->error);
 }
 $result_total_vendas = $stmt_total_vendas->get_result();
-$total_vendas = $result_total_vendas->fetch_assoc()['total_vendas'];
+$total_vendas = $result_total_vendas->fetch_assoc()['total_vendas'] ?? 0;
+
+$linksAdicionais = [
+    [
+        'caminho' => $_SESSION['tipo_usuario'] == 'admin' ? '../administrador/home_adm.php' : 'home_vendedor.php',
+        'titulo' => 'Voltar ao Painel',
+        'cor' => 'btn-secondary'
+    ],
+    [
+        'caminho' => '../venda/cadastrar_venda.php',
+        'titulo' => 'Cadastrar Venda',
+        'cor' => 'btn-primary'
+    ]
+];
+
 ?>
 
 <!DOCTYPE html>
 <html lang="pt-br">
 
 <head>
-    <meta charset="UTF-8">
+    <?php include '../../head.php'; ?>
     <title>Bartira Modas | Vendas Realizadas</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
-        .logo {
-            max-width: 200px;
-            margin-bottom: 20px;
+        .progress {
+            height: 25px;
         }
     </style>
 </head>
 
 <body>
+    <div class="w-100 min-vh-100 bg-dark px-3 pb-3">
+        <?php include '../../components/barra_navegacao.php'; ?>
 
-    <div class="w-100 vh-100 d-flex flex-column justify-content-center align-items-center bg-dark p-3">
-        <div class="col-12 col-sm-10 col-md-9 col-lg-8 bg-light p-2 rounded shadow">
-            <h2 class="text-center text-dark mb-3">Vendas Realizadas</h2>
+        <h4 class="text-warning">
+            Vendas Realizadas
+        </h4>
 
-            <div class="mb-2 text-right">
-                <?php
-                if ($_SESSION['tipo_usuario'] == 'admin') {
-                    echo '<a href="../administrador/home_adm.php" class="btn btn-secondary btn-sm">Voltar</a>';
-                } elseif ($_SESSION['tipo_usuario'] == 'vendedor') {
-                    echo '<a href="../vendedor/home_vendedor.php" class="btn btn-secondary btn-sm">Voltar</a>';
-                }
-                ?>
-            </div>
-
-            <?php if ($_SESSION['tipo_usuario'] == 'vendedor'): ?>
-                <div class="alert alert-info">
-                    <h5>Meta de Vendas</h5>
-                    <p>Valor da Meta: R$
-                        <?php
-
-                        if (isset($meta) && isset($meta['valor'])) {
-                            echo number_format($meta['valor'], 2, ',', '.');
-                        } else {
-                            echo 'Sem meta definida';
-                        }
-                        ?>
-                    </p>
-                    <p>Valor Total de Vendas: R$ <?= number_format($total_vendas, 2, ',', '.') ?></p>
+        <?php if ($_SESSION['tipo_usuario'] == 'vendedor'): ?>
+            <div class="card bg-white mb-4">
+                <div class="card-body">
+                    <h5 class="card-title text-dark">Meta de Vendas</h5>
+                    <?php if (isset($meta) && isset($meta['valor'])): ?>
+                        <div class="mb-3">
+                            <p class="text-dark mb-1">Valor da Meta: R$ <?= number_format($meta['valor'], 2, ',', '.') ?></p>
+                            <p class="text-dark mb-1">Data de Validade: <?= date('d/m/Y', strtotime($meta['data_validade'])) ?></p>
+                            <p class="text-dark mb-3">Valor Total de Vendas: R$ <?= number_format($total_vendas, 2, ',', '.') ?></p>
+                            
+                            <?php 
+                            $percentual = ($total_vendas / $meta['valor']) * 100;
+                            $percentual = min($percentual, 100);
+                            $cor = $percentual >= 100 ? 'success' : ($percentual >= 70 ? 'warning' : 'danger');
+                            ?>
+                            <div class="progress mb-2">
+                                <div class="progress-bar bg-<?= $cor ?>" role="progressbar" 
+                                     style="width: <?= $percentual ?>%" 
+                                     aria-valuenow="<?= $percentual ?>" 
+                                     aria-valuemin="0" 
+                                     aria-valuemax="100">
+                                    <?= number_format($percentual, 1) ?>%
+                                </div>
+                            </div>
+                            <p class="text-dark mb-0">
+                                <?php if ($percentual >= 100): ?>
+                                    <span class="badge bg-success">Meta atingida!</span>
+                                <?php else: ?>
+                                    <span class="badge bg-warning">Faltam R$ <?= number_format($meta['valor'] - $total_vendas, 2, ',', '.') ?> para atingir a meta</span>
+                                <?php endif; ?>
+                            </p>
+                        </div>
+                    <?php else: ?>
+                        <p class="text-dark">Nenhuma meta definida para o período atual.</p>
+                    <?php endif; ?>
                 </div>
-            <?php endif; ?>
+            </div>
+        <?php endif; ?>
 
+        <div class="bg-light rounded p-4">
             <div class="table-responsive">
-                <table class="table table-sm table-bordered table-striped">
-                    <thead class="thead-dark">
+                <table class="table table-striped table-bordered">
+                    <thead class="table-dark">
                         <tr>
                             <th>#</th>
                             <th>Cliente</th>
@@ -132,11 +167,8 @@ $total_vendas = $result_total_vendas->fetch_assoc()['total_vendas'];
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../path_to_bootstrap/js/bootstrap.bundle.min.js"></script>
 </body>
-
-</html>
 
 <?php
 $stmt->close();

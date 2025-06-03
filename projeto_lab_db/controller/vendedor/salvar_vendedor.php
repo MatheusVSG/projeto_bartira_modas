@@ -20,7 +20,8 @@ $_SESSION['form_data'] = $_POST;
 
 try {
     // Sanitização dos dados
-    $nome = trim($_POST['nome'] ?? '');
+    $nome_original = $_POST['nome'] ?? ''; // Manter o nome original para validação
+    $nome = trim($nome_original);
     $cpf = preg_replace('/[^0-9]/', '', $_POST['cpf'] ?? '');
     $email = filter_var($_POST['email'] ?? '', FILTER_SANITIZE_EMAIL);
     $telefone = preg_replace('/[^0-9]/', '', $_POST['telefone'] ?? '');
@@ -36,6 +37,9 @@ try {
     // Validações
     $erros = [];
     if (empty($nome)) $erros[] = 'Nome é obrigatório';
+    // Adiciona validação para nome começar com espaço
+    if (substr($nome_original, 0, 1) === ' ') $erros[] = 'O nome não pode começar com espaço';
+
     if (strlen($cpf) !== 11) $erros[] = 'CPF deve conter 11 dígitos';
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) $erros[] = 'E-mail inválido';
     if (strlen($senha) < 6) $erros[] = 'Senha deve ter no mínimo 6 caracteres';
@@ -54,6 +58,24 @@ try {
     
     if ($verifica_cpf->get_result()->num_rows > 0) {
         throw new Exception('CPF já cadastrado para outro vendedor');
+    }
+
+    // Verifica se Email já existe
+    $verifica_email = $conn->prepare("SELECT id FROM vendedores WHERE email = ?");
+    $verifica_email->bind_param("s", $email);
+    $verifica_email->execute();
+    
+    if ($verifica_email->get_result()->num_rows > 0) {
+        throw new Exception('E-mail já cadastrado para outro vendedor');
+    }
+
+     // Verifica se Telefone já existe
+    $verifica_telefone = $conn->prepare("SELECT id FROM vendedores WHERE telefone = ?");
+    $verifica_telefone->bind_param("s", $telefone);
+    $verifica_telefone->execute();
+    
+    if ($verifica_telefone->get_result()->num_rows > 0) {
+        throw new Exception('Telefone já cadastrado para outro vendedor');
     }
 
     // Hash da senha

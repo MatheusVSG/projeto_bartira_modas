@@ -3,182 +3,276 @@ session_start();
 include '../../connection.php';
 include '../../head.php';
 
-if (
-    !isset($_SESSION['usuario_id']) ||
-    !in_array($_SESSION['tipo_usuario'], ['admin', 'vendedor'])
-) {
+if (!isset($_SESSION['usuario_id']) || !in_array($_SESSION['tipo_usuario'], ['admin', 'vendedor'])) {
     header("Location: ../../login.php");
     exit();
 }
 
-$vendedor_id = $_SESSION['usuario_id'];
+// Buscar meta atual do vendedor
+$sql_meta = "SELECT valor, data_validade FROM meta_vendas 
+             WHERE fk_vendedor_id = {$_SESSION['usuario_id']} 
+             AND data_validade >= CURDATE() 
+             ORDER BY data_validade DESC 
+             LIMIT 1";
+$stmt_meta = $conn->prepare($sql_meta);
+if (!$stmt_meta->execute()) {
+    die("Erro ao executar consulta de meta: " . $stmt_meta->error);
+}
+$result_meta = $stmt_meta->get_result();
+$meta = $result_meta->fetch_assoc();
+
+// Buscar total de vendas do mês
+$sql_total_vendas = "SELECT SUM(valor) AS total_vendas 
+                     FROM vendas 
+                     WHERE fk_vendedor_id = {$_SESSION['usuario_id']}
+                     AND MONTH(data_venda) = MONTH(CURRENT_DATE())
+                     AND YEAR(data_venda) = YEAR(CURRENT_DATE())";
+$stmt_total_vendas = $conn->prepare($sql_total_vendas);
+if (!$stmt_total_vendas->execute()) {
+    die("Erro ao calcular o total das vendas: " . $stmt_total_vendas->error);
+}
+$result_total_vendas = $stmt_total_vendas->get_result();
+$total_vendas = $result_total_vendas->fetch_assoc()['total_vendas'] ?? 0;
+
+// Buscar clientes
+$query_clientes = "SELECT id, nome FROM clientes ORDER BY nome";
+$result_clientes = mysqli_query($conn, $query_clientes);
+
+// Buscar formas de pagamento
+$query_formas = "SELECT id, descricao FROM forma_pagto ORDER BY descricao";
+$result_formas = mysqli_query($conn, $query_formas);
+
+// Buscar produtos (removido inclusão de tamanho na query)
+$query_produtos = "SELECT p.id, p.nome, p.valor_unidade, e.quantidade 
+                   FROM produtos p 
+                   LEFT JOIN estoque e ON p.id = e.fk_produto_id 
+                   WHERE e.quantidade > 0 
+                   ORDER BY p.nome";
+$result_produtos = mysqli_query($conn, $query_produtos);
+
+$linksAdicionais = [
+    [
+        'caminho' => $_SESSION['tipo_usuario'] == 'admin' ? '../administrador/home_adm.php' : '../vendedor/home_vendedor.php',
+        'titulo' => 'Voltar ao Painel',
+        'cor' => 'btn-secondary'
+    ],
+    // Removido o link para 'Vendas Realizadas'
+];
 ?>
 
 <!DOCTYPE html>
 <html lang="pt-BR">
 
 <head>
-    <meta charset="UTF-8">
-    <title>Bartira Modas | Realizar Venda</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <?php include '../../head.php'; ?>
+    <title>Bartira Modas | Cadastrar Venda</title>
     <style>
-        .logo {
-            max-width: 200px;
-            margin-bottom: 20px;
+        .progress {
+            height: 25px;
         }
     </style>
 </head>
 
-<body class="bg-dark text-light">
+<body>
+    <div class="w-100 min-vh-100 bg-dark px-3 pb-3">
+        <?php include '../../components/barra_navegacao.php'; ?>
 
-    <div class="container py-4">
-        <div class="bg-light text-dark p-4 rounded shadow">
-            <h2 class="text-center mb-4">Nova Venda</h2>
-
-            <form method="POST" action="../../controller/vendas/venda_controller.php">
-
-                <div class="mb-3">
-                    <label for="cliente_nome">Cliente:</label>
-                    <input type="text" id="cliente_nome" class="form-control" placeholder="Digite o nome do cliente..." required>
-                    <input type="hidden" name="fk_cliente_id" id="fk_cliente_id">
+        <!-- Mensagens Sucesso/Erro -->
+        <div class="position-fixed top-0 end-0 z-3 p-3">
+            <?php if (isset($_SESSION['success_message'])) { ?>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <?= $_SESSION['success_message'] ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
                 </div>
+            <?php
+                unset($_SESSION['success_message']);
+            }
+            ?>
 
+            <?php if (isset($_SESSION['error_message'])) { ?>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <?= $_SESSION['error_message'] ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+                </div>
+            <?php
+                unset($_SESSION['error_message']);
+            }
+            ?>
+        </div>
 
-                <input type="hidden" name="fk_vendedor_id" value="<?= $vendedor_id ?>">
+        <h4 class="text-warning">
+            Cadastrar Venda
+        </h4>
 
-                <div class="mb-3">
-                    <label for="fk_forma_pagto_id">Forma de Pagamento:</label>
-                    <select name="fk_forma_pagto_id" class="form-control" required>
-                        <option value="">Selecione</option>
-                        <?php
-                        $formas = mysqli_query($conn, "SELECT id, descricao FROM forma_pagto");
-                        while ($f = mysqli_fetch_assoc($formas)) {
-                            echo "<option value='{$f['id']}'>{$f['descricao']}</option>";
-                        }
-                        ?>
+        <div class="bg-light rounded p-4">
+            <form method="POST" action="../../controller/vendas/venda_controller.php" class="row">
+                <input type="hidden" name="fk_vendedor_id" value="<?= $_SESSION['usuario_id'] ?>">
+                
+                <div class="col-12 col-lg-6 mb-3">
+                    <label for="fk_cliente_id" class="form-label">Cliente:</label>
+                    <select name="fk_cliente_id" id="fk_cliente_id" class="form-select" required>
+                        <option value="">Selecione um cliente</option>
+                        <?php while ($cliente = mysqli_fetch_assoc($result_clientes)) : ?>
+                            <option value="<?= $cliente['id'] ?>"><?= $cliente['nome'] ?></option>
+                        <?php endwhile; ?>
                     </select>
                 </div>
 
-
-                <div class="mb-3">
-                    <label>Buscar Produto:</label>
-                    <input type="text" id="busca-produto" class="form-control" placeholder="Digite o nome do produto...">
+                <div class="col-12 col-lg-6 mb-3">
+                    <label for="fk_forma_pagto_id" class="form-label">Forma de Pagamento:</label>
+                    <select name="fk_forma_pagto_id" id="fk_forma_pagto_id" class="form-select" required>
+                        <option value="">Selecione uma forma de pagamento</option>
+                        <?php while ($forma = mysqli_fetch_assoc($result_formas)) : ?>
+                            <option value="<?= $forma['id'] ?>"><?= $forma['descricao'] ?></option>
+                        <?php endwhile; ?>
+                    </select>
                 </div>
 
-
-                <div class="mb-3">
-                    <table class="table table-sm table-bordered" id="tabela-itens">
-                        <thead>
-                            <tr>
-                                <th>Produto</th>
-                                <th>Preço</th>
-                                <th>Ação</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
+                <div class="col-12 mb-3">
+                    <label class="form-label">Produtos:</label>
+                    <div id="produtos-container">
+                        <div class="row mb-2" data-index="0">
+                            <div class="col-md-6"> <?php // Ajustado o tamanho ?>
+                                <select name="produtos[0][id]" class="form-select produto-select" required>
+                                    <option value="">Selecione um produto</option>
+                                    <?php // Reset result pointer to reuse for the first product select
+mysqli_data_seek($result_produtos, 0);
+                                    while ($produto = mysqli_fetch_assoc($result_produtos)) : ?>
+                                        <option value="<?= $produto['id'] ?>" 
+                                                data-valor="<?= $produto['valor_unidade'] ?>"
+                                                data-quantidade="<?= $produto['quantidade'] ?>">
+                                            <?= $produto['nome'] ?> - R$ <?= number_format($produto['valor_unidade'], 2, ',', '.') ?> 
+                                            (Estoque: <?= $produto['quantidade'] ?>)
+                                        </option>
+                                    <?php endwhile; ?>
+                                </select>
+                            </div>
+                            <div class="col-md-6"> <?php // Ajustado o tamanho ?>
+                                <input type="number" name="produtos[0][quantidade]" class="form-control quantidade-input" 
+                                       placeholder="Quantidade" min="1" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center gap-2 mt-2">
+                        <button type="button" class="btn btn-secondary btn-sm" id="adicionar-produto">Adicionar Produto</button>
+                        <button type="button" class="btn btn-danger btn-sm" id="remover-produto" style="display: none;">Remover Produto</button>
+                    </div>
                 </div>
 
-
-                <div class="mb-3">
-                    <label>Valor Total:</label>
-                    <input type="text" id="valor-total" name="valor" class="form-control" readonly>
+                <div class="col-12 col-lg-6 mb-3">
+                    <label class="form-label">Valor Total:</label>
+                    <div class="input-group">
+                        <span class="input-group-text">R$</span>
+                        <input type="text" id="valor_total" name="valor" class="form-control" readonly>
+                    </div>
                 </div>
 
+                <div class="d-flex justify-content-end align-items-center gap-2">
+                    <button type="reset" class="btn btn-warning">
+                        Limpar
+                    </button>
 
-                <div id="produtos-selecionados"></div>
-
-                <div class="d-flex justify-content-between">
-                    <?php
-                    if ($_SESSION['tipo_usuario'] == 'admin') {
-                        echo '<a href="../administrador/home_adm.php" class="btn btn-secondary btn-sm">Voltar</a>';
-                    } elseif ($_SESSION['tipo_usuario'] == 'vendedor') {
-                        echo '<a href="../vendedor/home_vendedor.php" class="btn btn-secondary btn-sm">Voltar</a>';
-                    }
-                    ?>
-                    <button type="submit" name="cadastrar_venda" class="btn btn-success">Finalizar Venda</button>
+                    <button type="submit" name="cadastrar_venda" class="btn btn-success">
+                        Cadastrar
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 
-
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
-
+    <script src="../../path_to_bootstrap/js/bootstrap.bundle.min.js"></script>
     <script>
-        let total = 0;
-        let contador = 0;
+        document.addEventListener('DOMContentLoaded', function() {
+            const produtosContainer = document.getElementById('produtos-container');
+            const adicionarProdutoBtn = document.getElementById('adicionar-produto');
+            let produtoCount = 1;
 
-        $(function() {
+            function atualizarValorTotal() {
+                let total = 0;
+                document.querySelectorAll('.produto-select').forEach((select, index) => {
+                    const quantidade = document.querySelector(`input[name="produtos[${index}][quantidade]"]`).value;
+                    const valor = select.options[select.selectedIndex].dataset.valor;
+                    if (quantidade && valor) {
+                        total += parseFloat(valor) * parseInt(quantidade);
+                    }
+                });
+                document.getElementById('valor_total').value = total.toFixed(2);
+            }
 
-            $("#busca-produto").autocomplete({
-                source: function(request, response) {
-                    $.getJSON("../../controller/produto/produto_buscar.php", {
-                        termo: request.term
-                    }, function(data) {
-                        response(data.map(item => ({
-                            label: item.nome + " - R$" + parseFloat(item.valor_unidade).toFixed(2),
-                            value: item.nome,
-                            id: item.id,
-                            preco: parseFloat(item.valor_unidade)
-                        })));
-                    });
-                },
-                select: function(event, ui) {
-                    total += ui.item.preco;
-                    $("#valor-total").val(total.toFixed(2));
+            function adicionarProduto() {
+                const novoProduto = document.createElement('div');
+                novoProduto.className = 'row mb-2';
+                novoProduto.setAttribute('data-index', produtoCount);
+                novoProduto.innerHTML = `
+                    <div class="col-md-6"> <?php // Ajustado o tamanho ?>
+                        <select name="produtos[${produtoCount}][id]" class="form-select produto-select" required>
+                            <option value="">Selecione um produto</option>
+                            ${document.querySelector('.produto-select').innerHTML}
+                        </select>
+                    </div>
+                    <div class="col-md-6"> <?php // Ajustado o tamanho ?>
+                        <input type="number" name="produtos[${produtoCount}][quantidade]" class="form-control quantidade-input" 
+                               placeholder="Quantidade" min="1" required>
+                    </div>
+                `;
+                produtosContainer.appendChild(novoProduto);
+                produtoCount++;
 
-                    $("#tabela-itens tbody").append(`
-                    <tr id="item-${contador}">
-                        <td>${ui.item.label}</td>
-                        <td>R$ ${ui.item.preco.toFixed(2)}</td>
-                        <td><button type="button" class="btn btn-danger btn-sm" onclick="removerItem(${contador}, ${ui.item.preco})">Remover</button></td>
-                    </tr>
-                `);
+                novoProduto.querySelector('.produto-select').addEventListener('change', atualizarValorTotal);
+                novoProduto.querySelector('.quantidade-input').addEventListener('input', atualizarValorTotal);
 
-                    $("#produtos-selecionados").append(`
-                    <input type="hidden" name="produtos[${contador}][id]" value="${ui.item.id}">
-                    <input type="hidden" name="produtos[${contador}][preco]" value="${ui.item.preco}">
-                `);
-
-                    contador++;
-                    $(this).val("");
-                    return false;
+                // Mostrar o botão de remover se houver mais de um produto
+                if (produtosContainer.children.length > 1) {
+                    document.getElementById('remover-produto').style.display = 'inline-block';
                 }
+            }
+
+            function removerProduto() {
+                // Remover a última linha de produto
+                if (produtosContainer.children.length > 1) {
+                    produtosContainer.lastElementChild.remove();
+                    atualizarValorTotal();
+                    reindexarProdutos();
+
+                    // Ocultar o botão de remover se sobrar apenas um produto
+                    if (produtosContainer.children.length === 1) {
+                        document.getElementById('remover-produto').style.display = 'none';
+                    }
+                }
+            }
+
+            function reindexarProdutos() {
+                produtosContainer.querySelectorAll('.row.mb-2').forEach((row, index) => {
+                    row.setAttribute('data-index', index);
+                    row.querySelector('.produto-select').name = `produtos[${index}][id]`;
+                    row.querySelector('.quantidade-input').name = `produtos[${index}][quantidade]`;
+                });
+                produtoCount = produtosContainer.children.length;
+            }
+
+            adicionarProdutoBtn.addEventListener('click', adicionarProduto);
+            
+            // Adicionar listener ao botão remover
+            document.getElementById('remover-produto').addEventListener('click', removerProduto);
+
+            document.querySelectorAll('.produto-select').forEach(select => {
+                select.addEventListener('change', atualizarValorTotal);
             });
 
-
-            $("#cliente_nome").autocomplete({
-                source: function(request, response) {
-                    $.getJSON("../../controller/cliente/cliente_buscar.php", {
-                        termo: request.term
-                    }, function(data) {
-                        response(data.map(item => ({
-                            label: item.nome + " - CPF: " + item.cpf,
-                            value: item.nome,
-                            id: item.id
-                        })));
-                    });
-                },
-                select: function(event, ui) {
-                    $("#fk_cliente_id").val(ui.item.id);
-                    $("#cliente_nome").val(ui.item.value);
-                    return false;
-                }
+            document.querySelectorAll('.quantidade-input').forEach(input => {
+                input.addEventListener('input', atualizarValorTotal);
             });
+
+            // Ocultar o botão de remover inicialmente se houver apenas um produto
+             if (produtosContainer.children.length === 1) {
+                 document.getElementById('remover-produto').style.display = 'none';
+             }
         });
-
-        function removerItem(index, preco) {
-            $("#item-" + index).remove();
-            $(`#produtos-selecionados input[name="produtos[${index}][id]"]`).remove();
-            $(`#produtos-selecionados input[name="produtos[${index}][preco]"]`).remove();
-
-            total -= preco;
-            $("#valor-total").val(total.toFixed(2));
-        }
     </script>
 </body>
 
 </html>
+
+<?php
+mysqli_close($conn);
+?>

@@ -20,6 +20,7 @@ $linksAdicionais = [
         'titulo' => 'Voltar ao Painel',
         'cor' => 'btn-secondary'
     ],
+
     [
         'caminho' => 'cadastro_vendedor.php',
         'titulo' => 'Novo Vendedor',

@@ -39,7 +39,7 @@ if (isset($_GET['sucesso']) && $_GET['sucesso'] == 1) {
             
             [
                 'caminho' => 'listar_vendedores.php',
-                'titulo' => 'vendedores Cadastrados',
+                'titulo' => 'Vendedores cadastrados',
                 'cor' => 'btn-primary',
             ]
         ];

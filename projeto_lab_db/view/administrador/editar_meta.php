@@ -59,51 +59,86 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
+$linksAdicionais = [
+    [
+        'caminho' => '../../view/administrador/home_adm.php',
+        'titulo' => 'Voltar ao Painel',
+        'cor' => 'btn-secondary'
+    ],
+    [
+        'caminho' => 'metas_funcionario.php',
+        'titulo' => 'Nova Meta',
+        'cor' => 'btn-primary'
+    ]
+];
+
 ?>
 
 <!DOCTYPE html>
 <html lang="pt-BR">
 
 <head>
-    <meta charset="UTF-8">
+    <?php include '../../head.php'; ?>
     <title>Bartira Modas | Editar Meta</title>
-    <link href="../../path_to_bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        .logo {
-            max-width: 200px;
-            margin-bottom: 20px;
-        }
-    </style>
 </head>
 
-<body class="bg-dark text-light">
-    <div class="w-100 vh-100 d-flex flex-column justify-content-center align-items-center bg-dark p-3">
-        <div class="col-12 col-sm-10 col-md-8 col-lg-7 bg-light p-4 rounded shadow position-relative">
-             <a href="metas_funcionario.php" class="btn btn-secondary btn-sm position-fixed" style="top: 24px; right: 24px; z-index: 999;">Voltar</a>
-            <h2 class="text-center text-dark mb-4">Editar Meta de Vendas para <?= $vendedor_nome ?></h2>
+<body>
+    <div class="w-100 min-vh-100 bg-dark px-3 pb-3">
+        <?php include '../../components/barra_navegacao.php'; ?>
 
-            <?php if ($meta): ?>
-                <form method="POST" action="editar_meta.php?id=<?= $meta['id'] ?>">
+        <!-- Mensagens Sucesso/Erro -->
+        <div class="position-fixed top-0 end-0 z-3 p-3">
+            <?php if (isset($_SESSION['success_message'])) { ?>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <?= $_SESSION['success_message'] ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+                </div>
+            <?php
+                unset($_SESSION['success_message']);
+            }
+
+            if (isset($_SESSION['error_message'])) {
+            ?>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <?= $_SESSION['error_message'] ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+                </div>
+            <?php
+                unset($_SESSION['error_message']);
+            }
+            ?>
+        </div>
+
+        <h4 class="text-warning">
+            Editar Meta de Vendas para <?= $vendedor_nome ?>
+        </h4>
+
+        <?php if ($meta): ?>
+            <div class="bg-light rounded p-4">
+                <form method="POST" action="editar_meta.php?id=<?= $meta['id'] ?>" class="row">
                     <input type="hidden" name="meta_id" value="<?= $meta['id'] ?>">
-                    <div class="mb-3">
+                    <div class="col-12 col-lg-6 mb-3">
                         <label for="valor" class="form-label">Valor da Meta:</label>
-                        <input type="number" step="0.01" name="valor" id="valor" class="form-control" value="<?= $meta['valor'] ?>" required>
+                        <div class="input-group">
+                             <span class="input-group-text">R$</span>
+                            <input type="number" step="0.01" name="valor" id="valor" class="form-control" value="<?= $meta['valor'] ?>" required>
+                        </div>
                     </div>
-                    <div class="mb-3">
+                    <div class="col-12 col-lg-6 mb-3">
                         <label for="data_validade" class="form-label">Data de Validade:</label>
                         <input type="date" name="data_validade" id="data_validade" class="form-control" value="<?= $meta['data_validade'] ?>" required>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100">Atualizar Meta</button>
+                    <div class="col-12 d-flex justify-content-end align-items-center">
+                         <button type="submit" class="btn btn-success">Atualizar Meta</button>
+                    </div>
                 </form>
-            <?php else: ?>
-                <div class="alert alert-danger text-center">Erro ao carregar dados da meta.</div>
-            <?php endif; ?>
-        </div>
+            </div>
+        <?php else: ?>
+            <div class="alert alert-danger text-center">Erro ao carregar dados da meta.</div>
+        <?php endif; ?>
     </div>
 
     <script src="../../path_to_bootstrap/js/bootstrap.bundle.min.js"></script>
 </body>
-
-</html>
 
 <?php mysqli_close($conn); ?> 
