@@ -15,9 +15,15 @@ if (!isset($_GET['id']) || $_GET['id'] <= 0) {
 }
 
 $id = $_GET['id'];
-$sql = "SELECT * FROM produtos WHERE id = ?";
+$tamanho = $_GET['tamanho'];
+
+$sql = "SELECT p.*, e.quantidade, e.tamanho
+        FROM produtos AS p
+        LEFT JOIN estoque AS e ON e.fk_produto_id = p.id
+        WHERE p.id = ? AND e.tamanho = ?";
+
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $id);
+$stmt->bind_param("is", $id, $tamanho);
 $stmt->execute();
 $resultado = $stmt->get_result();
 
@@ -27,35 +33,34 @@ if ($resultado->num_rows !== 1) {
 }
 
 $produto = $resultado->fetch_assoc();
-
-$linksAdicionais = [
-    [
-        'caminho' => '../../view/produto/cadastro-produto.php',
-        'titulo' => 'Voltar ao Cadastro',
-        'cor' => 'btn-secondary'
-    ],
-    [
-        'caminho' => '../../view/produto/listar_produtos.php',
-        'titulo' => 'Produtos Cadastrados',
-        'cor' => 'btn-primary'
-    ]
-];
-
-include '../../head.php';
 ?>
 
 <!DOCTYPE html>
 <html lang="pt-BR">
 
 <head>
+    <?php include '../../head.php'; ?>
     <title>Bartira Modas | Editar Produto</title>
 </head>
 
-<body class="bg-dark text-light">
-    <?php include '../../components/barra_navegacao.php'; ?>
+<body>
+    <div class="bg-dark text-light px-3 pb-3">
+        <?php
+        $linksAdicionais = [
+            [
+                'caminho' => '../../view/produto/cadastro-produto.php',
+                'titulo' => 'Voltar ao Cadastro',
+                'cor' => 'btn-secondary'
+            ],
+            [
+                'caminho' => '../../view/produto/listar_produtos.php',
+                'titulo' => 'Produtos Cadastrados',
+                'cor' => 'btn-primary'
+            ]
+        ];
 
-    <div class="container py-4">
-
+        include '../../components/barra_navegacao.php';
+        ?>
         <!-- Alertas -->
         <div class="position-fixed top-0 end-0 z-3 p-3">
             <?php if (isset($_SESSION['success_message'])) { ?>
@@ -64,6 +69,14 @@ include '../../head.php';
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
                 </div>
                 <?php unset($_SESSION['success_message']); ?>
+            <?php } ?>
+
+            <?php if (isset($_SESSION['warning_message'])) { ?>
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <?= $_SESSION['warning_message'] ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+                </div>
+                <?php unset($_SESSION['warning_message']); ?>
             <?php } ?>
 
             <?php if (isset($_SESSION['error_message'])) { ?>
@@ -79,7 +92,8 @@ include '../../head.php';
 
         <div class="bg-light text-dark p-4 rounded shadow-sm">
             <form action="../../controller/produto/atualizar_produto.php" method="post" enctype="multipart/form-data">
-                <input type="hidden" name="id" value="<?= $produto['id'] ?>">
+                <input type="hidden" name="atualizacao_completa" value="S" required>
+                <input type="hidden" name="id" value="<?= $produto['id'] ?>" required>
 
                 <div class="mb-3">
                     <label for="nome" class="form-label">Nome:</label>
@@ -88,7 +102,7 @@ include '../../head.php';
 
                 <div class="mb-3">
                     <label for="tipo_id" class="form-label">Tipo de Produto:</label>
-                    <select name="tipo_id" id="tipo_id" class="form-select" required>
+                    <select name="tipo_id" id="tipo_id" required class="form-select">
                         <option value="">Selecione o tipo</option>
                         <?php
                         $tipos = $conn->query("SELECT id, nome FROM tipos_produto");
@@ -100,31 +114,20 @@ include '../../head.php';
                     </select>
                 </div>
 
+
                 <div class="mb-3">
-                    <label for="valor_unidade" class="form-label">Valor da Unidade:</label>
-                    <input type="number" step="0.01" name="valor_unidade" id="valor_unidade" value="<?= $produto['valor_unidade'] ?>" class="form-control" required>
+                    <label for="tamanho" class="form-label">Tamanho:</label>
+                    <input type="text" name="tamanho" value="<?= $produto['tamanho'] ?>" id="tamanho" readonly required class="form-control">
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Tamanhos e Quantidades:</label>
-                    <div id="tamanhos-container">
-                        <?php
-                        $sql_tamanhos = "SELECT tamanho, quantidade FROM estoque WHERE fk_produto_id = ?";
-                        $stmt_tamanhos = $conn->prepare($sql_tamanhos);
-                        $stmt_tamanhos->bind_param("i", $produto['id']);
-                        $stmt_tamanhos->execute();
-                        $result_tamanhos = $stmt_tamanhos->get_result();
+                    <label for="quantidade" class="form-label">Quantidade:</label>
+                    <input type="number" name="quantidade" value="<?= $produto['quantidade'] ?>" id="quantidade" required class="form-control">
+                </div>
 
-                        while ($tamanho = $result_tamanhos->fetch_assoc()) {
-                            echo '<div class="input-group mb-2">
-                                    <input type="text" name="tamanhos[]" class="form-control" value="' . htmlspecialchars($tamanho['tamanho']) . '" placeholder="Tamanho" required>
-                                    <input type="number" name="quantidades[]" class="form-control" value="' . htmlspecialchars($tamanho['quantidade']) . '" placeholder="Qtd" min="1" required>
-                                    <button type="button" class="btn btn-danger" onclick="removerTamanho(this)">Remover</button>
-                                </div>';
-                        }
-                        ?>
-                    </div>
-                    <button type="button" class="btn btn-secondary btn-sm" onclick="adicionarTamanho()">Adicionar Tamanho</button>
+                <div class="mb-3">
+                    <label for="valor_unidade" class="form-label">Valor da Unidade:</label>
+                    <input type="text" name="valor_unidade" value="<?= $produto['valor_unidade'] ?>" id="valor_unidade" required class="form-control">
                 </div>
 
                 <div class="mb-3">
@@ -134,34 +137,15 @@ include '../../head.php';
 
                 <div class="mb-3">
                     <label class="form-label">Foto Atual:</label><br>
-                    <img src="fotos/<?= $produto['foto'] ?>" width="120" class="rounded border">
+                    <img src="./fotos/<?= $produto['foto'] ?>" width="120" class="rounded border">
                 </div>
 
                 <div class="d-flex justify-content-end gap-2">
-                    <button type="reset" class="btn btn-warning">Limpar</button>
                     <button type="submit" class="btn btn-success">Salvar Alterações</button>
                 </div>
             </form>
         </div>
     </div>
-
-    <script>
-        function adicionarTamanho() {
-            const container = document.getElementById('tamanhos-container');
-            const div = document.createElement('div');
-            div.className = 'input-group mb-2';
-            div.innerHTML = `
-                <input type="text" name="tamanhos[]" class="form-control" placeholder="Tamanho" required>
-                <input type="number" name="quantidades[]" class="form-control" placeholder="Qtd" min="1" required>
-                <button type="button" class="btn btn-danger" onclick="removerTamanho(this)">Remover</button>
-            `;
-            container.appendChild(div);
-        }
-
-        function removerTamanho(button) {
-            button.parentElement.remove();
-        }
-    </script>
 </body>
 
 </html>

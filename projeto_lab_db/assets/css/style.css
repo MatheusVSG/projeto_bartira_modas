@@ -1,27 +1,27 @@
 /*site icons
 https://www.flaticon.com/free-icon/fashion_12517249?related_id=12517249*/
 
-*{
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-body{
+body {
     font-family: 'Segoe UI', Arial, sans-serif;
     font-size: 16px;
     background-color: #222;
     color: #222;
 }
 
-.logo{
+.logo {
     width: 256px;
     height: auto;
     display: block;
     margin: 0 auto 24px auto;
 }
 
-.p-6{
+.p-6 {
     padding: 64px;
 }
 
@@ -38,7 +38,7 @@ body{
 }
 
 .shadow {
-    box-shadow: 0 4px 24px rgba(0,0,0,0.08), 0 1.5px 4px rgba(0,0,0,0.04);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08), 0 1.5px 4px rgba(0, 0, 0, 0.04);
 }
 
 .btn {
@@ -52,6 +52,7 @@ body{
     border: none;
     color: #222;
 }
+
 .btn-primary:hover {
     background: #f5a623;
     color: #fff;
@@ -62,6 +63,7 @@ body{
     border: none;
     color: #fff;
 }
+
 .btn-secondary:hover {
     background: #444;
     color: #f7b731;
@@ -72,6 +74,7 @@ body{
     border: none;
     color: #fff;
 }
+
 .btn-danger:hover {
     background: #c0392b;
     color: #fff;
@@ -89,7 +92,11 @@ label {
     color: #222;
 }
 
-h1, h2, h3, h4, h5 {
+h1,
+h2,
+h3,
+h4,
+h5 {
     font-family: 'Segoe UI', Arial, sans-serif;
     font-weight: 700;
     color: #f7b731;
@@ -140,7 +147,7 @@ h1, h2, h3, h4, h5 {
     backdrop-filter: blur(5px) !important;
     border-radius: 8px !important;
     transition: all 0.3s ease !important;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
 }
 
 .custom-table tbody td {
@@ -150,15 +157,36 @@ h1, h2, h3, h4, h5 {
     color: #f8f9fa !important;
 }
 
-.custom-table tbody tr:first-child td:first-child { border-top-left-radius: 8px !important; }
-.custom-table tbody tr:first-child td:last-child { border-top-right-radius: 8px !important; }
-.custom-table tbody tr:last-child td:first-child { border-bottom-left-radius: 8px !important; }
-.custom-table tbody tr:last-child td:last-child { border-bottom-right-radius: 8px !important; }
+.custom-table tbody td input {
+    color: #f8f9fa;
+    background-color: transparent !important;
+    border-color: var(--bs-secondary) !important;
+}
+
+.custom-table tbody td input:focus {
+    color: #f8f9fa;
+}
+
+.custom-table tbody tr:first-child td:first-child {
+    border-top-left-radius: 8px !important;
+}
+
+.custom-table tbody tr:first-child td:last-child {
+    border-top-right-radius: 8px !important;
+}
+
+.custom-table tbody tr:last-child td:first-child {
+    border-bottom-left-radius: 8px !important;
+}
+
+.custom-table tbody tr:last-child td:last-child {
+    border-bottom-right-radius: 8px !important;
+}
 
 .custom-table tbody tr:hover {
     background-color: rgba(255, 255, 255, 0.2) !important;
     transform: translateY(-2px) !important;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15) !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15) !important;
 }
 
 .action-btn {
@@ -174,11 +202,19 @@ h1, h2, h3, h4, h5 {
 
 .action-btn:hover {
     transform: translateY(-1px) !important;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2) !important;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2) !important;
 }
 
-.btn-edit { background-color: #ffc107 !important; color: #212529 !important; }
-.btn-delete { background-color: #dc3545 !important; color: white !important; }
+.btn-edit {
+    text-decoration: none !important;
+    background-color: #ffc107 !important;
+    color: #212529 !important;
+}
+
+.btn-delete {
+    background-color: #dc3545 !important;
+    color: white !important;
+}
 
 .no-results {
     padding: 20px !important;
@@ -188,7 +224,9 @@ h1, h2, h3, h4, h5 {
 }
 
 @media (max-width: 992px) {
-    .custom-table thead { display: none !important; }
+    .custom-table thead {
+        display: none !important;
+    }
 
     .custom-table tbody tr {
         display: block !important;
@@ -235,4 +273,14 @@ h1, h2, h3, h4, h5 {
     }
 }
 
+::-webkit-scrollbar {
+  width: 16px !important;
+}
 
+::-webkit-scrollbar-track {
+  background: #333 !important;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #ffc107 !important;
+}

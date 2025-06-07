@@ -8,19 +8,6 @@ if (!isset($_SESSION['usuario_id']) || !in_array($_SESSION['tipo_usuario'], ['ad
     exit();
 }
 
-$linksAdicionais = [
-    [
-        'caminho' => $_SESSION['tipo_usuario'] == 'admin' ? '../administrador/home_adm.php' : '../vendedor/home_vendedor.php',
-        'titulo' => 'Voltar ao Painel',
-        'cor' => 'btn-secondary'
-    ],
-    [
-        'caminho' => 'cadastro_cliente.php',
-        'titulo' => 'Novo Cliente',
-        'cor' => 'btn-primary'
-    ]
-];
-
 $sql = "SELECT * FROM clientes ORDER BY nome";
 $result = mysqli_query($conn, $sql);
 ?>
@@ -34,9 +21,23 @@ $result = mysqli_query($conn, $sql);
 </head>
 
 <body>
-    <div class="w-100 min-vh-100 bg-dark px-3 pb-3">
-        <?php include '../../components/barra_navegacao.php'; ?>
+    <div class="w-100 vh-100 d-flex flex-column bg-dark px-3 pb-3">
+        <?php
+        $linksAdicionais = [
+            [
+                'caminho' => $_SESSION['tipo_usuario'] == 'admin' ? '../administrador/home_adm.php' : '../vendedor/home_vendedor.php',
+                'titulo' => 'Voltar ao Painel',
+                'cor' => 'btn-secondary'
+            ],
+            [
+                'caminho' => 'cadastro_cliente.php',
+                'titulo' => 'Novo Cliente',
+                'cor' => 'btn-primary'
+            ]
+        ];
 
+        include '../../components/barra_navegacao.php';
+        ?>
 
         <div class="position-fixed top-0 end-0 z-3 p-3">
             <?php if (isset($_SESSION['success_message'])) { ?>
@@ -64,11 +65,11 @@ $result = mysqli_query($conn, $sql);
             Lista de Clientes
         </h4>
 
-        <div>
+        <div class="flex-gow-1 overflow-y-hidden">
             <?php if (mysqli_num_rows($result) > 0): ?>
-                <div class="table-responsive">
+                <div class="h-100 overflow-y-auto table-responsive">
                     <table class="custom-table">
-                        <thead>
+                        <thead class="position-sticky top-0 start-0 z-2">
                             <tr>
                                 <th>ID</th>
                                 <th>Nome</th>
@@ -101,5 +102,4 @@ $result = mysqli_query($conn, $sql);
         </div>
     </div>
 </body>
-
 </html>

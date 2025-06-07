@@ -28,19 +28,6 @@ if ($resultado->num_rows !== 1) {
 
 $cliente = $resultado->fetch_assoc();
 
-$linksAdicionais = [
-    [
-        'caminho' => $_SESSION['tipo_usuario'] == 'admin' ? '../../' : '../vendedor/home_vendedor.php',
-        'titulo' => 'Voltar ao Painel',
-        'cor' => 'btn-secondary'
-    ],
-    [
-        'caminho' => 'listar_clientes.php',
-        'titulo' => 'Clientes Cadastrados',
-        'cor' => 'btn-primary'
-    ]
-];
-
 include '../../components/estados.php';
 ?>
 
@@ -54,8 +41,22 @@ include '../../components/estados.php';
 
 <body>
     <div class="w-100 min-vh-100 justify-content-center align-items-center bg-dark px-3 pb-3">
-        <?php include '../../components/barra_navegacao.php'; ?>
-
+        <?php
+        $linksAdicionais = [
+            [
+                'caminho' => $_SESSION['tipo_usuario'] == 'admin' ? '../../' : '../vendedor/home_vendedor.php',
+                'titulo' => 'Voltar ao Painel',
+                'cor' => 'btn-secondary'
+            ],
+            [
+                'caminho' => 'listar_clientes.php',
+                'titulo' => 'Clientes Cadastrados',
+                'cor' => 'btn-primary'
+            ]
+        ];
+        
+        include '../../components/barra_navegacao.php';
+        ?>
 
         <div class="position-fixed top-0 end-0 z-3 p-3">
             <?php if (isset($_SESSION['success_message'])) { ?>

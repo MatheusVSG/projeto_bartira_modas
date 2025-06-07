@@ -26,22 +26,32 @@ if (isset($_SESSION['tipo_usuario']) && isset($_SESSION['usuario_id'])) {
 
 <body class="bg-dark text-light">
     <div class="w-100 min-vh-100 d-flex flex-column justify-content-center align-items-center position-relative">
-        <?php
-        if (isset($_SESSION['error_message'])) {
-        ?>
-            <div class="position-absolute top-0 end-0 pt-3 pe-3">
-                <div class="card bg-danger">
-                    <div class="card-body">
-                        <span class="text-light">
-                            <?php echo $_SESSION['error_message']; ?>
-                        </span>
-                    </div>
+        <!-- Alertas -->
+        <div class="position-fixed top-0 end-0 z-3 p-3">
+            <?php if (isset($_SESSION['success_message'])) { ?>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <?= $_SESSION['success_message'] ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
                 </div>
-            </div>
-        <?php
-            unset($_SESSION['error_message']);
-        }
-        ?>
+                <?php unset($_SESSION['success_message']); ?>
+            <?php } ?>
+
+            <?php if (isset($_SESSION['warning_message'])) { ?>
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <?= $_SESSION['warning_message'] ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+                </div>
+                <?php unset($_SESSION['warning_message']); ?>
+            <?php } ?>
+
+            <?php if (isset($_SESSION['error_message'])) { ?>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <?= $_SESSION['error_message'] ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+                </div>
+                <?php unset($_SESSION['error_message']); ?>
+            <?php } ?>
+        </div>
 
         <div class="text-center mb-4">
             <img src="./assets/img/index/img_index.png" alt="Logo Bartira Modas" class="logo">
