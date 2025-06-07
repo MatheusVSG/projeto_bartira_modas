@@ -15,80 +15,70 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 include_once '../../connection.php';
 include('../logs/logger.controller.php');
 
-// Armazena TODOS os dados do POST na sessão
+// Armazena os dados do formulário em caso de erro
 $_SESSION['form_data'] = $_POST;
 
 try {
-    // Sanitização dos dados
-    $nome_original = $_POST['nome'] ?? ''; // Manter o nome original para validação
-    $nome = trim($nome_original);
-    $cpf = preg_replace('/[^0-9]/', '', $_POST['cpf'] ?? '');
-    $email = filter_var($_POST['email'] ?? '', FILTER_SANITIZE_EMAIL);
-    $telefone = preg_replace('/[^0-9]/', '', $_POST['telefone'] ?? '');
-    $sexo = $_POST['sexo'] ?? '';
-    $senha = $_POST['senha'] ?? '';
-    $logradouro = trim($_POST['logradouro'] ?? '');
-    $numero = trim($_POST['numero'] ?? '');
-    $bairro = trim($_POST['bairro'] ?? '');
-    $cidade = trim($_POST['cidade'] ?? '');
-    $estado = $_POST['estado'] ?? '';
-    $modificado_por = $_SESSION['usuario_id'];
-
     // Validações
-    $erros = [];
-    if (empty($nome)) $erros[] = 'Nome é obrigatório';
-    // Adiciona validação para nome começar com espaço
-    if (substr($nome_original, 0, 1) === ' ') $erros[] = 'O nome não pode começar com espaço';
+    $requiredFields = ['nome', 'cpf', 'email', 'telefone', 'sexo', 'senha'];
+    foreach ($requiredFields as $field) {
+        if (empty($_POST[$field])) {
+            throw new Exception("O campo " . ucfirst($field) . " é obrigatório!");
+        }
+    }
 
-    if (strlen($cpf) !== 11) $erros[] = 'CPF deve conter 11 dígitos';
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) $erros[] = 'E-mail inválido';
-    if (strlen($senha) < 6) $erros[] = 'Senha deve ter no mínimo 6 caracteres';
+    // Verifica se o CPF já está cadastrado
+    $sqlCheckCpf = "SELECT id FROM vendedores WHERE cpf = ?";
+    $stmtCheck = $conn->prepare($sqlCheckCpf);
+    $stmtCheck->bind_param("s", $_POST['cpf']);
+    $stmtCheck->execute();
+    $stmtCheck->store_result();
 
-    if (!empty($erros)) {
-        throw new Exception(implode('<br>', $erros));
+    if ($stmtCheck->num_rows > 0) {
+        throw new Exception("CPF já cadastrado no sistema!");
     }
 
     // Inicia transação
     $conn->begin_transaction();
 
-    // Verifica se CPF já existe
-    $verifica_cpf = $conn->prepare("SELECT id FROM vendedores WHERE cpf = ?");
-    $verifica_cpf->bind_param("s", $cpf);
-    $verifica_cpf->execute();
-    
-    if ($verifica_cpf->get_result()->num_rows > 0) {
-        throw new Exception('CPF já cadastrado para outro vendedor');
-    }
+    // Prepara a query de inserção
+    $sql = "INSERT INTO vendedores (
+        nome, 
+        cpf, 
+        email, 
+        telefone, 
+        logradouro, 
+        numero, 
+        bairro, 
+        cidade, 
+        estado, 
+        sexo, 
+        senha
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-    // Verifica se Email já existe
-    $verifica_email = $conn->prepare("SELECT id FROM vendedores WHERE email = ?");
-    $verifica_email->bind_param("s", $email);
-    $verifica_email->execute();
-    
-    if ($verifica_email->get_result()->num_rows > 0) {
-        throw new Exception('E-mail já cadastrado para outro vendedor');
-    }
-
-     // Verifica se Telefone já existe
-    $verifica_telefone = $conn->prepare("SELECT id FROM vendedores WHERE telefone = ?");
-    $verifica_telefone->bind_param("s", $telefone);
-    $verifica_telefone->execute();
-    
-    if ($verifica_telefone->get_result()->num_rows > 0) {
-        throw new Exception('Telefone já cadastrado para outro vendedor');
+    $stmt = $conn->prepare($sql);
+    if (!$stmt) {
+        throw new Exception("Erro ao preparar a query: " . $conn->error);
     }
 
     // Hash da senha
-    $senha_hash = password_hash($senha, PASSWORD_DEFAULT);
+    $senhaHash = password_hash($_POST['senha'], PASSWORD_DEFAULT);
 
-    // Prepara e executa a inserção
-    $stmt = $conn->prepare("INSERT INTO vendedores 
-        (nome, cpf, email, telefone, sexo, senha, logradouro, numero, bairro, cidade, estado, modificado_por) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    
-    $stmt->bind_param("sssssssssssi", 
-        $nome, $cpf, $email, $telefone, $sexo, $senha_hash,
-        $logradouro, $numero, $bairro, $cidade, $estado, $modificado_por);
+    // Bind dos parâmetros
+    $stmt->bind_param(
+        "sssssssssss",
+        $_POST['nome'],
+        $_POST['cpf'],
+        $_POST['email'],
+        $_POST['telefone'],
+        $_POST['logradouro'],
+        $_POST['numero'],
+        $_POST['bairro'],
+        $_POST['cidade'],
+        $_POST['estado'],
+        $_POST['sexo'],
+        $senhaHash
+    );
 
     if (!$stmt->execute()) {
         throw new Exception('Erro ao cadastrar vendedor: ' . $stmt->error);
@@ -100,15 +90,14 @@ try {
     // Limpa os dados do formulário após sucesso
     unset($_SESSION['form_data']);
     $_SESSION['success_message'] = 'Vendedor cadastrado com sucesso!';
-    header("Location: ../../view/vendedor/listar_vendedores.php");
+    header("Location: ../../view/vendedor/cadastro_vendedor.php");
     exit();
-
 } catch (Exception $e) {
     // Rollback em caso de erro
     if (isset($conn) && method_exists($conn, 'rollback')) {
         $conn->rollback();
     }
-    
+
     // Registra o erro
     registrar_log(
         $conn,
@@ -117,9 +106,8 @@ try {
         $_SERVER['REQUEST_URI'],
         'controller/vendedor/salvar_vendedor.php'
     );
-    
+
     $_SESSION['error_message'] = $e->getMessage();
     header("Location: ../../view/vendedor/cadastro_vendedor.php");
     exit();
 }
-?>

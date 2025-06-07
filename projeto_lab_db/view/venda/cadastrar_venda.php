@@ -107,7 +107,7 @@ $linksAdicionais = [
         <div class="bg-light rounded p-4">
             <form method="POST" action="../../controller/vendas/venda_controller.php" class="row">
                 <input type="hidden" name="fk_vendedor_id" value="<?= $_SESSION['usuario_id'] ?>">
-                
+
                 <div class="col-12 col-lg-6 mb-3">
                     <label for="fk_cliente_id" class="form-label">Cliente:</label>
                     <select name="fk_cliente_id" id="fk_cliente_id" class="form-select" required>
@@ -132,24 +132,26 @@ $linksAdicionais = [
                     <label class="form-label">Produtos:</label>
                     <div id="produtos-container">
                         <div class="row mb-2" data-index="0">
-                            <div class="col-md-6"> <?php // Ajustado o tamanho ?>
+                            <div class="col-md-6"> <?php // Ajustado o tamanho 
+                                                    ?>
                                 <select name="produtos[0][id]" class="form-select produto-select" required>
                                     <option value="">Selecione um produto</option>
                                     <?php // Reset result pointer to reuse for the first product select
-mysqli_data_seek($result_produtos, 0);
+                                    mysqli_data_seek($result_produtos, 0);
                                     while ($produto = mysqli_fetch_assoc($result_produtos)) : ?>
-                                        <option value="<?= $produto['id'] ?>" 
-                                                data-valor="<?= $produto['valor_unidade'] ?>"
-                                                data-quantidade="<?= $produto['quantidade'] ?>">
-                                            <?= $produto['nome'] ?> - R$ <?= number_format($produto['valor_unidade'], 2, ',', '.') ?> 
+                                        <option value="<?= $produto['id'] ?>"
+                                            data-valor="<?= $produto['valor_unidade'] ?>"
+                                            data-quantidade="<?= $produto['quantidade'] ?>">
+                                            <?= $produto['nome'] ?> - R$ <?= number_format($produto['valor_unidade'], 2, ',', '.') ?>
                                             (Estoque: <?= $produto['quantidade'] ?>)
                                         </option>
                                     <?php endwhile; ?>
                                 </select>
                             </div>
-                            <div class="col-md-6"> <?php // Ajustado o tamanho ?>
-                                <input type="number" name="produtos[0][quantidade]" class="form-control quantidade-input" 
-                                       placeholder="Quantidade" min="1" required>
+                            <div class="col-md-6"> <?php // Ajustado o tamanho 
+                                                    ?>
+                                <input type="number" name="produtos[0][quantidade]" class="form-control quantidade-input"
+                                    placeholder="Quantidade" min="1" required>
                             </div>
                         </div>
                     </div>
@@ -204,13 +206,15 @@ mysqli_data_seek($result_produtos, 0);
                 novoProduto.className = 'row mb-2';
                 novoProduto.setAttribute('data-index', produtoCount);
                 novoProduto.innerHTML = `
-                    <div class="col-md-6"> <?php // Ajustado o tamanho ?>
+                    <div class="col-md-6"> <?php // Ajustado o tamanho 
+                                            ?>
                         <select name="produtos[${produtoCount}][id]" class="form-select produto-select" required>
                             <option value="">Selecione um produto</option>
                             ${document.querySelector('.produto-select').innerHTML}
                         </select>
                     </div>
-                    <div class="col-md-6"> <?php // Ajustado o tamanho ?>
+                    <div class="col-md-6"> <?php // Ajustado o tamanho 
+                                            ?>
                         <input type="number" name="produtos[${produtoCount}][quantidade]" class="form-control quantidade-input" 
                                placeholder="Quantidade" min="1" required>
                     </div>
@@ -251,7 +255,7 @@ mysqli_data_seek($result_produtos, 0);
             }
 
             adicionarProdutoBtn.addEventListener('click', adicionarProduto);
-            
+
             // Adicionar listener ao botão remover
             document.getElementById('remover-produto').addEventListener('click', removerProduto);
 
@@ -264,9 +268,9 @@ mysqli_data_seek($result_produtos, 0);
             });
 
             // Ocultar o botão de remover inicialmente se houver apenas um produto
-             if (produtosContainer.children.length === 1) {
-                 document.getElementById('remover-produto').style.display = 'none';
-             }
+            if (produtosContainer.children.length === 1) {
+                document.getElementById('remover-produto').style.display = 'none';
+            }
         });
     </script>
 </body>

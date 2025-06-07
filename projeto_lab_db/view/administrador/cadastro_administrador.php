@@ -6,11 +6,6 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['tipo_usuario'] != 'admin') {
     header("Location: ../../login.php");
     exit();
 }
-
-$mensagem_sucesso = '';
-if (isset($_GET['sucesso']) && $_GET['sucesso'] == 1) {
-    $mensagem_sucesso = 'Administrador cadastrado com sucesso!';
-}
 ?>
 
 <!DOCTYPE html>
@@ -40,18 +35,34 @@ if (isset($_GET['sucesso']) && $_GET['sucesso'] == 1) {
         include '../../components/barra_navegacao.php';
         ?>
 
+        <!-- Mensagens Sucesso/Erro -->
+        <div class="position-fixed top-0 end-0 z-3 p-3">
+            <?php if (isset($_SESSION['success_message'])) { ?>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <?= $_SESSION['success_message'] ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+                </div>
+            <?php
+                unset($_SESSION['success_message']);
+            }
+            ?>
+
+            <?php if (isset($_SESSION['error_message'])) { ?>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <?= $_SESSION['error_message'] ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+                </div>
+            <?php
+                unset($_SESSION['error_message']);
+            }
+            ?>
+        </div>
+
         <h4 class="text-warning">
             Cadastro de Administrador
         </h4>
 
         <div class="bg-light rounded p-4">
-            <?php if (!empty($mensagem_sucesso)): ?>
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <?= $mensagem_sucesso ?>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
-                </div>
-            <?php endif; ?>
-
             <form action="../../controller/administrador/administrador_controller.php" method="POST" class="row">
                 <div class="col-12 col-md-6 mb-3">
                     <label for="usuario" class="form-label">Usuário</label>
@@ -63,8 +74,14 @@ if (isset($_GET['sucesso']) && $_GET['sucesso'] == 1) {
                     <input type="password" name="senha" id="senha" required class="form-control" placeholder="Digite a senha">
                 </div>
 
-                <div class="d-flex justify-content-end">
-                    <button type="submit" name="cadastrar" class="btn btn-success">Cadastrar</button>
+                <div class="d-flex justify-content-end align-items-center gap-2 mt-3">
+                    <button type="reset" class="btn btn-warning">
+                        Limpar
+                    </button>
+
+                    <button type="submit" name="cadastrar" class="btn btn-success">
+                        Cadastrar
+                    </button>
                 </div>
             </form>
         </div>

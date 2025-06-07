@@ -96,7 +96,7 @@ $linksAdicionais = [
                                 <th>Progresso Atual R$</th>
                                 <th>Data de Validade</th>
                                 <th>Última Alteração</th>
-                                <th>Ação</th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
