@@ -44,17 +44,22 @@ if (!$stmt_meta->execute()) {
 $result_meta = $stmt_meta->get_result();
 $meta = $result_meta->fetch_assoc();
 
+$total_vendas = 0;
+
+// Calcula o total de vendas para o ano corrente
 $sql_total_vendas = "SELECT SUM(valor) AS total_vendas 
                      FROM vendas 
-                     WHERE fk_vendedor_id = {$_SESSION['usuario_id']}
-                     AND MONTH(data_venda) = MONTH(CURRENT_DATE())
-                     AND YEAR(data_venda) = YEAR(CURRENT_DATE())";
+                     WHERE fk_vendedor_id = ?
+                     AND YEAR(data_criacao) = YEAR(CURRENT_DATE())";
+
 $stmt_total_vendas = $conn->prepare($sql_total_vendas);
+$stmt_total_vendas->bind_param("i", $_SESSION['usuario_id']);
 if (!$stmt_total_vendas->execute()) {
     die("Erro ao calcular o total das vendas: " . $stmt_total_vendas->error);
 }
 $result_total_vendas = $stmt_total_vendas->get_result();
-$total_vendas = $result_total_vendas->fetch_assoc()['total_vendas'] ?? 0;
+$row_total_vendas = $result_total_vendas->fetch_assoc();
+$total_vendas = $row_total_vendas['total_vendas'] ?? 0;
 
 $linksAdicionais = [
     [

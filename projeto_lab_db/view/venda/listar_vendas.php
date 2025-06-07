@@ -20,11 +20,18 @@ $params = []; // Array para armazenar os parâmetros a serem vinculados (valores
 $types = ""; // String para armazenar os tipos dos parâmetros (ex: 's' para string, 'i' para integer)
 
 // Lógica para aplicar o filtro por data da venda
-if (isset($_GET['data']) && !empty($_GET['data'])) {
-    $data = $_GET['data'];
-    $sql .= " AND DATE(v.data_criacao) = ?"; // Adiciona condição para filtrar por data exata
-    $params[] = $data;
-    $types .= "s"; // Tipo string para a data
+if (isset($_GET['data_inicio']) && !empty($_GET['data_inicio'])) {
+    $data_inicio = $_GET['data_inicio'];
+    $sql .= " AND DATE(v.data_criacao) >= ?";
+    $params[] = $data_inicio;
+    $types .= "s";
+}
+
+if (isset($_GET['data_fim']) && !empty($_GET['data_fim'])) {
+    $data_fim = $_GET['data_fim'];
+    $sql .= " AND DATE(v.data_criacao) <= ?";
+    $params[] = $data_fim;
+    $types .= "s";
 }
 
 // Lógica para aplicar o filtro por nome do vendedor
@@ -87,25 +94,29 @@ $linksAdicionais = [
             <h4 class="text-warning mb-0">Vendas Realizadas</h4>
 
             <!-- Formulário de Filtros -->
-            <form method="GET" class="mb-3"> <!-- Formulário para aplicar os filtros, usa método GET para URLs amigáveis -->
+            <form method="GET" class="mb-3">
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="form-group">
-                            <label for="data" class="text-light">Data da Venda:</label>
-                            <!-- Campo de input para data, com valor pré-preenchido se já filtrado -->
-                            <input type="date" class="form-control" id="data" name="data" value="<?= isset($_GET['data']) ? $_GET['data'] : '' ?>">
+                            <label for="data_inicio" class="text-light">Data Inicial:</label>
+                            <input type="date" class="form-control" id="data_inicio" name="data_inicio" value="<?= isset($_GET['data_inicio']) ? $_GET['data_inicio'] : '' ?>">
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="data_fim" class="text-light">Data Final:</label>
+                            <input type="date" class="form-control" id="data_fim" name="data_fim" value="<?= isset($_GET['data_fim']) ? $_GET['data_fim'] : '' ?>">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
                         <div class="form-group">
                             <label for="vendedor" class="text-light">Vendedor:</label>
-                            <!-- Campo de input para nome do vendedor, com valor pré-preenchido e validação JS -->
-                            <input type="text" class="form-control" id="vendedor" name="vendedor" value="<?= isset($_GET['vendedor']) ? htmlspecialchars($_GET['vendedor']) : '' ?>" placeholder="Nome do vendedor" oninput="this.value = this.value.replace(/^[ ]+|[0-9]/g, '');"> <!-- Validação JS para remover espaços no início e números -->
+                            <input type="text" class="form-control" id="vendedor" name="vendedor" value="<?= isset($_GET['vendedor']) ? htmlspecialchars($_GET['vendedor']) : '' ?>" placeholder="Nome do vendedor" oninput="this.value = this.value.replace(/^[ ]+|[0-9]/g, '');">
                         </div>
                     </div>
-                    <div class="col-md-4 d-flex align-items-end">
-                        <button type="submit" class="btn btn-primary me-2">Filtrar</button> <!-- Botão para submeter o formulário de filtro -->
-                        <a href="listar_vendas.php" class="btn btn-secondary">Limpar Filtros</a> <!-- Botão para limpar os filtros, recarrega a página sem parâmetros -->
+                    <div class="col-md-3 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary me-2">Filtrar</button>
+                        <a href="listar_vendas.php" class="btn btn-secondary">Limpar Filtros</a>
                     </div>
                 </div>
             </form>
