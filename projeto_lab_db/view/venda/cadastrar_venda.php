@@ -42,12 +42,12 @@ $result_clientes = mysqli_query($conn, $query_clientes);
 $query_formas = "SELECT id, descricao FROM forma_pagto ORDER BY descricao";
 $result_formas = mysqli_query($conn, $query_formas);
 
-// Buscar produtos (removido inclusão de tamanho na query)
-$query_produtos = "SELECT p.id, p.nome, p.valor_unidade, e.quantidade 
+// Buscar produtos (incluindo tamanho na query)
+$query_produtos = "SELECT p.id, p.nome, p.valor_unidade, e.quantidade, e.tamanho 
                    FROM produtos p 
                    LEFT JOIN estoque e ON p.id = e.fk_produto_id 
                    WHERE e.quantidade > 0 
-                   ORDER BY p.nome";
+                   ORDER BY p.nome, e.tamanho";
 $result_produtos = mysqli_query($conn, $query_produtos);
 
 $linksAdicionais = [
@@ -132,26 +132,24 @@ $linksAdicionais = [
                     <label class="form-label">Produtos:</label>
                     <div id="produtos-container">
                         <div class="row mb-2" data-index="0">
-                            <div class="col-md-6"> <?php // Ajustado o tamanho 
-                                                    ?>
+                            <div class="col-md-6">
                                 <select name="produtos[0][id]" class="form-select produto-select" required>
                                     <option value="">Selecione um produto</option>
-                                    <?php // Reset result pointer to reuse for the first product select
+                                    <?php 
                                     mysqli_data_seek($result_produtos, 0);
                                     while ($produto = mysqli_fetch_assoc($result_produtos)) : ?>
-                                        <option value="<?= $produto['id'] ?>"
+                                        <option value="<?= $produto['id'] . '-' . $produto['tamanho'] ?>"
                                             data-valor="<?= $produto['valor_unidade'] ?>"
                                             data-quantidade="<?= $produto['quantidade'] ?>">
-                                            <?= $produto['nome'] ?> - R$ <?= number_format($produto['valor_unidade'], 2, ',', '.') ?>
+                                            <?= $produto['nome'] ?> - Tamanho: <?= $produto['tamanho'] ?> - R$ <?= number_format($produto['valor_unidade'], 2, ',', '.') ?>
                                             (Estoque: <?= $produto['quantidade'] ?>)
                                         </option>
                                     <?php endwhile; ?>
                                 </select>
                             </div>
-                            <div class="col-md-6"> <?php // Ajustado o tamanho 
-                                                    ?>
+                            <div class="col-md-6">
                                 <input type="number" name="produtos[0][quantidade]" class="form-control quantidade-input"
-                                    placeholder="Quantidade" min="1" required>
+                                    placeholder="Quantidade" min="1" max="0" required>
                             </div>
                         </div>
                     </div>
@@ -201,70 +199,72 @@ $linksAdicionais = [
                 document.getElementById('valor_total').value = total.toFixed(2);
             }
 
+            // Função para atualizar o max do input de quantidade quando um produto é selecionado
+            function atualizarQuantidadeMaxima(select) {
+                const quantidadeInput = select.closest('.row').querySelector('.quantidade-input');
+                const quantidadeDisponivel = select.options[select.selectedIndex].dataset.quantidade;
+                quantidadeInput.max = quantidadeDisponivel;
+                
+                // Se a quantidade atual for maior que o novo máximo, ajusta para o máximo
+                if (parseInt(quantidadeInput.value) > parseInt(quantidadeDisponivel)) {
+                    quantidadeInput.value = quantidadeDisponivel;
+                }
+                
+                // Atualiza o placeholder para mostrar a quantidade disponível
+                quantidadeInput.placeholder = `Quantidade (máx: ${quantidadeDisponivel})`;
+            }
+
             function adicionarProduto() {
                 const novoProduto = document.createElement('div');
                 novoProduto.className = 'row mb-2';
                 novoProduto.setAttribute('data-index', produtoCount);
                 novoProduto.innerHTML = `
-                    <div class="col-md-6"> <?php // Ajustado o tamanho 
-                                            ?>
+                    <div class="col-md-6">
                         <select name="produtos[${produtoCount}][id]" class="form-select produto-select" required>
                             <option value="">Selecione um produto</option>
                             ${document.querySelector('.produto-select').innerHTML}
                         </select>
                     </div>
-                    <div class="col-md-6"> <?php // Ajustado o tamanho 
-                                            ?>
+                    <div class="col-md-6">
                         <input type="number" name="produtos[${produtoCount}][quantidade]" class="form-control quantidade-input" 
-                               placeholder="Quantidade" min="1" required>
+                               placeholder="Quantidade" min="1" max="0" required>
                     </div>
                 `;
                 produtosContainer.appendChild(novoProduto);
                 produtoCount++;
 
-                novoProduto.querySelector('.produto-select').addEventListener('change', atualizarValorTotal);
+                const novoSelect = novoProduto.querySelector('.produto-select');
+                novoSelect.addEventListener('change', function() {
+                    atualizarQuantidadeMaxima(this);
+                    atualizarValorTotal();
+                });
+                
                 novoProduto.querySelector('.quantidade-input').addEventListener('input', atualizarValorTotal);
 
-                // Mostrar o botão de remover se houver mais de um produto
                 if (produtosContainer.children.length > 1) {
                     document.getElementById('remover-produto').style.display = 'inline-block';
                 }
             }
 
-            function removerProduto() {
-                // Remover a última linha de produto
+            // Adicionar listeners para o primeiro produto
+            document.querySelector('.produto-select').addEventListener('change', function() {
+                atualizarQuantidadeMaxima(this);
+                atualizarValorTotal();
+            });
+            document.querySelector('.quantidade-input').addEventListener('input', atualizarValorTotal);
+
+            // Adicionar listeners para os botões
+            adicionarProdutoBtn.addEventListener('click', adicionarProduto);
+            document.getElementById('remover-produto').addEventListener('click', function() {
                 if (produtosContainer.children.length > 1) {
                     produtosContainer.lastElementChild.remove();
                     atualizarValorTotal();
-                    reindexarProdutos();
+                    produtoCount--;
 
-                    // Ocultar o botão de remover se sobrar apenas um produto
                     if (produtosContainer.children.length === 1) {
                         document.getElementById('remover-produto').style.display = 'none';
                     }
                 }
-            }
-
-            function reindexarProdutos() {
-                produtosContainer.querySelectorAll('.row.mb-2').forEach((row, index) => {
-                    row.setAttribute('data-index', index);
-                    row.querySelector('.produto-select').name = `produtos[${index}][id]`;
-                    row.querySelector('.quantidade-input').name = `produtos[${index}][quantidade]`;
-                });
-                produtoCount = produtosContainer.children.length;
-            }
-
-            adicionarProdutoBtn.addEventListener('click', adicionarProduto);
-
-            // Adicionar listener ao botão remover
-            document.getElementById('remover-produto').addEventListener('click', removerProduto);
-
-            document.querySelectorAll('.produto-select').forEach(select => {
-                select.addEventListener('change', atualizarValorTotal);
-            });
-
-            document.querySelectorAll('.quantidade-input').forEach(input => {
-                input.addEventListener('input', atualizarValorTotal);
             });
 
             // Ocultar o botão de remover inicialmente se houver apenas um produto

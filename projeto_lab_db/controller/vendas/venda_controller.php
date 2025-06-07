@@ -2,68 +2,95 @@
 session_start();
 include '../../connection.php';
 
-
 if (!isset($_POST['cadastrar_venda'])) {
     header("Location: ../../view/venda/cadastrar_venda.php");
     exit();
 }
 
-$cliente_nome = $_POST['cliente_nome'];
+$cliente_id = $_POST['fk_cliente_id'];
 $vendedor_id = $_POST['fk_vendedor_id'];
 $forma_pagto_id = $_POST['fk_forma_pagto_id'];
 $valor_total = $_POST['valor'];
 $produtos = $_POST['produtos']; 
 
-// Verifica se o cliente já existe
-$query_check_cliente = "SELECT id FROM clientes WHERE nome = ?";
-$stmt_check_cliente = $conn->prepare($query_check_cliente);
-$stmt_check_cliente->bind_param("s", $cliente_nome);
-$stmt_check_cliente->execute();
-$result_check_cliente = $stmt_check_cliente->get_result();
+try {
+    $conn->begin_transaction();
 
-if ($result_check_cliente->num_rows > 0) {
-    // Cliente existe, usa o ID existente
-    $cliente = $result_check_cliente->fetch_assoc();
-    $cliente_id = $cliente['id'];
-} else {
-    // Cliente não existe, cadastra novo cliente
-    $query_insert_cliente = "INSERT INTO clientes (nome) VALUES (?)";
-    $stmt_insert_cliente = $conn->prepare($query_insert_cliente);
-    $stmt_insert_cliente->bind_param("s", $cliente_nome);
-    $stmt_insert_cliente->execute();
-    $cliente_id = $conn->insert_id; // Obtém o ID do cliente recém-inserido
-}
-$stmt_check_cliente->close();
+    // Verificar estoque antes de iniciar a venda
+    foreach ($produtos as $produto) {
+        list($produto_id, $tamanho) = explode('-', $produto['id']);
+        $qtd = intval($produto['quantidade']);
+        
+        // Verificar se a quantidade é válida
+        if ($qtd <= 0) {
+            throw new Exception("Quantidade inválida para o produto.");
+        }
 
-$queryVenda = "INSERT INTO vendas (fk_cliente_id, fk_vendedor_id, fk_forma_pagto_id, valor) 
-               VALUES (?, ?, ?, ?)";
-$stmtVenda = $conn->prepare($queryVenda);
-$stmtVenda->bind_param("iiid", $cliente_id, $vendedor_id, $forma_pagto_id, $valor_total);
-$stmtVenda->execute();
+        // Verificar se há estoque suficiente
+        $query_check_estoque = "SELECT quantidade FROM estoque 
+                               WHERE fk_produto_id = ? AND tamanho = ?";
+        $stmt_check_estoque = $conn->prepare($query_check_estoque);
+        $stmt_check_estoque->bind_param("is", $produto_id, $tamanho);
+        $stmt_check_estoque->execute();
+        $result_check_estoque = $stmt_check_estoque->get_result();
+        
+        if ($result_check_estoque->num_rows === 0) {
+            throw new Exception("Produto não encontrado no estoque.");
+        }
 
-$venda_id = $conn->insert_id;
+        $estoque = $result_check_estoque->fetch_assoc();
+        if ($estoque['quantidade'] < $qtd) {
+            throw new Exception("Estoque insuficiente. Disponível: " . $estoque['quantidade'] . " unidades.");
+        }
+    }
 
-
-foreach ($produtos as $produto) {
-    $produto_id = $produto['id'];
-    $qtd = $produto['quantidade']; // Obter a quantidade do array de produtos
+    // Inserir a venda
+    $queryVenda = "INSERT INTO vendas (fk_cliente_id, fk_vendedor_id, fk_forma_pagto_id, valor) 
+                   VALUES (?, ?, ?, ?)";
+    $stmtVenda = $conn->prepare($queryVenda);
+    $stmtVenda->bind_param("iiid", $cliente_id, $vendedor_id, $forma_pagto_id, $valor_total);
     
-    // Inserir item na venda
-    $queryItem = "INSERT INTO item_venda (fk_venda_id, fk_produto_id, qtd_vendida) 
-                  VALUES (?, ?, ?)";
-    $stmtItem = $conn->prepare($queryItem);
-    $stmtItem->bind_param("iii", $venda_id, $produto_id, $qtd);
-    $stmtItem->execute();
+    if (!$stmtVenda->execute()) {
+        throw new Exception("Erro ao registrar a venda: " . $stmtVenda->error);
+    }
 
-    // Atualizar o estoque
-    $queryEstoque = "UPDATE estoque SET quantidade = quantidade - ? 
-                     WHERE fk_produto_id = ? AND quantidade >= ?"; // Adicionado verificação de quantidade
-    $stmtEstoque = $conn->prepare($queryEstoque);
-    $stmtEstoque->bind_param("iii", $qtd, $produto_id, $qtd);
-    $stmtEstoque->execute();
+    $venda_id = $conn->insert_id;
+
+    foreach ($produtos as $produto) {
+        list($produto_id, $tamanho) = explode('-', $produto['id']);
+        $qtd = intval($produto['quantidade']);
+        
+        // Inserir item na venda
+        $queryItem = "INSERT INTO item_venda (fk_venda_id, fk_produto_id, qtd_vendida) 
+                      VALUES (?, ?, ?)";
+        $stmtItem = $conn->prepare($queryItem);
+        $stmtItem->bind_param("iii", $venda_id, $produto_id, $qtd);
+        
+        if (!$stmtItem->execute()) {
+            throw new Exception("Erro ao registrar item da venda: " . $stmtItem->error);
+        }
+
+        // Atualizar o estoque
+        $queryEstoque = "UPDATE estoque 
+                        SET quantidade = quantidade - ? 
+                        WHERE fk_produto_id = ? AND tamanho = ?";
+        $stmtEstoque = $conn->prepare($queryEstoque);
+        $stmtEstoque->bind_param("iis", $qtd, $produto_id, $tamanho);
+        
+        if (!$stmtEstoque->execute()) {
+            throw new Exception("Erro ao atualizar estoque: " . $stmtEstoque->error);
+        }
+    }
+
+    $conn->commit();
+    $_SESSION['success_message'] = 'Venda registrada com sucesso!';
+    header("Location: ../../view/venda/cadastrar_venda.php");
+    exit();
+
+} catch (Exception $e) {
+    $conn->rollback();
+    $_SESSION['error_message'] = $e->getMessage();
+    header("Location: ../../view/venda/cadastrar_venda.php");
+    exit();
 }
-
-
-header("Location: ../../view/logout.php");
-exit();
 ?>
