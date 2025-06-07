@@ -1,0 +1,6 @@
+{
+    "name": "bartira/projeto_lab_db",
+    "require": {
+        "dompdf/dompdf": "^2.0"
+    }
+}

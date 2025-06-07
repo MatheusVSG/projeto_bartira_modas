@@ -148,7 +148,7 @@ $linksAdicionais = [
                                     <td data-label="Valor">R$ <?= number_format($row['valor'], 2, ',', '.') ?></td>
                                     <td data-label="Detalhes">
                                         <!-- Botão para ver os detalhes da venda, redireciona para venda_detalhada.php com o ID da venda -->
-                                        <a href="venda_detalhada.php?id=<?= $row['id'] ?>" class="btn btn-sm btn-info">Ver Detalhes</a>
+                                        <a href="venda_detalhada.php?id=<?= $row['id'] ?>" target="_blank" class="btn btn-sm btn-info">Ver Detalhes</a>
                                     </td>
                                     <td data-label="Data da Venda"><?= date("d/m/Y H:i:s", strtotime($row['data_criacao'])) ?></td>
                                 </tr>

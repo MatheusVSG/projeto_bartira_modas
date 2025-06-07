@@ -1,12 +1,14 @@
 <?php
+
 require_once '../../vendor/autoload.php';
+
 require_once '../../connection.php';
 
 use Dompdf\Dompdf;
 use Dompdf\Options;
 
-// Verifica se o ID da venda foi fornecido
-if (!isset($_GET['id']) || empty($_GET['id'])) {
+// Verifica se o ID da venda foi fornecido ou se é válido
+if (!isset($_GET['id']) || $_GET['id'] <= 0) {
     header("Location: listar_vendas.php");
     exit();
 }
@@ -143,4 +145,3 @@ $dompdf->stream($filename, array('Attachment' => false));
 $stmt->close();
 $stmt_itens->close();
 $conn->close();
-?> 
