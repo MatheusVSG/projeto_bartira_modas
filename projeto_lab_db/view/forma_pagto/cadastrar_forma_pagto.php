@@ -55,7 +55,8 @@ if (isset($_GET['sucesso']) && $_GET['sucesso'] == 1) {
                     <input type="text" name="descricao" id="descricao" class="form-control" required>
                 </div>
 
-                <div class="d-flex justify-content-end">
+                <div class="d-flex justify-content-end gap-2 mt-3">
+                    <button type="reset" class="btn btn-warning">Limpar</button>
                     <button type="submit" name="cadastrar_pagto" class="btn btn-success">Cadastrar</button>
                 </div>
             </form>

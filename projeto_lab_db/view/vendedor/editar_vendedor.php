@@ -11,7 +11,7 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['tipo_usuario'] !== 'admin') {
 
 if (!isset($_GET['id']) || $_GET['id'] <= 0) {
     $_SESSION['error_message'] = 'Vendedor não identificado.';
-    header("Location: listar_vendedores.php");
+    header("Location: editar_vendedor.php");
     exit;
 }
 

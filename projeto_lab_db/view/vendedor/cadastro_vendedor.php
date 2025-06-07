@@ -6,12 +6,6 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['tipo_usuario'] !== 'admin') {
     header("Location: ../../login.php");
     exit();
 }
-
-$mensagem_sucesso = '';
-if (isset($_GET['sucesso']) && $_GET['sucesso'] == 1) {
-    $mensagem_sucesso = 'Vendedor cadastrado com sucesso!';
-}
-
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -19,12 +13,6 @@ if (isset($_GET['sucesso']) && $_GET['sucesso'] == 1) {
 <head>
     <?php include '../../head.php'; ?>
     <title>Bartira Modas | Cadastro de Vendedor</title>
-    <style>
-        .logo {
-            max-width: 200px;
-            margin-bottom: 20px;
-        }
-    </style>
 </head>
 
 <body>
@@ -36,7 +24,6 @@ if (isset($_GET['sucesso']) && $_GET['sucesso'] == 1) {
                 'titulo' => 'Voltar ao Painel',
                 'cor' => 'btn-secondary',
             ],
-            
             [
                 'caminho' => 'listar_vendedores.php',
                 'titulo' => 'Vendedores cadastrados',
@@ -47,18 +34,34 @@ if (isset($_GET['sucesso']) && $_GET['sucesso'] == 1) {
         include '../../components/barra_navegacao.php';
         ?>
 
+        <!-- Mensagens Sucesso/Erro -->
+        <div class="position-fixed top-0 end-0 z-3 p-3">
+            <?php if (isset($_SESSION['success_message'])) { ?>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <?= $_SESSION['success_message'] ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+                </div>
+            <?php
+                unset($_SESSION['success_message']);
+            }
+            ?>
+
+            <?php if (isset($_SESSION['error_message'])) { ?>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <?= $_SESSION['error_message'] ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+                </div>
+            <?php
+                unset($_SESSION['error_message']);
+            }
+            ?>
+        </div>
+
         <h4 class="text-warning mb-0">
             Cadastro de Vendedor
         </h4>
 
         <div class="bg-light rounded p-4">
-            <?php if (!empty($mensagem_sucesso)): ?>
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <?= $mensagem_sucesso ?>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
-                </div>
-            <?php endif; ?>
-
             <form action="../../controller/vendedor/salvar_vendedor.php" method="POST" class="row">
                 <div class="col-12 col-lg-4 mb-3">
                     <label for="nome" class="form-label">Nome</label>
@@ -67,7 +70,9 @@ if (isset($_GET['sucesso']) && $_GET['sucesso'] == 1) {
 
                 <div class="col-12 col-lg-2 mb-3">
                     <label for="cpf" class="form-label">CPF</label>
-                    <input type="text" name="cpf" id="cpf" required class="form-control" pattern="\d{11}" maxlength="11" oninput="this.value = this.value.replace(/\D/g, '')" title="Digite exatamente 11 números, somente dígitos." placeholder="000.000.000-00">
+                    <input type="text" name="cpf" id="cpf" required class="form-control" pattern="\d{11}" maxlength="11"
+                        oninput="this.value = this.value.replace(/\D/g, '')" title="Digite exatamente 11 números, somente dígitos."
+                        placeholder="00000000000">
                 </div>
 
                 <div class="col-12 col-lg-4 mb-3">
@@ -77,17 +82,32 @@ if (isset($_GET['sucesso']) && $_GET['sucesso'] == 1) {
 
                 <div class="col-12 col-lg-2 mb-3">
                     <label for="telefone" class="form-label">Telefone</label>
-                    <input type="text" name="telefone" id="telefone" class="form-control" placeholder="Digite o telefone">
+                    <input type="text" name="telefone" id="telefone" class="form-control" pattern="\d{11}"
+                        oninput="this.value = this.value.replace(/\D/g, '')" maxlength="11" placeholder="Digite o telefone">
                 </div>
 
-                <div class="col-11 col-lg-4 mb-3">
+                <div class="col-12 mb-3">
+                    <p>Sexo</p>
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="form-check">
+                            <input type="radio" name="sexo" value="M" id="Masc" class="form-check-input">
+                            <label for="Masc" class="form-check-label">Masculino</label>
+                        </div>
+                        <div class="form-check">
+                            <input type="radio" name="sexo" value="F" id="Fem" class="form-check-input">
+                            <label for="Fem" class="form-check-label">Feminino</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-lg-4 mb-3">
                     <label for="logradouro" class="form-label">Logradouro</label>
                     <input type="text" name="logradouro" id="logradouro" class="form-control" placeholder="Digite o logradouro">
                 </div>
 
-                <div class="col-2 col-lg-1 mb-3">
+                <div class="col-12 col-lg-1 mb-3">
                     <label for="numero" class="form-label">Nº</label>
-                    <input type="text" name="numero" id="numero" class="form-control" placeholder="Ex.: 10">
+                    <input type="text" name="numero" id="numero" class="form-control" maxlength="5" placeholder="Ex.: 10">
                 </div>
 
                 <div class="col-12 col-lg-3 mb-3">
@@ -101,11 +121,11 @@ if (isset($_GET['sucesso']) && $_GET['sucesso'] == 1) {
                 </div>
 
                 <div class="col-12 col-lg-1 mb-3">
-                   <label for="estado" class="form-label">Estado</label>
+                    <label for="estado" class="form-label">Estado</label>
                     <select type="text" name="estado" id="estado" class="form-select">
                         <option value="">Selecione o Estado</option>
                         <?php
-                        include '../../../components/estados.php';
+                        include '../../components/estados.php';
                         foreach ($estados as $estado) {
                         ?>
                             <option value="<?php echo $estado ?>"><?php echo $estado ?></option>
@@ -115,25 +135,18 @@ if (isset($_GET['sucesso']) && $_GET['sucesso'] == 1) {
                     </select>
                 </div>
 
-                <div class="col-12 col-lg-2 mb-3">
-                    <label for="sexo" class="form-label">Sexo</label>
-                    <select name="sexo" id="sexo" class="form-control">
-                        <option value="">Selecione</option>
-                        <option value="M">Masculino</option>
-                        <option value="F">Feminino</option>
-                    </select>
-                </div>
-
                 <div class="col-12 col-lg-3 mb-3">
                     <label for="senha" class="form-label">Senha</label>
                     <input type="password" name="senha" id="senha" required class="form-control" placeholder="Digite a senha">
                 </div>
 
-                <div class="d-flex justify-content-end">
+                <div class="d-flex justify-content-end align-items-center gap-2 mt-3">
+                    <button type="reset" class="btn btn-warning">Limpar</button>
                     <button type="submit" name="cadastrar" class="btn btn-success">Cadastrar</button>
                 </div>
             </form>
         </div>
     </div>
 </body>
+
 </html>
