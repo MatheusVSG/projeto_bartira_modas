@@ -29,7 +29,7 @@ $produtos = $conn->query($sql);
                 'cor' => 'btn-secondary',
             ],
             [
-                'caminho' => 'listar_produto.php',
+                'caminho' => 'listar_estoque.php',
                 'titulo' => 'Produtos Cadastrados',
                 'cor' => 'btn-primary',
             ]

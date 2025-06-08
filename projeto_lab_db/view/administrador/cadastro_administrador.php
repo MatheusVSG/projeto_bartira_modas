@@ -58,7 +58,7 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['tipo_usuario'] != 'admin') {
             ?>
         </div>
 
-        <h4 class="text-warning">
+        <h4 class="text-warning mb-4">
             Cadastro de Administrador
         </h4>
 
@@ -66,12 +66,12 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['tipo_usuario'] != 'admin') {
             <form action="../../controller/administrador/administrador_controller.php" method="POST" class="row">
                 <div class="col-12 col-md-6 mb-3">
                     <label for="usuario" class="form-label">Usuário</label>
-                    <input type="text" name="usuario" id="usuario" required class="form-control" placeholder="Digite o nome de usuário">
+                    <input type="text" name="usuario" id="usuario" required placeholder="Digite o nome de usuário" class="form-control">
                 </div>
 
                 <div class="col-12 col-md-6 mb-3">
                     <label for="senha" class="form-label">Senha</label>
-                    <input type="password" name="senha" id="senha" required class="form-control" placeholder="Digite a senha">
+                    <input type="password" name="senha" id="senha" required  placeholder="Digite a senha" class="form-control">
                 </div>
 
                 <div class="d-flex justify-content-end align-items-center gap-2 mt-3">

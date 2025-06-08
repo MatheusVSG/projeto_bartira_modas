@@ -69,7 +69,7 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['tipo_usuario'] != 'admin') {
                     <div class="card-body d-flex flex-column justify-content-between">
                         <h4 class="card-title">Estoque</h4>
                         <p class="card-text">Visualizar e atualizar o estoque.</p>
-                        <a href="../estoque/listar_estoque.php" class="btn btn-primary mt-3">Acessar</a>
+                        <a href="../produto/listar_estoque.php" class="btn btn-primary mt-3">Acessar</a>
                     </div>
                 </div>
             </div>

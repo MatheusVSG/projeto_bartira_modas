@@ -1,21 +1,29 @@
 <?php
 session_start();
 
+if (!isset($_SESSION['tipo_usuario']) || $_SESSION['tipo_usuario'] != 'admin') {
+    $_SESSION['error_message'] = 'Acesso negado. Administrador não autenticado!';
+    header("Location: ../../");
+    exit;
+}
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST' && !isset($_GET['excluir'])) {
     $_SESSION['error_message'] = 'Acesso inválido. Requisição não permitida!';
     header("Location: ../../view/administrador/listar_administrador.php");
     exit;
 }
 
-include_once '../../connection.php';
-include('../logs/logger.controller.php');
+require_once '../../connection.php';
+require_once '../logs/logger.controller.php';
+
+
 
 // Operação de Cadastro
 if (isset($_POST['cadastrar'])) {
     $usuario = trim($_POST['usuario']);
     $senha = $_POST['senha'];
 
-    if (empty($usuario) || empty($senha)) {
+    if (empty(trim($usuario)) || empty(trim($senha))) {
         $_SESSION['error_message'] = 'Usuário e senha são obrigatórios!';
         header("Location: ../../view/administrador/cadastro_administrador.php");
         exit;
@@ -66,8 +74,15 @@ if (isset($_POST['cadastrar'])) {
 // Operação de Edição
 if (isset($_POST['editar'])) {
     $id = $_POST['id'];
+
     $usuario = trim($_POST['usuario']);
     $senha = $_POST['senha'];
+
+    if (empty(trim($usuario)) || empty(trim($senha))) {
+        $_SESSION['error_message'] = 'Usuário e senha são obrigatórios!';
+        header("Location: ../../view/administrador/cadastro_administrador.php");
+        exit;
+    }
 
     if (empty($usuario)) {
         $_SESSION['error_message'] = 'O usuário não pode ficar em branco!';
@@ -161,6 +176,7 @@ if (isset($_GET['excluir'])) {
         $_SESSION['error_message'] = 'Erro ao excluir administrador. Tente novamente.';
     }
 
+    $conn->close();
     header("Location: ../../view/administrador/cadastro_administrador.php");
     exit;
 }
