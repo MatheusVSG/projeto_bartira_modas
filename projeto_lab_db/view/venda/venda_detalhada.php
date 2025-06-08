@@ -68,7 +68,7 @@ $linksAdicionais = [
                     <div class="card bg-secondary text-light mb-3">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <h5 class="card-title mb-0">Venda #<?= $row['venda_id'] ?></h5>
-                            <button type="button" class="btn btn-success" onclick="gerarRelatorio(<?= $row['venda_id'] ?>)">Gerar Relatório</button>
+                            <a href="relatorio_venda_especifica.php?id=<?php echo $row['venda_id'] ?>" target="_blank" class="btn btn-success">Gerar Relatório</a>
                         </div>
                         <div class="card-body">
                             <div class="row mb-2">
@@ -121,12 +121,6 @@ $linksAdicionais = [
             </div>
         </div>
     </div>
-
-    <script>
-        function gerarRelatorio(vendaId) {
-            window.location.href = 'relatorio_venda_especifica.php?id=' + vendaId;
-        }
-    </script>
 </body>
 
 </html>

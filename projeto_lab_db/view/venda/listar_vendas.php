@@ -90,6 +90,33 @@ $linksAdicionais = [
     <div class="w-100 min-vh-100 bg-dark px-3 pb-3">
         <?php include '../../components/barra_navegacao.php'; ?> <!-- Inclui a barra de navegação -->
 
+        <!-- Alertas -->
+        <div class="position-fixed top-0 end-0 z-3 p-3">
+            <?php if (isset($_SESSION['success_message'])) { ?>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <?= $_SESSION['success_message'] ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+                </div>
+                <?php unset($_SESSION['success_message']); ?>
+            <?php } ?>
+
+            <?php if (isset($_SESSION['warning_message'])) { ?>
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <?= $_SESSION['warning_message'] ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+                </div>
+                <?php unset($_SESSION['warning_message']); ?>
+            <?php } ?>
+
+            <?php if (isset($_SESSION['error_message'])) { ?>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <?= $_SESSION['error_message'] ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+                </div>
+                <?php unset($_SESSION['error_message']); ?>
+            <?php } ?>
+        </div>
+
         <div class="responsive-container">
             <h4 class="text-warning mb-0">Vendas Realizadas</h4>
 
@@ -148,7 +175,7 @@ $linksAdicionais = [
                                     <td data-label="Valor">R$ <?= number_format($row['valor'], 2, ',', '.') ?></td>
                                     <td data-label="Detalhes">
                                         <!-- Botão para ver os detalhes da venda, redireciona para venda_detalhada.php com o ID da venda -->
-                                        <a href="venda_detalhada.php?id=<?= $row['id'] ?>" target="_blank" class="btn btn-sm btn-info">Ver Detalhes</a>
+                                        <a href="venda_detalhada.php?id=<?= $row['id'] ?>" class="btn btn-sm btn-info">Ver Detalhes</a>
                                     </td>
                                     <td data-label="Data da Venda"><?= date("d/m/Y H:i:s", strtotime($row['data_criacao'])) ?></td>
                                 </tr>

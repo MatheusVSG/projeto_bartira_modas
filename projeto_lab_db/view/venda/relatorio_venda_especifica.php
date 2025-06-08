@@ -1,22 +1,31 @@
 <?php
+session_start();
 
 require_once '../../vendor/autoload.php';
-
-require_once '../../connection.php';
 
 use Dompdf\Dompdf;
 use Dompdf\Options;
 
+if (!isset($_SESSION['tipo_usuario']) || $_SESSION['tipo_usuario'] != 'admin') {
+    $_SESSION['error_message'] = 'Acesso negado! Administrador não autenticado';
+    header("Location: ../../");
+    exit();
+}
+
 // Verifica se o ID da venda foi fornecido ou se é válido
 if (!isset($_GET['id']) || $_GET['id'] <= 0) {
+    $_SESSION['error_message'] = 'ID de venda inválido';
     header("Location: listar_vendas.php");
     exit();
 }
 
 $venda_id = $_GET['id'];
 
-// Consulta SQL para obter os detalhes da venda
-$sql = "SELECT v.id AS venda_id, v.valor AS valor_total, v.data_criacao AS data_venda,
+try {
+    require_once '../../connection.php';
+    
+    // Consulta SQL para obter os detalhes da venda
+    $sql = "SELECT v.id AS venda_id, v.valor AS valor_total, v.data_criacao AS data_venda,
                c.nome AS cliente_nome, c.telefone AS cliente_telefone, c.email AS cliente_email,
                ve.nome AS vendedor_nome, ve.telefone AS vendedor_telefone, ve.email AS vendedor_email,
                fp.descricao AS forma_pagamento
@@ -26,39 +35,44 @@ $sql = "SELECT v.id AS venda_id, v.valor AS valor_total, v.data_criacao AS data_
         INNER JOIN forma_pagto fp ON v.fk_forma_pagto_id = fp.id
         WHERE v.id = ?";
 
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $venda_id);
-$stmt->execute();
-$result = $stmt->get_result();
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $venda_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-if ($result->num_rows === 0) {
-    header("Location: listar_vendas.php");
-    exit();
-}
+    if ($result->num_rows === 0) {
+        header("Location: listar_vendas.php");
+        exit();
+    }
 
-$venda = $result->fetch_assoc();
+    $venda = $result->fetch_assoc();
 
-// Consulta SQL para obter os itens da venda
-$sql_itens = "SELECT p.nome, t.nome as tipo_nome, iv.qtd_vendida
+    // Consulta SQL para obter os itens da venda
+    $sql_itens = "SELECT p.nome, iv.qtd_vendida
               FROM item_venda iv
               INNER JOIN produtos p ON iv.fk_produto_id = p.id
-              LEFT JOIN tipos_produto t ON p.tipo_id = t.id
-              WHERE iv.fk_venda_id = ?";
+              WHERE iv.fk_venda_id = ?
+              ORDER BY p.nome ASC";
 
-$stmt_itens = $conn->prepare($sql_itens);
-$stmt_itens->bind_param("i", $venda_id);
-$stmt_itens->execute();
-$itens_result = $stmt_itens->get_result();
+    $stmt_itens = $conn->prepare($sql_itens);
+    $stmt_itens->bind_param("i", $venda_id);
+    $stmt_itens->execute();
+    $itens_result = $stmt_itens->get_result();
 
-// Configuração do DOMPDF
-$options = new Options();
-$options->set('isHtml5ParserEnabled', true);
-$options->set('isPhpEnabled', true);
+    if ($itens_result->num_rows === 0) {
+        header("Location: listar_vendas.php");
+        exit();
+    }
 
-$dompdf = new Dompdf($options);
+    // Configuração do DOMPDF
+    $options = new Options();
+    $options->set('isHtml5ParserEnabled', true);
+    $options->set('isPhpEnabled', true);
 
-// HTML do relatório
-$html = '
+    $dompdf = new Dompdf($options);
+
+    // HTML do relatório
+    $html = '
 <!DOCTYPE html>
 <html>
 <head>
@@ -102,22 +116,20 @@ $html = '
             <thead>
                 <tr>
                     <th>Produto</th>
-                    <th>Tipo</th>
                     <th>Quantidade</th>
                 </tr>
             </thead>
             <tbody>';
 
-while ($item = $itens_result->fetch_assoc()) {
-    $html .= '
+    while ($item = $itens_result->fetch_assoc()) {
+        $html .= '
                 <tr>
                     <td>' . htmlspecialchars($item['nome']) . '</td>
-                    <td>' . htmlspecialchars($item['tipo_nome'] ?? 'N/A') . '</td>
                     <td>' . htmlspecialchars($item['qtd_vendida']) . '</td>
                 </tr>';
-}
+    }
 
-$html .= '
+    $html .= '
             </tbody>
         </table>
     </div>
@@ -130,18 +142,19 @@ $html .= '
 </body>
 </html>';
 
-// Gera o PDF
-$dompdf->loadHtml($html);
-$dompdf->setPaper('A4', 'portrait');
-$dompdf->render();
+    // Gera o PDF
+    $dompdf->loadHtml($html);
+    $dompdf->setPaper('A4', 'portrait');
+    $dompdf->render();
 
-// Define o nome do arquivo
-$filename = 'relatorio_venda_' . $venda_id . '.pdf';
+    // Define o nome do arquivo
+    $filename = 'relatorio_venda_' . $venda_id . '.pdf';
 
-// Envia o PDF para o navegador
-$dompdf->stream($filename, array('Attachment' => false));
-
-// Fecha as conexões
-$stmt->close();
-$stmt_itens->close();
-$conn->close();
+    // Envia o PDF para o navegador
+    $dompdf->stream($filename, array('Attachment' => false));
+} catch (Exception $e) {
+} finally {
+    $stmt->close();
+    $stmt_itens->close();
+    $conn->close();
+}

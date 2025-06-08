@@ -34,7 +34,7 @@ $produtos = $conn->query($sql);
                 'cor' => 'btn-primary',
             ]
         ];
-        include '../../components/barra_navegacao.php';
+        include_once '../../components/barra_navegacao.php';
         ?>
 
         <!-- Alertas -->
