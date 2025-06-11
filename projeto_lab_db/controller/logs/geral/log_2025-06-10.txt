@@ -1,0 +1,1 @@
+[2025-06-10 00:17:04] Erro ao excluir vendedor | Cannot delete or update a parent row: a foreign key constraint fails (`loja_de_roupas`.`vendas`, CONSTRAINT `vendas_ibfk_2` FOREIGN KEY (`fk_vendedor_id`) REFERENCES `vendedores` (`id`)) - ID: 2 | /projeto_bartira_modas/projeto_lab_db/controller/vendedor/excluir_vendedor.php?id=2 | controller/vendedor/excluir_vendedor.php

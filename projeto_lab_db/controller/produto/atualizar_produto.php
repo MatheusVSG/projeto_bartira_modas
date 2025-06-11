@@ -117,7 +117,7 @@ try {
                 header("Location: ../../view/produto/editar_produto.php?id=$id&tamanho=$tamanho");
             } else {
                 // Redireciona para a listagem de estoque caso contrário
-                header("Location: ../../view/estoque/listar_estoque.php");
+                header("Location: ../../view/produto/listar_estoque.php");
             }
             exit();
         } else {

@@ -1,0 +1,18 @@
+10/06/2025
+// Adicionar o campo data_de_atualizacao
+ALTER TABLE estoque 
+DROP COLUMN data_de_modificacao;
+
+// Remover o campo da consulta
+ALTER TABLE logs
+DROP COLUMN link;
+
+ALTER TABLE produtos
+DROP COLUMN quantidade;
+
+ALTER TABLE vendas
+DROP COLUMN valor_total;
+DROP COLUMN data_venda;
+
+ALTER TABLE vendedores
+DROP COLUMN tipo;
