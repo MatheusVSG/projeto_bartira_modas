@@ -47,7 +47,7 @@ $linksAdicionais = [
                                 <th>Título</th>
                                 <th>Descrição</th>
                                 <th>Endereço</th>
-                                <th>Link</th>
+                                <th></th>
                                 <th>Data</th>
                             </tr>
                         </thead>

@@ -83,7 +83,7 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['tipo_usuario'] !== 'admin') {
                 <div class="col-12 col-lg-2 mb-3">
                     <label for="telefone" class="form-label">Telefone</label>
                     <input type="text" name="telefone" id="telefone" class="form-control" pattern="\d{11}"
-                        oninput="this.value = this.value.replace(/\D/g, '')" maxlength="11" placeholder="Digite o telefone">
+                        oninput="this.value = this.value.replace(/\D/g, '')" maxlength="11" required placeholder="Digite o telefone">
                 </div>
 
                 <div class="col-12 mb-3">
@@ -94,7 +94,7 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['tipo_usuario'] !== 'admin') {
                             <label for="Masc" class="form-check-label">Masculino</label>
                         </div>
                         <div class="form-check">
-                            <input type="radio" name="sexo" value="F" id="Fem" class="form-check-input">
+                            <input type="radio" name="sexo" value="F" id="Fem" class="form-check-input" required>
                             <label for="Fem" class="form-check-label">Feminino</label>
                         </div>
                     </div>

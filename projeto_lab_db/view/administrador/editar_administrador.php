@@ -1,57 +1,117 @@
 <?php
 session_start();
-include '../../connection.php';
-include '../../head.php';
+include_once '../../connection.php';
 
 if (!isset($_SESSION['usuario_id']) || $_SESSION['tipo_usuario'] != 'admin') {
+    $_SESSION['error_message'] = 'Acesso negado. Você não tem permissão para realizar esta ação.';
     header("Location: ../../login.php");
     exit();
 }
 
+if (!isset($_GET['id']) || $_GET['id'] <= 0) {
+    $_SESSION['error_message'] = 'Não foi possível carregar os dados. Administrador não identificado.';
+    header("Location: ../../view/administrador/listar_administrador.php");
+    exit;
+}
+
 $id = $_GET['id'];
-$stmt = $conn->prepare("SELECT * FROM administrador WHERE id=?");
+$sql = "SELECT * FROM administrador WHERE id = ?";
+$stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $id);
 $stmt->execute();
-$result = $stmt->get_result();
-$admin = $result->fetch_assoc();
+$resultado = $stmt->get_result();
+
+if ($resultado->num_rows !== 1) {
+    $_SESSION['error_message'] = 'Administrador não encontrado.';
+    header("Location: ../../view/administrador/listar_administrador.php");
+    exit;
+}
+
+$admin = $resultado->fetch_assoc();
 ?>
 
 <!DOCTYPE html>
 <html lang="pt-BR">
 
 <head>
-    <meta charset="UTF-8">
-    <title>Editar Administrador</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
+    <?php include '../../head.php'; ?>
+    <title>Bartira Modas | Editar Administrador</title>
 </head>
 
-<body class="bg-dark text-light">
-    <div class="container py-4">
-        <div class="d-flex justify-content-end mb-2 gap-2">
-            <a href="listar_administrador.php" class="btn btn-secondary btn-sm position-fixed" style="top: 24px; right: 24px; z-index: 999;">Voltar</a>
+<body>
+    <div class="w-100 min-vh-100 bg-dark px-3 pb-3">
+        <?php
+        $linksAdicionais = [
+            [
+                'caminho' => '../administrador/home_adm.php',
+                'titulo' => 'Voltar ao Painel',
+                'cor' => 'btn-secondary'
+            ],
+            [
+                'caminho' => 'listar_administrador.php',
+                'titulo' => 'Administradores Cadastrados',
+                'cor' => 'btn-primary'
+            ]
+        ];
+
+        include '../../components/barra_navegacao.php';
+        ?>
+
+        <!-- Mensagens Sucesso/Erro -->
+        <div class="position-fixed top-0 end-0 z-3 p-3">
+            <?php if (isset($_SESSION['success_message'])) { ?>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <?= $_SESSION['success_message'] ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+                </div>
+            <?php
+                unset($_SESSION['success_message']);
+            }
+            ?>
+
+            <?php if (isset($_SESSION['error_message'])) { ?>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <?= $_SESSION['error_message'] ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+                </div>
+            <?php
+                unset($_SESSION['error_message']);
+            }
+            ?>
         </div>
-        <h1 class="text-center text-warning mb-4">Editar Administrador</h1>
 
-        <form action="../../controller/administrador/administrador_controller.php" method="POST" class="bg-light text-dark p-4 rounded shadow">
-            <input type="hidden" name="id" value="<?= $admin['id'] ?>">
+        <h4 class="text-warning">
+            Editar Administrador
+        </h4>
 
-            <div class="mb-3">
-                <label for="usuario" class="form-label">Usuário</label>
-                <input type="text" name="usuario" id="usuario" class="form-control" value="<?= $admin['usuario'] ?>" required>
-            </div>
+        <div class="bg-light rounded p-4">
+            <form action="../../controller/administrador/administrador_controller.php" method="POST" class="row">
+                <input type="hidden" name="id" value="<?= htmlspecialchars($admin['id']) ?>">
 
-            <div class="mb-3">
-                <label for="senha" class="form-label">Senha</label>
-                <input type="password" name="senha" id="senha" class="form-control" placeholder="Nova senha" required>
-            </div>
+                <div class="col-12 col-md-6 mb-3">
+                    <label for="usuario" class="form-label">Usuário</label>
+                    <input type="text" name="usuario" id="usuario" class="form-control"
+                        value="<?= htmlspecialchars($admin['usuario']) ?>" required>
+                </div>
 
-            <div class="d-flex justify-content-start gap-2 mt-3">
-                <button type="submit" name="editar" class="btn btn-success">Atualizar</button>
-            </div>
-        </form>
+                <div class="col-12 col-md-6 mb-3">
+                    <label for="senha" class="form-label">Senha</label>
+                    <input type="password" name="senha" id="senha" class="form-control"
+                        placeholder="Deixe em branco para manter a senha atual">
+                </div>
+
+                <div class="d-flex justify-content-end align-items-center gap-2 mt-3">
+                    <button type="reset" class="btn btn-warning">
+                        Limpar
+                    </button>
+
+                    <button type="submit" name="editar" class="btn btn-success">
+                        Salvar Alterações
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" defer></script>
 </body>
 
 </html>

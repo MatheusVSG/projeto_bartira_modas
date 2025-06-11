@@ -65,7 +65,7 @@ $result = mysqli_query($conn, $sql);
                                 <th>Nome</th>
                                 <th>CPF</th>
                                 <th>Email</th>
-                                <th>Tipo</th>
+                                <th></th>
                                 <th>Ações</th>
                             </tr>
                         </thead>

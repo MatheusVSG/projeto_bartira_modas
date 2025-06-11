@@ -3,29 +3,10 @@ session_start();
 include_once '../../connection.php';
 
 if (!isset($_SESSION['usuario_id']) || $_SESSION['tipo_usuario'] !== 'admin') {
+    $_SESSION['error_message'] = 'Acesso negado. Você não tem permissão para realizar esta ação.';
     header("Location: ../../login.php");
     exit();
 }
-
-$mensagem_sucesso = '';
-if (isset($_GET['excluido']) && $_GET['excluido'] == 1) {
-    $mensagem_sucesso = 'Administrador excluído com sucesso!';
-} elseif (isset($_GET['atualizado']) && $_GET['atualizado'] == 1) {
-    $mensagem_sucesso = 'Administrador atualizado com sucesso!';
-}
-
-$linksAdicionais = [
-    [
-        'caminho' => '../administrador/home_adm.php',
-        'titulo' => 'Voltar ao Painel',
-        'cor' => 'btn-secondary'
-    ],
-    [
-        'caminho' => 'cadastro_administrador.php',
-        'titulo' => 'Novo Administrador',
-        'cor' => 'btn-primary'
-    ]
-];
 
 $sql = "SELECT * FROM administrador ORDER BY usuario";
 $result = mysqli_query($conn, $sql);
@@ -40,25 +21,55 @@ $result = mysqli_query($conn, $sql);
 </head>
 
 <body>
-    <div class="w-100 min-vh-100 bg-dark px-3 pb-3">
-        <?php include '../../components/barra_navegacao.php'; ?>
+    <div class="w-100 vh-100 d-flex flex-column bg-dark px-3 pb-3">
+        <?php
+        $linksAdicionais = [
+            [
+                'caminho' => '../administrador/home_adm.php',
+                'titulo' => 'Voltar ao Painel',
+                'cor' => 'btn-secondary'
+            ],
+            [
+                'caminho' => 'cadastro_administrador.php',
+                'titulo' => 'Novo Administrador',
+                'cor' => 'btn-primary'
+            ]
+        ];
 
-        <div class="responsive-container">
-            <h4 class="text-warning mb-0">
-                Lista de Administradores
-            </h4>
+        include '../../components/barra_navegacao.php';
+        ?>
 
-            <?php if (!empty($mensagem_sucesso)): ?>
-                <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
-                    <?= htmlspecialchars($mensagem_sucesso) ?>
+        <div class="position-fixed top-0 end-0 z-3 p-3">
+            <?php if (isset($_SESSION['success_message'])) { ?>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <?= $_SESSION['success_message'] ?>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
                 </div>
-            <?php endif; ?>
+            <?php
+                unset($_SESSION['success_message']);
+            }
+            ?>
 
-            <div class="table-responsive mt-3">
-                <?php if (mysqli_num_rows($result) > 0): ?>
+            <?php if (isset($_SESSION['error_message'])) { ?>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <?= $_SESSION['error_message'] ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+                </div>
+            <?php
+                unset($_SESSION['error_message']);
+            }
+            ?>
+        </div>
+
+        <h4 class="text-warning">
+            Lista de Administradores
+        </h4>
+
+        <div class="flex-grow-1 overflow-y-hidden">
+            <?php if (mysqli_num_rows($result) > 0): ?>
+                <div class="h-100 overflow-y-auto table-responsive">
                     <table class="custom-table">
-                        <thead>
+                        <thead class="position-sticky top-0 start-0 z-2">
                             <tr>
                                 <th>ID</th>
                                 <th>Usuário</th>
@@ -73,17 +84,21 @@ $result = mysqli_query($conn, $sql);
                                     <td data-label="Ações">
                                         <div class="action-buttons">
                                             <a href="editar_administrador.php?id=<?= $admin['id'] ?>" class="action-btn btn-edit">Editar</a>
-                                            <a href="../../controller/administrador/administrador_controller.php?excluir=<?= $admin['id'] ?>" class="action-btn btn-delete" onclick="return confirm('Tem certeza que deseja excluir este administrador?')">Excluir</a>
+                                            <a href="../../controller/administrador/administrador_controller.php?excluir=<?= $admin['id'] ?>"
+                                                class="action-btn btn-delete"
+                                                onclick="return confirm('Tem certeza que deseja excluir este administrador?')">
+                                                Excluir
+                                            </a>
                                         </div>
                                     </td>
                                 </tr>
                             <?php endwhile; ?>
                         </tbody>
                     </table>
-                <?php else: ?>
-                    <div class="no-results">Nenhum administrador cadastrado.</div>
-                <?php endif; ?>
-            </div>
+                </div>
+            <?php else: ?>
+                <div class="no-results">Nenhum administrador cadastrado.</div>
+            <?php endif; ?>
         </div>
     </div>
 </body>
