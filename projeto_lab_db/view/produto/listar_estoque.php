@@ -1,31 +1,39 @@
 <?php
-session_start();
+session_start();  // Inicia a sessão para controle de login/autenticação
+
+// Verifica se o usuário está logado e se o tipo é 'admin' ou 'vendedor'
 if (
     !isset($_SESSION['usuario_id'])
     || !in_array($_SESSION['tipo_usuario'], ['admin', 'vendedor'])
 ) {
-    header("Location: ../../login.php");
+    header("Location: ../../login.php"); // Redireciona para login caso não esteja autorizado
     exit();
 }
 
-include '../../connection.php';
+include '../../connection.php'; // Inclui a conexão com o banco de dados
 
+// Recebe os filtros passados via GET (parâmetros da URL)
 $tipoFiltro = isset($_GET['tipo_id']) ? $_GET['tipo_id'] : '';
 $nomeFiltro = isset($_GET['nome_produto']) ? $_GET['nome_produto'] : '';
 
+// Monta a query base para buscar os produtos com seus tipos e estoque
 $query = "SELECT p.id as produto_id, p.nome as produto_nome, p.valor_unidade, p.foto, p.tipo_id, t.nome as tipo_nome, e.tamanho, e.quantidade
           FROM produtos p
           LEFT JOIN tipos_produto t ON p.tipo_id = t.id
           LEFT JOIN estoque e ON p.id = e.fk_produto_id
-          WHERE 1=1";
+          WHERE 1=1";  // WHERE 1=1 facilita a concatenação dos filtros abaixo
 
+// Adiciona filtro por tipo, se informado
 if ($tipoFiltro) {
     $query .= " AND t.id = '" . mysqli_real_escape_string($conn, $tipoFiltro) . "'";
 }
+
+// Adiciona filtro por nome do produto, se informado
 if ($nomeFiltro) {
     $query .= " AND p.nome LIKE '%" . mysqli_real_escape_string($conn, $nomeFiltro) . "%'";
 }
 
+// Executa a query no banco
 $result = mysqli_query($conn, $query);
 ?>
 
@@ -33,13 +41,14 @@ $result = mysqli_query($conn, $query);
 <html lang="pt-BR">
 
 <head>
-    <?php include '../../head.php'; ?>
+    <?php include '../../head.php'; ?> <!-- Inclui cabeçalho comum -->
     <title>Bartira Modas | Estoque</title>
 </head>
 
 <body>
     <div class="w-100 vh-100 d-flex flex-column bg-dark px-3 pb-3">
         <?php
+        // Configura os links de navegação dependendo do tipo do usuário
         $linksAdicionais = [
             [
                 'caminho' => $_SESSION['tipo_usuario'] == 'admin' ? '../administrador/home_adm.php' : '../vendedor/home_vendedor.php',
@@ -48,6 +57,7 @@ $result = mysqli_query($conn, $query);
             ],
         ];
 
+        // Se for admin, adiciona link para cadastro de produto
         if ($_SESSION['tipo_usuario'] == 'admin') {
             array_push($linksAdicionais, [
                 'caminho' => '../produto/cadastro-produto.php',
@@ -56,9 +66,10 @@ $result = mysqli_query($conn, $query);
             ]);
         }
 
-        include '../../components/barra_navegacao.php'
+        include '../../components/barra_navegacao.php'  // Inclui barra de navegação
         ?>
 
+        <!-- Área para exibir mensagens de sucesso ou erro -->
         <div class="position-fixed top-0 end-0 z-3 p-3">
             <?php if (isset($_SESSION['success_message'])) { ?>
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -84,6 +95,7 @@ $result = mysqli_query($conn, $query);
         <h4 class="text-warning">Estoque</h4>
 
         <div class="flex-grow-1 overflow-y-hidden d-flex flex-column">
+            <!-- Formulário de filtro para nome do produto e tipo -->
             <form method="GET" class="d-flex gap-2 align-items-end mb-3">
                 <div>
                     <label for="nome_produto" class="form-label text-light">Nome do Produto</label>
@@ -95,6 +107,7 @@ $result = mysqli_query($conn, $query);
                     <select name="tipo_id" id="tipo_id" class="form-select">
                         <option value="">Todos</option>
                         <?php
+                        // Popula os tipos de produto na seleção
                         $tipos = $conn->query("SELECT id, nome FROM tipos_produto");
                         while ($tipo = $tipos->fetch_assoc()) {
                             $selected = ($tipoFiltro == $tipo['id']) ? 'selected' : '';
@@ -108,6 +121,7 @@ $result = mysqli_query($conn, $query);
                 <a href="relatorio_estoque_pdf.php" target="_blank" class="btn btn-success">Gerar PDF</a>
             </form>
 
+            <!-- Tabela de resultados -->
             <div class="flex-grow-1 table-responsive">
                 <table class="h-100 overflow-y-auto custom-table">
                     <thead class="position-sticky top-0 start-0 z-2">
@@ -119,15 +133,14 @@ $result = mysqli_query($conn, $query);
                             <th>Foto</th>
                             <th>Tamanho</th>
                             <th>Quantidade</th>
-                            <?php if ($_SESSION['tipo_usuario'] == 'admin') {
-                            ?>
-                                <th></th>
+                            <?php if ($_SESSION['tipo_usuario'] == 'admin') { ?>
+                                <th></th> <!-- Coluna extra para admin (botões de ação) -->
                             <?php } ?>
                         </tr>
                     </thead>
                     <tbody>
                         <?php if ($result->num_rows > 0) {
-                            // Se admin
+                            // Se for admin, permite editar valor e quantidade no estoque
                             if ($_SESSION['tipo_usuario'] == 'admin') {
                                 while ($row = mysqli_fetch_assoc($result)) { ?>
                                     <form action="../../controller/produto/atualizar_produto.php" method="POST">
@@ -150,15 +163,16 @@ $result = mysqli_query($conn, $query);
 
                                             <td>
                                                 <?php if (!empty($row['foto'])): ?>
+                                                    <!-- Imagem com modal para ampliar -->
                                                     <a href="#" data-bs-toggle="modal" data-bs-target="#modalFotoEstoque<?php echo $row['produto_id'] . str_replace(' ', '', $row['tamanho']); ?>">
                                                         <img src="../produto/fotos/<?php echo $row['foto']; ?>" width="50" class="rounded">
                                                     </a>
-
                                                 <?php else: ?>
                                                     <span>Sem foto</span>
                                                 <?php endif; ?>
                                             </td>
 
+                                            <!-- Modal para mostrar foto ampliada -->
                                             <div class="modal fade" id="modalFotoEstoque<?php echo $row['produto_id'] . str_replace(' ', '', $row['tamanho']); ?>" tabindex="-1" aria-labelledby="modalFotoEstoqueLabel<?php echo $row['produto_id'] . str_replace(' ', '', $row['tamanho']); ?>" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                                     <div class="modal-content">
@@ -182,6 +196,7 @@ $result = mysqli_query($conn, $query);
                                             </td>
 
                                             <td>
+                                                <!-- Botões para salvar e editar -->
                                                 <button type="submit" class="action-btn btn btn-success mb-2">Salvar</button>
                                                 <a href="../produto/editar_produto.php?id=<?php echo $row['produto_id']; ?>&tamanho=<?php echo $row['tamanho']; ?>" class="action-btn btn-edit">Editar</a>
                                             </td>
@@ -189,7 +204,7 @@ $result = mysqli_query($conn, $query);
                                     </form>
                                 <?php }
                             }
-                            // Se Vendedor
+                            // Se for vendedor, apenas mostra os dados sem inputs para edição
                             else {
                                 while ($row = mysqli_fetch_assoc($result)) { ?>
                                     <tr>

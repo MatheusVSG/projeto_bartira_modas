@@ -1,30 +1,34 @@
 <?php
+// Inicia a sessão para acessar variáveis como tipo de usuário
 session_start();
 
+// Carrega automaticamente todas as dependências (inclui o DomPDF)
 require_once '../../vendor/autoload.php';
 
+// Usa as classes da biblioteca DomPDF
 use Dompdf\Dompdf;
 use Dompdf\Options;
 
+// Verifica se o usuário está logado como administrador
 if (!isset($_SESSION['tipo_usuario']) || $_SESSION['tipo_usuario'] != 'admin') {
     $_SESSION['error_message'] = 'Acesso negado! Administrador não autenticado';
-    header("Location: ../../");
+    header("Location: ../../"); // Redireciona para a página inicial
     exit();
 }
 
-// Verifica se o ID da venda foi fornecido ou se é válido
+// Verifica se o ID da venda foi passado pela URL e se é válido
 if (!isset($_GET['id']) || $_GET['id'] <= 0) {
     $_SESSION['error_message'] = 'ID de venda inválido';
     header("Location: listar_vendas.php");
     exit();
 }
 
-$venda_id = $_GET['id'];
+$venda_id = $_GET['id']; // Armazena o ID da venda
 
 try {
-    require_once '../../connection.php';
-    
-    // Consulta SQL para obter os detalhes da venda
+    require_once '../../connection.php'; // Conexão com o banco de dados
+
+    // Consulta principal para obter detalhes da venda, cliente, vendedor e forma de pagamento
     $sql = "SELECT v.id AS venda_id, v.valor AS valor_total, v.data_criacao AS data_venda,
                c.nome AS cliente_nome, c.telefone AS cliente_telefone, c.email AS cliente_email,
                ve.nome AS vendedor_nome, ve.telefone AS vendedor_telefone, ve.email AS vendedor_email,
@@ -36,18 +40,19 @@ try {
         WHERE v.id = ?";
 
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $venda_id);
+    $stmt->bind_param("i", $venda_id); // Substitui o "?" pelo ID da venda
     $stmt->execute();
     $result = $stmt->get_result();
 
+    // Se não encontrar nenhuma venda com o ID, redireciona
     if ($result->num_rows === 0) {
         header("Location: listar_vendas.php");
         exit();
     }
 
-    $venda = $result->fetch_assoc();
+    $venda = $result->fetch_assoc(); // Recupera os dados da venda
 
-    // Consulta SQL para obter os itens da venda
+    // Consulta para buscar os produtos e quantidades vendidos nessa venda
     $sql_itens = "SELECT p.nome, iv.qtd_vendida
               FROM item_venda iv
               INNER JOIN produtos p ON iv.fk_produto_id = p.id
@@ -55,23 +60,25 @@ try {
               ORDER BY p.nome ASC";
 
     $stmt_itens = $conn->prepare($sql_itens);
-    $stmt_itens->bind_param("i", $venda_id);
+    $stmt_itens->bind_param("i", $venda_id); // Substitui o "?" pelo ID da venda
     $stmt_itens->execute();
     $itens_result = $stmt_itens->get_result();
 
+    // Se não houver itens vinculados à venda, redireciona
     if ($itens_result->num_rows === 0) {
         header("Location: listar_vendas.php");
         exit();
     }
 
-    // Configuração do DOMPDF
+    // Configuração das opções do DomPDF
     $options = new Options();
-    $options->set('isHtml5ParserEnabled', true);
-    $options->set('isPhpEnabled', true);
+    $options->set('isHtml5ParserEnabled', true); // Habilita o parser HTML5
+    $options->set('isPhpEnabled', true); // Permite código PHP no HTML (caso use)
 
+    // Cria uma instância do Dompdf
     $dompdf = new Dompdf($options);
 
-    // HTML do relatório
+    // Início do HTML que será convertido em PDF
     $html = '
 <!DOCTYPE html>
 <html>
@@ -121,6 +128,7 @@ try {
             </thead>
             <tbody>';
 
+    // Laço para inserir os itens da venda no HTML
     while ($item = $itens_result->fetch_assoc()) {
         $html .= '
                 <tr>
@@ -142,18 +150,20 @@ try {
 </body>
 </html>';
 
-    // Gera o PDF
+    // Carrega o HTML no DomPDF
     $dompdf->loadHtml($html);
-    $dompdf->setPaper('A4', 'portrait');
-    $dompdf->render();
+    $dompdf->setPaper('A4', 'portrait'); // Define o tamanho e orientação da página
+    $dompdf->render(); // Renderiza o conteúdo
 
-    // Define o nome do arquivo
+    // Define o nome do arquivo PDF
     $filename = 'relatorio_venda_' . $venda_id . '.pdf';
 
-    // Envia o PDF para o navegador
+    // Exibe o PDF no navegador (sem forçar download)
     $dompdf->stream($filename, array('Attachment' => false));
 } catch (Exception $e) {
+    // Aqui poderia ser exibida uma mensagem de erro, mas está vazio
 } finally {
+    // Fecha os recursos do banco de dados
     $stmt->close();
     $stmt_itens->close();
     $conn->close();
