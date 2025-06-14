@@ -72,7 +72,23 @@ try {
             $foto = uniqid() . '.' . $ext;
             $destino = "../../view/produto/fotos/" . $foto;
             $foto_tmp = $_FILES['foto']['tmp_name'];
-            move_uploaded_file($foto_tmp, $destino);
+            
+            // Verifica se o diretório existe
+            if (!file_exists("../../view/produto/fotos/")) {
+                mkdir("../../view/produto/fotos/", 0777, true);
+            }
+            
+            // Tenta fazer o upload
+            if (!move_uploaded_file($foto_tmp, $destino)) {
+                $_SESSION['error_message'] = 'Erro ao fazer upload da foto!';
+                throw new Exception('Erro ao fazer upload da foto!');
+            }
+
+            // Verifica se o arquivo foi realmente criado
+            if (!file_exists($destino)) {
+                $_SESSION['error_message'] = 'Erro ao salvar a foto!';
+                throw new Exception('Erro ao salvar a foto!');
+            }
         } else {
             $foto = '';
         }
@@ -128,6 +144,37 @@ try {
 
         if (empty(trim($tamanho))) {
             $tamanho = '';
+        }
+
+        // Faz o upload da foto (se houver)
+        if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
+            $nome_original = $_FILES['foto']['name'];
+            $ext = pathinfo($nome_original, PATHINFO_EXTENSION);
+            $foto = uniqid() . '.' . $ext;
+            $destino = "../../view/produto/fotos/" . $foto;
+            $foto_tmp = $_FILES['foto']['tmp_name'];
+            
+            // Verifica se o diretório existe
+            if (!file_exists("../../view/produto/fotos/")) {
+                mkdir("../../view/produto/fotos/", 0777, true);
+            }
+            
+            // Tenta fazer o upload
+            if (!move_uploaded_file($foto_tmp, $destino)) {
+                $_SESSION['error_message'] = 'Erro ao fazer upload da foto!';
+                throw new Exception('Erro ao fazer upload da foto!');
+            }
+
+            // Atualiza a foto do produto
+            $sql_foto = "UPDATE produtos SET foto = ? WHERE id = ?";
+            $stmt_foto = $conn->prepare($sql_foto);
+            $stmt_foto->bind_param("si", $foto, $produto_id);
+            
+            if (!$stmt_foto->execute()) {
+                $_SESSION['error_message'] = 'Erro ao atualizar a foto do produto!';
+                throw new Exception('Erro ao atualizar a foto do produto!');
+            }
+            $stmt_foto->close();
         }
 
         $sql_check = "SELECT id FROM estoque WHERE fk_produto_id = ? AND tamanho = ?";

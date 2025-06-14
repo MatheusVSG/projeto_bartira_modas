@@ -51,7 +51,7 @@ $result = mysqli_query($conn, $query);
         // Configura os links de navegação dependendo do tipo do usuário
         $linksAdicionais = [
             [
-                'caminho' => $_SESSION['tipo_usuario'] == 'admin' ? '../administrador/home_adm.php' : '../vendedor/home_vendedor.php',
+                'caminho' => $_SESSION['tipo_usuario'] == 'admin' ? '../../view/administrador/home_adm.php' : '../../view/vendedor/home_vendedor.php',
                 'titulo' => 'Voltar ao Painel',
                 'cor' => 'btn-secondary',
             ],
@@ -60,7 +60,7 @@ $result = mysqli_query($conn, $query);
         // Se for admin, adiciona link para cadastro de produto
         if ($_SESSION['tipo_usuario'] == 'admin') {
             array_push($linksAdicionais, [
-                'caminho' => '../produto/cadastro-produto.php',
+                'caminho' => '../../view/produto/cadastro-produto.php',
                 'titulo' => 'Cadastrar Produto',
                 'cor' => 'btn-primary',
             ]);
@@ -214,27 +214,30 @@ $result = mysqli_query($conn, $query);
                                         <td><?php echo $row['tipo_nome']; ?></td>
                                         <td>
                                             <?php if (!empty($row['foto'])): ?>
-                                                <a href="#" data-toggle="modal" data-target="#modalFotoEstoque<?php echo $row['produto_id'] . str_replace(' ', '', $row['tamanho']); ?>">
-                                                    <img src="../produto/fotos/<?php echo $row['foto']; ?>" width="50" class="rounded">
+                                                <!-- Imagem com modal para ampliar -->
+                                                <a href="#" data-bs-toggle="modal" data-bs-target="#modalFotoEstoque<?php echo $row['produto_id'] . str_replace(' ', '', $row['tamanho']); ?>">
+                                                    <img src="../produto/fotos/<?php echo $row['foto']; ?>" width="50" class="rounded" onerror="this.onerror=null; this.src='../../assets/img/no-image.png';">
                                                 </a>
-
-                                                <div class="modal fade" id="modalFotoEstoque<?php echo $row['produto_id'] . str_replace(' ', '', $row['tamanho']); ?>" tabindex="-1" role="dialog" aria-labelledby="modalFotoEstoqueLabel<?php echo $row['produto_id'] . str_replace(' ', '', $row['tamanho']); ?>" aria-hidden="true">
-                                                    <div class="modal-dialog modal-dialog-centered" role="document">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header position-relative">
-                                                                <h5 class="modal-title" id="modalFotoEstoqueLabel<?php echo $row['produto_id'] . str_replace(' ', '', $row['tamanho']); ?>">Foto do Produto: <?php echo $row['produto_nome']; ?></h5>
-                                                                <button type="button" class="btn-close position-absolute" style="right: 16px; top: 16px;" data-dismiss="modal" aria-label="Fechar"></button>
-                                                            </div>
-                                                            <div class="modal-body text-center">
-                                                                <img src="../produto/fotos/<?php echo $row['foto']; ?>" class="img-fluid rounded">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
                                             <?php else: ?>
                                                 <span>Sem foto</span>
                                             <?php endif; ?>
                                         </td>
+
+                                        <!-- Modal para mostrar foto ampliada -->
+                                        <div class="modal fade" id="modalFotoEstoque<?php echo $row['produto_id'] . str_replace(' ', '', $row['tamanho']); ?>" tabindex="-1" aria-labelledby="modalFotoEstoqueLabel<?php echo $row['produto_id'] . str_replace(' ', '', $row['tamanho']); ?>" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header position-relative">
+                                                        <h5 class="modal-title" id="modalFotoEstoqueLabel<?php echo $row['produto_id'] . str_replace(' ', '', $row['tamanho']); ?>">Foto do Produto: <?php echo $row['produto_nome']; ?></h5>
+                                                        <button type="button" class="btn-close position-absolute" style="right: 16px; top: 16px;" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                                                    </div>
+                                                    <div class="modal-body text-center">
+                                                        <img src="../produto/fotos/<?php echo $row['foto']; ?>" class="img-fluid rounded" style="width: 100%; height: auto" onerror="this.onerror=null; this.src='../../assets/img/no-image.png';">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
                                         <td><?php echo $row['tamanho'] ?? '-'; ?></td>
                                         <td><?php echo $row['quantidade'] ?? '-'; ?></td>
                                     </tr>

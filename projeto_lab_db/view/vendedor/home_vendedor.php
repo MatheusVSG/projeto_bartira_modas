@@ -47,7 +47,7 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['tipo_usuario'] != 'vendedor') 
                     <div class="card-body d-flex flex-column justify-content-between">
                         <h4 class="card-title text-dark">Estoque</h4>
                         <p class="card-text">Visualizar o estoque.</p>
-                        <a href="../estoque/listar_estoque.php" class="btn btn-primary mt-3">Acessar</a>
+                        <a href="../produto/listar_estoque.php" class="btn btn-primary mt-3">Acessar</a>
                     </div>
                 </div>
             </div>

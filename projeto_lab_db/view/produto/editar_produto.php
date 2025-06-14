@@ -10,7 +10,7 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['tipo_usuario'] != 'admin') {
 
 if (!isset($_GET['id']) || $_GET['id'] <= 0) {
     $_SESSION['error_message'] = 'Produto não identificado.';
-    header("Location: ../../view/produto/listar_produtos.php");
+    header("Location: ../../view/produto/listar_estoque.php");
     exit;
 }
 
@@ -53,7 +53,7 @@ $produto = $resultado->fetch_assoc();
                 'cor' => 'btn-secondary'
             ],
             [
-                'caminho' => '../../view/produto/listar_produtos.php',
+                'caminho' => '../../view/produto/listar_estoque.php',
                 'titulo' => 'Produtos Cadastrados',
                 'cor' => 'btn-primary'
             ]

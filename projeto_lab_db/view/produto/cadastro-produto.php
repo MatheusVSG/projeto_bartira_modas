@@ -67,7 +67,7 @@ $produtos = $conn->query($sql);
         <h4 class="text-warning mb-4">Cadastro de Produto</h4>
 
         <div class="bg-light rounded p-4">
-            <form action="../../controller/produto/salvar_produto.php" method="POST" class="row">
+            <form action="../../controller/produto/salvar_produto.php" method="POST" class="row" enctype="multipart/form-data">
                 <div class="form-group mb-3">
                     <label for="produto_id" class="form-label">Selecione um Produto ou Cadastre um Novo:</label>
                     <select name="produto_id" id="produto_id" required class="form-select">
