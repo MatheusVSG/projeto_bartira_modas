@@ -25,8 +25,8 @@ $meta = $result_meta->fetch_assoc();
 $sql_total_vendas = "SELECT SUM(valor) AS total_vendas 
                      FROM vendas 
                      WHERE fk_vendedor_id = {$_SESSION['usuario_id']}
-                     AND MONTH(data_venda) = MONTH(CURRENT_DATE())
-                     AND YEAR(data_venda) = YEAR(CURRENT_DATE())";
+                     AND MONTH(data_criacao) = MONTH(CURRENT_DATE())
+                     AND YEAR(data_criacao) = YEAR(CURRENT_DATE())";
 $stmt_total_vendas = $conn->prepare($sql_total_vendas);
 if (!$stmt_total_vendas->execute()) {
     die("Erro ao calcular o total das vendas: " . $stmt_total_vendas->error);
