@@ -31,7 +31,7 @@ $linksAdicionais = [
 ];
 
 // Primeiro buscamos todos os vendedores
-$sql_vendedores = "SELECT id, nome FROM vendedores WHERE tipo = 'vendedor' ORDER BY nome";
+$sql_vendedores = "SELECT id, nome FROM vendedores ORDER BY nome";
 $vendedores = mysqli_query($conn, $sql_vendedores);
 ?>
 

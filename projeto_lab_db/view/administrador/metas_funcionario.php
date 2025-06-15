@@ -70,9 +70,11 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['tipo_usuario'] !== 'admin') {
                     <select name="vendedor_id" class="form-select" required>
                         <option value="">Selecione</option>
                         <?php
-                        $res = mysqli_query($conn, "SELECT id, nome FROM vendedores WHERE tipo = 'vendedor'");
+                        $vendedor_selecionado = isset($_GET['vendedor_id']) ? $_GET['vendedor_id'] : '';
+                        $res = mysqli_query($conn, "SELECT id, nome FROM vendedores ORDER BY nome");
                         while ($v = mysqli_fetch_assoc($res)) {
-                            echo "<option value='{$v['id']}'>{$v['nome']}</option>";
+                            $selected = ($v['id'] == $vendedor_selecionado) ? 'selected' : '';
+                            echo "<option value='{$v['id']}' {$selected}>{$v['nome']}</option>";
                         }
                         ?>
                     </select>

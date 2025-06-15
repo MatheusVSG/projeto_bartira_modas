@@ -65,7 +65,6 @@ $result = mysqli_query($conn, $sql);
                                 <th>Nome</th>
                                 <th>CPF</th>
                                 <th>Email</th>
-                                <th></th>
                                 <th>Ações</th>
                             </tr>
                         </thead>
@@ -76,11 +75,6 @@ $result = mysqli_query($conn, $sql);
                                     <td data-label="Nome"><?= htmlspecialchars($vendedor['nome']) ?></td>
                                     <td data-label="CPF"><?= htmlspecialchars($vendedor['cpf']) ?></td>
                                     <td data-label="Email"><?= htmlspecialchars($vendedor['email']) ?></td>
-                                    <td data-label="Tipo">
-                                        <span class="status-badge <?= $vendedor['tipo'] === 'admin' ? 'badge-admin' : 'badge-vendedor' ?>">
-                                            <?= $vendedor['tipo'] === 'admin' ? 'Administrador' : 'Vendedor' ?>
-                                        </span>
-                                    </td>
                                     <td data-label="Ações">
                                         <div class="action-buttons">
                                             <a href="editar_vendedor.php?id=<?= $vendedor['id'] ?>" class="action-btn btn-edit">Editar</a>
