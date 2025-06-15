@@ -6,10 +6,9 @@ function registrar_log($conn, $titulo, $descricao, $endereco = '', $link = '', $
     $titulo = mysqli_real_escape_string($conn, $titulo);
     $descricao = mysqli_real_escape_string($conn, $descricao);
     $endereco = mysqli_real_escape_string($conn, $endereco);
-    $link = mysqli_real_escape_string($conn, $link);
 
     // Monta a query para inserir o log na tabela 'logs' no banco de dados
-    $sql = "INSERT INTO logs (titulo, descricao, endereco, link) VALUES ('$titulo', '$descricao', '$endereco', '$link')";
+    $sql = "INSERT INTO logs (titulo, descricao, endereco) VALUES ('$titulo', '$descricao', '$endereco')";
     // Executa a query no banco
     mysqli_query($conn, $sql);
 

@@ -1,0 +1,1 @@
+[2025-06-15 22:33:13] Erro ao cadastrar vendedor | CPF já cadastrado no sistema! | /projeto_bartira_modas/projeto_lab_db/controller/vendedor/salvar_vendedor.php | controller/vendedor/salvar_vendedor.php
