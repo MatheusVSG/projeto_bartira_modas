@@ -2,17 +2,16 @@
 // Inicia ou retoma a sessão atual
 session_start();
 
-// Inclui o arquivo de conexão com o banco de dados (assumindo que define $conn)
-include_once 'connection.php';
-
-// Verifica se houve erro na conexão com o banco de dados
-if ($conn->connect_error) {
-    // Para a execução e exibe mensagem de erro se a conexão falhar
-    die("Falha na conexão: " . $conn->connect_error);
-}
-
 // Verifica se o método da requisição HTTP é POST, ou seja, se um formulário foi enviado
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Inclui o arquivo de conexão com o banco de dados (assumindo que define $conn)
+    include_once 'connection.php';
+
+    // Verifica se houve erro na conexão com o banco de dados
+    if ($conn->connect_error) {
+        // Para a execução e exibe mensagem de erro se a conexão falhar
+        die("Falha na conexão: " . $conn->connect_error);
+    }
 
     // Verifica se o formulário enviado é o de login de vendedor
     if (isset($_POST['login_vendedor'])) {
@@ -42,6 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if ($result->num_rows > 0) {
                 // Busca os dados do vendedor em formato de array associativo
                 $vendedor = $result->fetch_assoc();
+                $conn->close();
                 // Verifica se a senha informada corresponde ao hash armazenado no banco
                 if (password_verify($senha, $vendedor['senha'])) {
                     // Define variáveis de sessão para indicar que o vendedor está logado
@@ -56,12 +56,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     // Termina a execução do script após o redirecionamento
                     exit;
                 } else {
+                    $conn->close();
                     // Se a senha não bate, salva mensagem de erro na sessão
                     $_SESSION['error_message'] = "Credenciais inválidas!";
                     // Redireciona para o login
                     header("Location: index.php");
                 }
             } else {
+                $conn->close();
                 // Se não encontrou vendedor com o CPF, mostra erro igual
                 $_SESSION['error_message'] = "Credenciais inválidas!";
                 header("Location: index.php");
@@ -93,6 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if ($result->num_rows > 0) {
                 // Busca os dados do administrador
                 $admin = $result->fetch_assoc();
+                $conn->close();
                 // Verifica se a senha informada confere com o hash armazenado
                 if (password_verify($senha, $admin['senha'])) {
                     // Define as variáveis de sessão para o admin logado
@@ -104,10 +107,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     unset($_SESSION['error_message']);
                     exit;
                 } else {
+                    $conn->close();
                     $_SESSION['error_message'] = "Credenciais inválidas!";
                     header("Location: index.php");
                 }
             } else {
+                $conn->close();
                 $_SESSION['error_message'] = "Credenciais inválidas!";
                 header("Location: index.php");
             }

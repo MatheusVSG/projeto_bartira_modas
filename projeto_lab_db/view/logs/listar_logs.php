@@ -64,7 +64,6 @@ $linksAdicionais = [
                                 <th>Título</th>
                                 <th>Descrição</th>
                                 <th>Endereço</th>
-                                <th></th> <!-- Coluna sem título, provavelmente para o link -->
                                 <th>Data</th>
                             </tr>
                         </thead>
@@ -79,7 +78,6 @@ $linksAdicionais = [
                                     <td data-label="Título"><?= htmlspecialchars($row['titulo']) ?></td> <!-- htmlspecialchars para evitar XSS -->
                                     <td data-label="Descrição"><?= htmlspecialchars($row['descricao']) ?></td>
                                     <td data-label="Endereço"><?= htmlspecialchars($row['endereco']) ?></td>
-                                    <td data-label="Link"><?= htmlspecialchars($row['link']) ?></td>
                                     <!-- Formata a data para o formato brasileiro dia/mês/ano hora:minuto:segundo -->
                                     <td data-label="Data"><?= date("d/m/Y H:i:s", strtotime($row['data_criacao'])) ?></td>
                                 </tr>

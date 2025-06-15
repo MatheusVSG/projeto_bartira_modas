@@ -59,7 +59,6 @@ if (isset($_SESSION['tipo_usuario']) && isset($_SESSION['usuario_id'])) {
             <p class="text-light fs-4">Vendas online</p>
         </div>
 
-
         <div class="row w-100 justify-content-center">
 
             <div class="col-12 col-md-5 m-2">

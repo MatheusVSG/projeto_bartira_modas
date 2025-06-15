@@ -16,8 +16,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST' && !isset($_GET['excluir'])) {
 require_once '../../connection.php';
 require_once '../logs/logger.controller.php';
 
-
-
 // Operação de Cadastro
 if (isset($_POST['cadastrar'])) {
     $usuario = trim($_POST['usuario']);
@@ -30,6 +28,7 @@ if (isset($_POST['cadastrar'])) {
     }
 
     try {
+        $conn->begin_transaction();
         // Verifica se usuário já existe
         $sql = "SELECT id FROM administrador WHERE usuario = ?";
         $stmt = $conn->prepare($sql);
@@ -40,6 +39,7 @@ if (isset($_POST['cadastrar'])) {
         if ($result->num_rows > 0) {
             $_SESSION['error_message'] = 'O nome de usuário já está em uso. Por favor, escolha outro.';
             header("Location: ../../view/administrador/cadastro_administrador.php");
+            $conn->close();
             exit;
         }
 
@@ -52,11 +52,14 @@ if (isset($_POST['cadastrar'])) {
         if ($stmt->execute()) {
             $_SESSION['success_message'] = 'Administrador cadastrado com sucesso!';
             header("Location: ../../view/administrador/cadastro_administrador.php");
+            $conn->commit();
+            $conn->close();
             exit;
         } else {
             throw new Exception('Erro ao cadastrar administrador: ' . $stmt->error);
         }
     } catch (Exception $e) {
+        $conn->rollback();
         registrar_log(
             $conn,
             'Erro ao cadastrar administrador',
@@ -67,6 +70,7 @@ if (isset($_POST['cadastrar'])) {
 
         $_SESSION['error_message'] = 'Erro ao cadastrar administrador. Tente novamente.';
         header("Location: ../../view/administrador/cadastro_administrador.php");
+        $conn->close();
         exit;
     }
 }
@@ -78,9 +82,9 @@ if (isset($_POST['editar'])) {
     $usuario = trim($_POST['usuario']);
     $senha = $_POST['senha'];
 
-    if (empty(trim($usuario)) || empty(trim($senha))) {
-        $_SESSION['error_message'] = 'Usuário e senha são obrigatórios!';
-        header("Location: ../../view/administrador/cadastro_administrador.php");
+    if (empty(trim($usuario))) {
+        $_SESSION['error_message'] = 'Usuário obrigatório!';
+        header("Location: ../../view/administrador/editar_administrador.php?id=$id");
         exit;
     }
 
@@ -91,6 +95,7 @@ if (isset($_POST['editar'])) {
     }
 
     try {
+        $conn->begin_transaction();
         // Verifica se o novo usuário já existe (excluindo o próprio registro)
         $sql = "SELECT id FROM administrador WHERE usuario = ? AND id != ?";
         $stmt = $conn->prepare($sql);
@@ -101,6 +106,7 @@ if (isset($_POST['editar'])) {
         if ($result->num_rows > 0) {
             $_SESSION['error_message'] = 'O nome de usuário já está em uso. Por favor, escolha outro.';
             header("Location: ../../view/administrador/editar_administrador.php?id=$id");
+            $conn->close();
             exit;
         }
 
@@ -119,11 +125,14 @@ if (isset($_POST['editar'])) {
         if ($stmt->execute()) {
             $_SESSION['success_message'] = 'Administrador atualizado com sucesso!';
             header("Location: ../../view/administrador/listar_administrador.php");
+            $conn->commit();
+            $conn->close();
             exit;
         } else {
             throw new Exception('Erro ao atualizar administrador: ' . $stmt->error);
         }
     } catch (Exception $e) {
+        $conn->rollback();
         registrar_log(
             $conn,
             'Erro ao atualizar administrador',
@@ -134,15 +143,17 @@ if (isset($_POST['editar'])) {
 
         $_SESSION['error_message'] = 'Erro ao atualizar administrador. Tente novamente.';
         header("Location: ../../view/administrador/editar_administrador.php?id=$id");
+        $conn->close();
         exit;
     }
 }
 
-// Operação de Exclusão
+// peração de Exclusão
 if (isset($_GET['excluir'])) {
     $id = $_GET['excluir'];
 
     try {
+        $conn->begin_transaction();
         // Verifica se é o último administrador
         $sql = "SELECT COUNT(*) as total FROM administrador";
         $result = $conn->query($sql);
@@ -150,7 +161,8 @@ if (isset($_GET['excluir'])) {
 
         if ($row['total'] <= 1) {
             $_SESSION['error_message'] = 'Não é possível excluir o último administrador!';
-            header("Location: ../../view/administrador/cadastro_administrador.php");
+            header("Location: ../../view/administrador/listar_administrador.php");
+            $conn->close();
             exit;
         }
 
@@ -161,10 +173,13 @@ if (isset($_GET['excluir'])) {
 
         if ($stmt->execute()) {
             $_SESSION['success_message'] = 'Administrador excluído com sucesso!';
+            $conn->commit();
         } else {
             throw new Exception('Erro ao excluir administrador: ' . $stmt->error);
         }
     } catch (Exception $e) {
+        $conn->rollback();
+
         registrar_log(
             $conn,
             'Erro ao excluir administrador',
@@ -177,6 +192,6 @@ if (isset($_GET['excluir'])) {
     }
 
     $conn->close();
-    header("Location: ../../view/administrador/cadastro_administrador.php");
+    header("Location: ../../view/administrador/listar_administrador.php");
     exit;
 }

@@ -72,12 +72,12 @@ try {
             $foto = uniqid() . '.' . $ext;
             $destino = "../../view/produto/fotos/" . $foto;
             $foto_tmp = $_FILES['foto']['tmp_name'];
-            
+
             // Verifica se o diretório existe
             if (!file_exists("../../view/produto/fotos/")) {
                 mkdir("../../view/produto/fotos/", 0777, true);
             }
-            
+
             // Tenta fazer o upload
             if (!move_uploaded_file($foto_tmp, $destino)) {
                 $_SESSION['error_message'] = 'Erro ao fazer upload da foto!';
@@ -153,12 +153,12 @@ try {
             $foto = uniqid() . '.' . $ext;
             $destino = "../../view/produto/fotos/" . $foto;
             $foto_tmp = $_FILES['foto']['tmp_name'];
-            
+
             // Verifica se o diretório existe
             if (!file_exists("../../view/produto/fotos/")) {
                 mkdir("../../view/produto/fotos/", 0777, true);
             }
-            
+
             // Tenta fazer o upload
             if (!move_uploaded_file($foto_tmp, $destino)) {
                 $_SESSION['error_message'] = 'Erro ao fazer upload da foto!';
@@ -169,7 +169,7 @@ try {
             $sql_foto = "UPDATE produtos SET foto = ? WHERE id = ?";
             $stmt_foto = $conn->prepare($sql_foto);
             $stmt_foto->bind_param("si", $foto, $produto_id);
-            
+
             if (!$stmt_foto->execute()) {
                 $_SESSION['error_message'] = 'Erro ao atualizar a foto do produto!';
                 throw new Exception('Erro ao atualizar a foto do produto!');
@@ -209,6 +209,7 @@ try {
             throw new Exception('Erro ao executar verificação para o tamanho ' . htmlspecialchars($tamanho));
         }
     }
+    $conn->close();
 } catch (Exception $e) {
     $conn->rollback();
 
@@ -222,5 +223,6 @@ try {
     );
 
     header('Location: ../../view/produto/cadastro-produto.php');
+    $conn->close();
     exit();
 }
