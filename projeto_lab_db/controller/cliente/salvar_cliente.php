@@ -24,10 +24,13 @@ $sexo = $_POST['sexo'] ?? '';
 if (empty(trim($nome))) {
     $_SESSION['error_message'] = 'O nome não pode ficar em branco!';
     header("Location: ../../view/cliente/cadastro_cliente.php");
+    $conn->close();
     exit;
 }
 
 try {
+    $conn->begin_transaction();
+
     $sql = "INSERT INTO clientes (nome, cpf, email, telefone, logradouro, numero, bairro, cidade, estado, sexo)
 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
@@ -42,11 +45,15 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     if ($stmt->execute()) {
         $_SESSION['success_message'] = 'Cliente cadastrado com sucesso!';
         header("Location: ../../view/cliente/cadastro_cliente.php");
+        $conn->commit();
+        $conn->close();
         exit;
     } else {
         throw new Exception('Erro na execução da consulta: ' . $stmt->error);
     }
 } catch (Exception $e) {
+    $conn->rollback();
+
     registrar_log(
         $conn,
         'Erro ao salvar cliente',
@@ -54,8 +61,9 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $_SERVER['REQUEST_URI'],
         'controller/cliente/salvar_cliente.php'
     );
-    
+
     $_SESSION['error_message'] = 'Erro ao salvar cliente. Verifique os dados e tente novamente.';
     header("Location: ../../view/cliente/cadastro_cliente.php");
+    $conn->close();
     exit;
 }

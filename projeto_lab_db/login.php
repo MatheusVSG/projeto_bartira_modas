@@ -41,7 +41,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if ($result->num_rows > 0) {
                 // Busca os dados do vendedor em formato de array associativo
                 $vendedor = $result->fetch_assoc();
-                $conn->close();
                 // Verifica se a senha informada corresponde ao hash armazenado no banco
                 if (password_verify($senha, $vendedor['senha'])) {
                     // Define variáveis de sessão para indicar que o vendedor está logado
@@ -56,12 +55,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     // Termina a execução do script após o redirecionamento
                     exit;
                 } else {
-                    $conn->close();
+                    
                     // Se a senha não bate, salva mensagem de erro na sessão
                     $_SESSION['error_message'] = "Credenciais inválidas!";
                     // Redireciona para o login
                     header("Location: index.php");
                 }
+                $conn->close();
             } else {
                 $conn->close();
                 // Se não encontrou vendedor com o CPF, mostra erro igual
@@ -95,7 +95,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if ($result->num_rows > 0) {
                 // Busca os dados do administrador
                 $admin = $result->fetch_assoc();
-                $conn->close();
                 // Verifica se a senha informada confere com o hash armazenado
                 if (password_verify($senha, $admin['senha'])) {
                     // Define as variáveis de sessão para o admin logado
@@ -107,10 +106,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     unset($_SESSION['error_message']);
                     exit;
                 } else {
-                    $conn->close();
                     $_SESSION['error_message'] = "Credenciais inválidas!";
                     header("Location: index.php");
                 }
+                $conn->close();
             } else {
                 $conn->close();
                 $_SESSION['error_message'] = "Credenciais inválidas!";
