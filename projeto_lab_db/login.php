@@ -56,7 +56,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     // Termina a execução do script após o redirecionamento
                     exit;
                 } else {
-                    $conn->close();
                     // Se a senha não bate, salva mensagem de erro na sessão
                     $_SESSION['error_message'] = "Credenciais inválidas!";
                     // Redireciona para o login
@@ -107,7 +106,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     unset($_SESSION['error_message']);
                     exit;
                 } else {
-                    $conn->close();
                     $_SESSION['error_message'] = "Credenciais inválidas!";
                     header("Location: index.php");
                 }
