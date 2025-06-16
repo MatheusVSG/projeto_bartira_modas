@@ -73,7 +73,6 @@ $result = mysqli_query($conn, $sql);
                             <tr>
                                 <th>ID</th>
                                 <th>Descrição</th>
-                                <th>Ações</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -81,14 +80,7 @@ $result = mysqli_query($conn, $sql);
                                 <tr>
                                     <td data-label="ID"><?= $forma['id'] ?></td>
                                     <td data-label="Descrição"><?= htmlspecialchars($forma['descricao']) ?></td>
-                                    <td data-label="Ações">
-                                        <div class="action-buttons">
-                                            <form method="POST" action="../../controller/forma_pagto_controller.php" style="display: inline;">
-                                                <input type="hidden" name="id" value="<?= $forma['id'] ?>">
-                                                <button type="submit" name="excluir_pagto" class="action-btn btn-delete" onclick="return confirm('Excluir esta forma de pagamento?')">Excluir</button>
-                                            </form>
-                                        </div>
-                                    </td>
+                                    
                                 </tr>
                             <?php endwhile; ?>
                         </tbody>
