@@ -66,7 +66,7 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['tipo_usuario'] !== 'admin') {
                 <input type="hidden" name="cadastrar_meta">
 
                 <div class="col-12 col-lg-6 mb-3">
-                    <label class="form-label">Vendedor</label>
+                    <label class="form-label">Vendedor <span class="text-danger">*</span></label>
                     <select name="vendedor_id" class="form-select" required>
                         <option value="">Selecione</option>
                         <?php
@@ -81,20 +81,18 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['tipo_usuario'] !== 'admin') {
                 </div>
 
                 <div class="col-12 col-lg-3 mb-3">
-                    <label class="form-label">Valor da Meta (R$)</label>
+                    <label class="form-label">Valor da Meta (R$) <span class="text-danger">*</span></label>
                     <input type="number" name="meta_valor" step="0.01" min="0" class="form-control" required>
                 </div>
 
                 <div class="col-12 col-lg-3 mb-3">
-                    <label class="form-label">Data de Validade</label>
+                    <label class="form-label">Data de Validade <span class="text-danger">*</span></label>
                     <input type="date" name="data_validade" class="form-control" required min="<?= date('Y-m-d') ?>">
                 </div>
 
                 <div class="d-flex justify-content-end align-items-center gap-2 mt-3">
-                    <button type="reset" class="btn btn-warning">
-                        Limpar
-                    </button>
 
+                    <a href="listar_metas.php" class="btn btn-secondary">Cancelar</a>
                     <button type="submit" class="btn btn-success">
                         Cadastrar Meta
                     </button>

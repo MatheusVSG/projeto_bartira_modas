@@ -82,23 +82,23 @@ include '../../components/estados.php';
                 <input type="hidden" name="id" value="<?= $vendedor['id'] ?>">
 
                 <div class="col-12 col-lg-4 mb-3">
-                    <label for="nome" class="form-label">Nome</label>
+                    <label for="nome" class="form-label">Nome <span class="text-danger">*</span></label>
                     <input type="text" name="nome" id="nome" class="form-control form-control-sm" required value="<?= htmlspecialchars($vendedor['nome']) ?>">
                 </div>
 
                 <div class="col-12 col-lg-2 mb-3">
-                    <label for="cpf" class="form-label">CPF</label>
+                    <label for="cpf" class="form-label">CPF <span class="text-danger">*</span></label>
                     <input type="text" name="cpf" id="cpf" class="form-control form-control-sm" required maxlength="11" pattern="\d{11}" oninput="this.value = this.value.replace(/\D/g, '')" value="<?= htmlspecialchars($vendedor['cpf']) ?>">
                 </div>
 
                 <div class="col-12 col-lg-4 mb-3">
-                    <label for="email" class="form-label">Email</label>
+                    <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
                     <input type="email" name="email" id="email" class="form-control form-control-sm" required value="<?= htmlspecialchars($vendedor['email']) ?>">
                 </div>
 
                 <div class="col-12 col-lg-2 mb-3">
-                    <label for="telefone" class="form-label">Telefone</label>
-                    <input type="text" name="telefone" id="telefone" class="form-control" maxlength="11" pattern="\d{11}" oninput="this.value = this.value.replace(/\D/g, '')" value="<?= htmlspecialchars($vendedor['telefone']) ?>">
+                    <label for="telefone" class="form-label">Telefone <span class="text-danger">*</span></label>
+                    <input type="text" name="telefone" id="telefone" class="form-control" maxlength="11" pattern="\d{11}" oninput="this.value = this.value.replace(/\D/g, '')" required value="<?= htmlspecialchars($vendedor['telefone']) ?>">
                 </div>
 
                 <div class="col-12 col-lg-4 mb-3">
@@ -140,7 +140,7 @@ include '../../components/estados.php';
                 </div>
 
                 <div class="col-12 col-lg-4 mb-3">
-                    <label for="senha" class="form-label">Senha</label>
+                    <label for="senha" class="form-label">Senha <span class="text-danger">*</span></label>
                     <input type="password" name="senha" id="senha" class="form-control" required value="<?= htmlspecialchars($vendedor['senha']) ?>">
                 </div>
 

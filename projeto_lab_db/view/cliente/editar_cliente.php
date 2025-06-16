@@ -54,7 +54,7 @@ include '../../components/estados.php';
                 'cor' => 'btn-primary'
             ]
         ];
-        
+
         include '../../components/barra_navegacao.php';
         ?>
 
@@ -89,22 +89,22 @@ include '../../components/estados.php';
                 <input type="hidden" name="id" value="<?= $cliente['id'] ?>">
 
                 <div class="col-12 col-lg-4 mb-3">
-                    <label for="nome" class="form-label">Nome</label>
+                    <label for="nome" class="form-label">Nome <span class="text-danger">*</span></label>
                     <input type="text" name="nome" id="nome" class="form-control form-control-sm" required value="<?= htmlspecialchars($cliente['nome']) ?>">
                 </div>
 
                 <div class="col-12 col-lg-2 mb-3">
-                    <label for="cpf" class="form-label">CPF</label>
+                    <label for="cpf" class="form-label">CPF <span class="text-danger">*</span></label>
                     <input type="text" name="cpf" id="cpf" class="form-control form-control-sm" required pattern="\d{11}" maxlength="11" oninput="this.value = this.value.replace(/\D/g, '')" value="<?= htmlspecialchars($cliente['cpf']) ?>">
                 </div>
 
                 <div class="col-12 col-lg-4 mb-3">
-                    <label for="email" class="form-label">Email</label>
+                    <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
                     <input type="email" name="email" id="email" class="form-control form-control-sm" required value="<?= htmlspecialchars($cliente['email']) ?>">
                 </div>
                 <div class="col-12 col-lg-2 mb-3">
-                    <label for="telefone" class="form-label">Telefone</label>
-                    <input type="text" name="telefone" id="telefone" value="<?= htmlspecialchars($cliente['telefone']) ?>" pattern="\d{11}" oninput="this.value = this.value.replace(/\D/g, '')" maxlength="11" placeholder="Digite o telefone" class="form-control">
+                    <label for="telefone" class="form-label">Telefone <span class="text-danger">*</span></label>
+                    <input type="text" name="telefone" id="telefone" value="<?= htmlspecialchars($cliente['telefone']) ?>" pattern="\d{11}" oninput="this.value = this.value.replace(/\D/g, '')" maxlength="11" placeholder="Digite o telefone" class="form-control" required>
                 </div>
 
                 <!--<div class="col-12 mb-3">
@@ -160,10 +160,8 @@ include '../../components/estados.php';
                 </div>
 
                 <div class="d-flex justify-content-end align-items-center gap-2">
-                    <button type="reset" class="btn btn-warning">
-                        Limpar
-                    </button>
 
+                    <a href="listar_clientes.php" class="btn btn-secondary">Cancelar</a>
                     <button type="submit" class="btn btn-success">
                         Salvar Alterações
                     </button>

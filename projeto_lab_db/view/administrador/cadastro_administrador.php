@@ -65,13 +65,13 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['tipo_usuario'] != 'admin') {
         <div class="bg-light rounded p-4">
             <form action="../../controller/administrador/administrador_controller.php" method="POST" class="row">
                 <div class="col-12 col-md-6 mb-3">
-                    <label for="usuario" class="form-label">Usuário</label>
+                    <label for="usuario" class="form-label">Usuário <span class="text-danger">*</span></label>
                     <input type="text" name="usuario" id="usuario" required placeholder="Digite o nome de usuário" class="form-control">
                 </div>
 
                 <div class="col-12 col-md-6 mb-3">
-                    <label for="senha" class="form-label">Senha</label>
-                    <input type="password" name="senha" id="senha" required  placeholder="Digite a senha" class="form-control">
+                    <label for="senha" class="form-label">Senha <span class="text-danger">*</span></label>
+                    <input type="password" name="senha" id="senha" required placeholder="Digite a senha" class="form-control">
                 </div>
 
                 <div class="d-flex justify-content-end align-items-center gap-2 mt-3">

@@ -1,6 +1,6 @@
 <?php
 include '../connection.php';
-include('logger.controller.php');
+include('logs/logger.controller.php');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $fk_venda_id = $_POST['fk_venda_id'];

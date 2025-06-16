@@ -1,42 +1,43 @@
 <?php
 session_start();
-include '../../connection.php';
+include_once '../../connection.php';
 
-if (!isset($_SESSION['usuario_id']) || $_SESSION['tipo_usuario'] != 'admin') {
-    $_SESSION['error_message'] = 'Acesso negado.';
-    header("Location: ../../");
+if (!isset($_SESSION['usuario_id']) || $_SESSION['tipo_usuario'] !== 'admin') {
+    $_SESSION['error_message'] = 'Acesso negado. Apenas administradores podem acessar esta página.';
+    header("Location: ../../login.php");
     exit();
 }
 
-include '../../head.php';
-
-$result = mysqli_query($conn, "SELECT * FROM forma_pagto");
-
-$linksAdicionais = [
-    [
-        'caminho' => $_SESSION['tipo_usuario'] == 'admin' ? '../administrador/home_adm.php' : '../vendedor/home_vendedor.php',
-        'titulo' => 'Voltar ao Painel',
-        'cor' => 'btn-secondary'
-    ],
-    [
-        'caminho' => 'cadastrar_forma_pagto.php',
-        'titulo' => 'Nova Forma de Pagamento',
-        'cor' => 'btn-primary'
-    ]
-];
+$sql = "SELECT * FROM forma_pagto ORDER BY descricao";
+$result = mysqli_query($conn, $sql);
 ?>
 
 <!DOCTYPE html>
 <html lang="pt-BR">
 
 <head>
+    <?php include '../../head.php'; ?>
     <title>Bartira Modas | Formas de Pagamento</title>
 </head>
 
 <body>
-    <div class="w-100 min-vh-100 bg-dark px-3 pb-3">
-        <?php include '../../components/barra_navegacao.php'; ?>
+    <div class="w-100 vh-100 d-flex flex-column bg-dark px-3 pb-3">
+        <?php
+        $linksAdicionais = [
+            [
+                'caminho' => $_SESSION['tipo_usuario'] == 'admin' ? '../administrador/home_adm.php' : '../vendedor/home_vendedor.php',
+                'titulo' => 'Voltar ao Painel',
+                'cor' => 'btn-secondary'
+            ],
+            [
+                'caminho' => 'cadastrar_forma_pagto.php',
+                'titulo' => 'Nova Forma de Pagamento',
+                'cor' => 'btn-primary'
+            ]
+        ];
 
+        include '../../components/barra_navegacao.php';
+        ?>
 
         <div class="position-fixed top-0 end-0 z-3 p-3">
             <?php if (isset($_SESSION['success_message'])) { ?>
@@ -44,50 +45,58 @@ $linksAdicionais = [
                     <?= $_SESSION['success_message'] ?>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
                 </div>
-                <?php unset($_SESSION['success_message']); ?>
-            <?php } ?>
+            <?php
+                unset($_SESSION['success_message']);
+            }
+            ?>
 
             <?php if (isset($_SESSION['error_message'])) { ?>
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <?= $_SESSION['error_message'] ?>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
                 </div>
-                <?php unset($_SESSION['error_message']); ?>
-            <?php } ?>
+            <?php
+                unset($_SESSION['error_message']);
+            }
+            ?>
         </div>
 
-        <h4 class="text-warning">Formas de Pagamento</h4>
+        <h4 class="text-warning">
+            Formas de Pagamento
+        </h4>
 
-        <div class="table-responsive">
-            <table class="custom-table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Descrição</th>
-                        <th>Ação</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php if (mysqli_num_rows($result) > 0): ?>
-                        <?php while ($row = mysqli_fetch_assoc($result)) : ?>
+        <div class="flex-grow-1 overflow-y-hidden">
+            <?php if (mysqli_num_rows($result) > 0): ?>
+                <div class="h-100 overflow-y-auto table-responsive">
+                    <table class="custom-table">
+                        <thead class="position-sticky top-0 start-0 z-2">
                             <tr>
-                                <td data-label="ID"><?= $row['id'] ?></td>
-                                <td data-label="Descrição"><?= htmlspecialchars($row['descricao']) ?></td>
-                                <td data-label="Ação">
-                                    <form method="POST" action="../../controller/forma_pagto_controller.php" style="display:inline;">
-                                        <input type="hidden" name="id" value="<?= $row['id'] ?>">
-                                        <button type="submit" name="excluir_pagto" class="btn btn-danger btn-sm" onclick="return confirm('Excluir esta forma de pagamento?')">Excluir</button>
-                                    </form>
-                                </td>
+                                <th>ID</th>
+                                <th>Descrição</th>
+                                <th>Ações</th>
                             </tr>
-                        <?php endwhile; ?>
-                    <?php else: ?>
-                        <tr>
-                            <td colspan="3" class="text-center">Nenhuma forma de pagamento encontrada.</td>
-                        </tr>
-                    <?php endif; ?>
-                </tbody>
-            </table>
+                        </thead>
+                        <tbody>
+                            <?php while ($forma = mysqli_fetch_assoc($result)): ?>
+                                <tr>
+                                    <td data-label="ID"><?= $forma['id'] ?></td>
+                                    <td data-label="Descrição"><?= htmlspecialchars($forma['descricao']) ?></td>
+                                    <td data-label="Ações">
+                                        <div class="action-buttons">
+                                            <form method="POST" action="../../controller/forma_pagto_controller.php" style="display: inline;">
+                                                <input type="hidden" name="id" value="<?= $forma['id'] ?>">
+                                                <button type="submit" name="excluir_pagto" class="action-btn btn-delete" onclick="return confirm('Excluir esta forma de pagamento?')">Excluir</button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <?php endwhile; ?>
+                        </tbody>
+                    </table>
+                </div>
+            <?php else: ?>
+                <div class="no-results">Nenhuma forma de pagamento cadastrada.</div>
+            <?php endif; ?>
         </div>
     </div>
 </body>

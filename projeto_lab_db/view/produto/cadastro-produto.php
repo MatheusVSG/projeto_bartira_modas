@@ -69,7 +69,7 @@ $produtos = $conn->query($sql);
         <div class="bg-light rounded p-4">
             <form action="../../controller/produto/salvar_produto.php" method="POST" class="row" enctype="multipart/form-data">
                 <div class="form-group mb-3">
-                    <label for="produto_id" class="form-label">Selecione um Produto ou Cadastre um Novo:</label>
+                    <label for="produto_id" class="form-label">Selecione um Produto ou Cadastre um Novo <span class="text-danger">*</span></label>
                     <select name="produto_id" id="produto_id" required class="form-select">
                         <option value="novo_produto">-- Cadastrar Novo Produto --</option>
 
@@ -86,12 +86,12 @@ $produtos = $conn->query($sql);
 
                 <div id="campos_novo_produto" class="mb-3">
                     <div class="col-12 col-md-6 mb-3">
-                        <label for="nome" class="form-label">Nome do Produto:</label>
+                        <label for="nome" class="form-label">Nome do Produto <span class="text-danger">*</span></label>
                         <input type="text" name="nome" id="nome" class="form-control" required>
                     </div>
 
                     <div class="col-12 col-md-6 mb-3">
-                        <label for="tipo_id" class="form-label">Tipo de Produto:</label>
+                        <label for="tipo_id" class="form-label">Tipo de Produto</label>
                         <select name="tipo_id" id="tipo_id" class="form-control">
                             <option value="">Selecione o tipo</option>
                             <?php
@@ -104,18 +104,18 @@ $produtos = $conn->query($sql);
                     </div>
 
                     <div class="col-12 col-md-6 mb-3">
-                        <label for="valor_unidade" class="form-label">Valor da Unidade:</label>
+                        <label for="valor_unidade" class="form-label">Valor da Unidade <span class="text-danger">*</span></label>
                         <input type="number" name="valor_unidade" id="valor_unidade" step="0.01" class="form-control" required>
                     </div>
 
                     <div class="col-12">
-                        <label for="foto" class="form-label">Foto do Produto:</label>
+                        <label for="foto" class="form-label">Foto do Produto</label>
                         <input type="file" name="foto" id="foto" class="form-control" accept="image/*">
                     </div>
                 </div>
 
                 <div class="col-12 mb-3">
-                    <label class="form-label">Tamanhos e Quantidades:</label>
+                    <label class="form-label">Tamanhos e Quantidades <span class="text-danger">*</span></label>
                     <div class="input-group mb-2">
                         <span class="input-group-text">Tamanho</span>
                         <input type="text" name="tamanho" class="form-control" placeholder="(P, M, G, 38, 40)">
