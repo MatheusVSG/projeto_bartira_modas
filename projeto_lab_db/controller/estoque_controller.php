@@ -1,6 +1,6 @@
 <?php
 include('../connection.php');
-include('logger.controller.php');
+include('logs/logger.controller.php');
 
 if (isset($_POST['cadastrar_estoque'])) {
     $tamanho = $_POST['tamanho'];

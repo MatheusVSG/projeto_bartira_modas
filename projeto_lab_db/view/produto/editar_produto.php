@@ -96,12 +96,12 @@ $produto = $resultado->fetch_assoc();
                 <input type="hidden" name="id" value="<?= $produto['id'] ?>" required>
 
                 <div class="mb-3">
-                    <label for="nome" class="form-label">Nome:</label>
+                    <label for="nome" class="form-label">Nome <span class="text-danger">*</span></label>
                     <input type="text" name="nome" id="nome" value="<?= htmlspecialchars($produto['nome']) ?>" class="form-control" required>
                 </div>
 
                 <div class="mb-3">
-                    <label for="tipo_id" class="form-label">Tipo de Produto:</label>
+                    <label for="tipo_id" class="form-label">Tipo de Produto <span class="text-danger">*</span></label>
                     <select name="tipo_id" id="tipo_id" required class="form-select">
                         <option value="">Selecione o tipo</option>
                         <?php
@@ -116,31 +116,32 @@ $produto = $resultado->fetch_assoc();
 
 
                 <div class="mb-3">
-                    <label for="tamanho" class="form-label">Tamanho:</label>
+                    <label for="tamanho" class="form-label">Tamanho <span class="text-danger">*</span></label>
                     <input type="text" name="tamanho" value="<?= $produto['tamanho'] ?>" id="tamanho" readonly required class="form-control">
                 </div>
 
                 <div class="mb-3">
-                    <label for="quantidade" class="form-label">Quantidade:</label>
+                    <label for="quantidade" class="form-label">Quantidade <span class="text-danger">*</span></label>
                     <input type="number" name="quantidade" value="<?= $produto['quantidade'] ?>" id="quantidade" required class="form-control">
                 </div>
 
                 <div class="mb-3">
-                    <label for="valor_unidade" class="form-label">Valor da Unidade:</label>
+                    <label for="valor_unidade" class="form-label">Valor da Unidade <span class="text-danger">*</span></label>
                     <input type="text" name="valor_unidade" value="<?= $produto['valor_unidade'] ?>" id="valor_unidade" required class="form-control">
                 </div>
 
                 <div class="mb-3">
-                    <label for="foto" class="form-label">Nova Foto (opcional):</label>
+                    <label for="foto" class="form-label">Nova Foto (opcional)</label>
                     <input type="file" name="foto" id="foto" class="form-control" accept="image/*">
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Foto Atual:</label><br>
+                    <label class="form-label">Foto Atual</label><br>
                     <img src="./fotos/<?= $produto['foto'] ?>" width="120" class="rounded border">
                 </div>
 
                 <div class="d-flex justify-content-end gap-2">
+                    <a href="listar_estoque.php" class="btn btn-secondary">Cancelar</a>
                     <button type="submit" class="btn btn-success">Salvar Alterações</button>
                 </div>
             </form>

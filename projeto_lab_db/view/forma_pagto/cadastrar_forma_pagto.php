@@ -51,7 +51,7 @@ if (isset($_GET['sucesso']) && $_GET['sucesso'] == 1) {
 
             <form action="../../controller/forma_pagto_controller.php" method="POST" class="row">
                 <div class="col-12 mb-3">
-                    <label for="descricao" class="form-label">Descrição da Forma de Pagamento:</label>
+                    <label for="descricao" class="form-label">Descrição da Forma de Pagamento <span class="text-danger">*</span></label>
                     <input type="text" name="descricao" id="descricao" class="form-control" required>
                 </div>
 

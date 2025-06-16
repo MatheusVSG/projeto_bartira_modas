@@ -109,7 +109,7 @@ $linksAdicionais = [
                 <input type="hidden" name="fk_vendedor_id" value="<?= $_SESSION['usuario_id'] ?>">
 
                 <div class="col-12 col-lg-6 mb-3">
-                    <label for="fk_cliente_id" class="form-label">Cliente:</label>
+                    <label for="fk_cliente_id" class="form-label">Cliente <span class="text-danger">*</span></label>
                     <select name="fk_cliente_id" id="fk_cliente_id" class="form-select" required>
                         <option value="">Selecione um cliente</option>
                         <?php while ($cliente = mysqli_fetch_assoc($result_clientes)) : ?>
@@ -119,7 +119,7 @@ $linksAdicionais = [
                 </div>
 
                 <div class="col-12 col-lg-6 mb-3">
-                    <label for="fk_forma_pagto_id" class="form-label">Forma de Pagamento:</label>
+                    <label for="fk_forma_pagto_id" class="form-label">Forma de Pagamento <span class="text-danger">*</span></label>
                     <select name="fk_forma_pagto_id" id="fk_forma_pagto_id" class="form-select" required>
                         <option value="">Selecione uma forma de pagamento</option>
                         <?php while ($forma = mysqli_fetch_assoc($result_formas)) : ?>
@@ -129,13 +129,13 @@ $linksAdicionais = [
                 </div>
 
                 <div class="col-12 mb-3">
-                    <label class="form-label">Produtos:</label>
+                    <label class="form-label">Produtos <span class="text-danger">*</span></label>
                     <div id="produtos-container">
                         <div class="row mb-2" data-index="0">
                             <div class="col-md-6">
                                 <select name="produtos[0][id]" class="form-select produto-select" required>
                                     <option value="">Selecione um produto</option>
-                                    <?php 
+                                    <?php
                                     mysqli_data_seek($result_produtos, 0);
                                     while ($produto = mysqli_fetch_assoc($result_produtos)) : ?>
                                         <option value="<?= $produto['id'] . '-' . $produto['tamanho'] ?>"
@@ -160,7 +160,7 @@ $linksAdicionais = [
                 </div>
 
                 <div class="col-12 col-lg-6 mb-3">
-                    <label class="form-label">Valor Total:</label>
+                    <label class="form-label">Valor Total</label>
                     <div class="input-group">
                         <span class="input-group-text">R$</span>
                         <input type="text" id="valor_total" name="valor" class="form-control" readonly>
@@ -204,12 +204,12 @@ $linksAdicionais = [
                 const quantidadeInput = select.closest('.row').querySelector('.quantidade-input');
                 const quantidadeDisponivel = select.options[select.selectedIndex].dataset.quantidade;
                 quantidadeInput.max = quantidadeDisponivel;
-                
+
                 // Se a quantidade atual for maior que o novo máximo, ajusta para o máximo
                 if (parseInt(quantidadeInput.value) > parseInt(quantidadeDisponivel)) {
                     quantidadeInput.value = quantidadeDisponivel;
                 }
-                
+
                 // Atualiza o placeholder para mostrar a quantidade disponível
                 quantidadeInput.placeholder = `Quantidade (máx: ${quantidadeDisponivel})`;
             }
@@ -238,7 +238,7 @@ $linksAdicionais = [
                     atualizarQuantidadeMaxima(this);
                     atualizarValorTotal();
                 });
-                
+
                 novoProduto.querySelector('.quantidade-input').addEventListener('input', atualizarValorTotal);
 
                 if (produtosContainer.children.length > 1) {

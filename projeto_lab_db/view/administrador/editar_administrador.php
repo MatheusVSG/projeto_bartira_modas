@@ -89,22 +89,20 @@ $admin = $resultado->fetch_assoc();
                 <input type="hidden" name="id" value="<?= htmlspecialchars($admin['id']) ?>">
 
                 <div class="col-12 col-md-6 mb-3">
-                    <label for="usuario" class="form-label">Usuário</label>
+                    <label for="usuario" class="form-label">Usuário <span class="text-danger">*</span></label>
                     <input type="text" name="usuario" id="usuario" class="form-control"
                         value="<?= htmlspecialchars($admin['usuario']) ?>" required>
                 </div>
 
                 <div class="col-12 col-md-6 mb-3">
-                    <label for="senha" class="form-label">Senha</label>
+                    <label for="senha" class="form-label">Senha <span class="text-danger">*</span></label>
                     <input type="password" name="senha" id="senha" class="form-control"
-                        placeholder="Deixe em branco para manter a senha atual">
+                        placeholder="Deixe em branco para manter a senha atual" required>
                 </div>
 
                 <div class="d-flex justify-content-end align-items-center gap-2 mt-3">
-                    <button type="reset" class="btn btn-warning">
-                        Limpar
-                    </button>
 
+                    <a href="listar_administrador.php" class="btn btn-secondary">Cancelar</a>
                     <button type="submit" name="editar" class="btn btn-success">
                         Salvar Alterações
                     </button>
