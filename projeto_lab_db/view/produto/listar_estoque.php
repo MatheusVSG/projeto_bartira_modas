@@ -118,7 +118,7 @@ $result = mysqli_query($conn, $query);
                 </div>
 
                 <button type="submit" class="btn btn-primary">Filtrar</button>
-                <a href="relatorio_estoque_pdf.php" target="_blank" class="btn btn-success">Gerar PDF</a>
+                <a href="relatorio_estoque_pdf.php?tipo_id=<?php echo $tipoFiltro ?? '';?>&nome_produto=<?php echo $nomeFiltro ?? '';?>" target="_blank" class="btn btn-success">Gerar PDF</a>
             </form>
 
             <!-- Tabela de resultados -->
